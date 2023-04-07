@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 @immutable
 class User {
+  final int? id;
   final String name;
   final String email;
   final String surname;
@@ -9,6 +10,7 @@ class User {
   final String? profileImage;
 
   const User({
+    this.id,
     required this.email,
     required this.name,
     required this.surname,
@@ -18,6 +20,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
+        id: json['id'],
         email: json['email'],
         name: json['name'],
         surname: json['surname'],
@@ -25,12 +28,13 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['email'] = email;
-    data['name'] = name;
-    data['surname'] = surname;
-    data['password'] = password;
-    data['profile_image'] = profileImage;
-    return data;
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'surname': surname,
+      'password': password,
+      'profile_image': profileImage
+    };
   }
 }
