@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       darkTheme: appTheme.dark,
       themeMode: ThemeMode.dark,
       title: 'Chatter',
-      home: const UsersScreen(),
+      home: const MainScreen(),
     );
   }
 }
