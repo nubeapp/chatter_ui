@@ -17,7 +17,7 @@ class UserService implements IUserService {
       final List<dynamic> responseData = jsonDecode(response.body);
       final List<User> users =
           responseData.map((json) => User.fromJson(json)).toList();
-      Logger.info('Users has been retrieved successfully!');
+      Logger.info('Users have been retrieved successfully!');
       return users;
     } else {
       Logger.error('Failed to load users');

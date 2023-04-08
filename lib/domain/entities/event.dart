@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 @immutable
 class Event {
   final int? id;
-  final String ownerEmail;
+  final int ownerId;
   final String title;
   final bool completed;
 
   // Constructor
   const Event({
     this.id,
-    required this.ownerEmail,
+    required this.ownerId,
     required this.title,
-    required this.completed,
+    this.completed = false,
   });
 
   // Factory method to create a new instance from a Map (fromJson)
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
       id: json['id'],
-      ownerEmail: json['ownerEmail'],
+      ownerId: json['owner_id'],
       title: json['title'],
       completed: json['completed'],
     );
@@ -29,7 +29,7 @@ class Event {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'ownerEmail': ownerEmail,
+      'owner_id': ownerId,
       'title': title,
       'completed': completed,
     };
