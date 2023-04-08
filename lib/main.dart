@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ui/application/services/dependency_injection/dependencies.dart';
 import 'package:ui/domain/services/api_service_interface.dart';
-import 'package:ui/presentation/pages/users_screen.dart';
 import 'package:ui/presentation/styles/theme.dart';
 
 import 'presentation/pages/pages.dart';

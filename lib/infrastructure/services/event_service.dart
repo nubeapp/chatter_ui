@@ -55,11 +55,14 @@ class EventService implements IEventService {
 
   @override
   Future<Event> createEvent(Event event) async {
-    Logger.debug('Creating new event ${event.title}...');
+    Logger.debug('Creating new event "${event.title}"...');
     final response = await http.post(Uri.parse(API_BASE_URL),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
         body: json.encode(event.toJson()));
     if (response.statusCode == 201) {
-      Logger.info('The event ${event.title} was created successfully!');
+      Logger.info('The event "${event.title}" was created successfully!');
       final Map<String, dynamic> data = json.decode(response.body);
       return Event.fromJson(data);
     } else {
@@ -73,6 +76,9 @@ class EventService implements IEventService {
   Future<Event> updateEventById(int eventId, Event updatedEvent) async {
     Logger.debug('Updating the event with id $eventId...');
     final response = await http.put(Uri.parse('$API_BASE_URL/$eventId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
         body: json.encode(updatedEvent.toJson()));
     if (response.statusCode == 200) {
       Logger.info('The event with id $eventId has been updated succesfully!');

@@ -28,7 +28,6 @@ class Event {
   // Method to convert the instance to a Map (toJson)
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'owner_id': ownerId,
       'title': title,
       'completed': completed,

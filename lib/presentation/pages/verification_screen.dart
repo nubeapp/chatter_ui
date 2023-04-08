@@ -7,7 +7,6 @@ import 'package:ui/domain/services/user_service_interface.dart';
 import 'package:ui/presentation/pages/users_screen.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/button.dart';
-import 'package:ui/presentation/widgets/custom_icon_button.dart';
 import 'package:ui/extensions/extensions.dart';
 
 import '../widgets/input_field.dart';

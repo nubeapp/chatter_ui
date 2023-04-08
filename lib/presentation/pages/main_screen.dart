@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/presentation/pages/users_screen.dart';
 import 'package:ui/presentation/styles/logger.dart';
-import 'package:ui/presentation/styles/theme.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
