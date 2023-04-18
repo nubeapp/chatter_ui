@@ -5,6 +5,8 @@ import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/services/event_service_interface.dart';
 import 'package:ui/presentation/pages/users_screen.dart';
 import 'package:ui/presentation/styles/logger.dart';
+import 'package:ui/presentation/widgets/event_tile.dart';
+import 'package:ui/presentation/widgets/input_field.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -36,6 +38,14 @@ class _MainScreenState extends State<MainScreen> {
                 MaterialPageRoute(builder: (context) => const UsersScreen())),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).bottomAppBarColor,
+        onPressed: () => _showDialog(context),
+        child: const Icon(
+          CupertinoIcons.add,
+          color: Colors.white,
+        ),
       ),
       body: FutureBuilder<List<Event>>(
         future: _events,
@@ -72,89 +82,36 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-}
 
-class EventTile extends StatefulWidget {
-  const EventTile({super.key, required this.event});
+  TextEditingController titleController = TextEditingController();
 
-  final Event event;
-
-  @override
-  State<EventTile> createState() => _EventTileState();
-}
-
-class _EventTileState extends State<EventTile> {
-  final _eventService = GetIt.instance.get<IEventService>();
-  late bool _completed;
-
-  @override
-  void initState() {
-    super.initState();
-    _completed = widget.event.completed;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-      child: Ink(
-        height: 90,
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.event.title,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  Text('Owner: ${widget.event.ownerId}')
-                ],
-              ),
-              GestureDetector(
-                onTap: () async {
-                  setState(() {
-                    _completed = !_completed;
-                  });
-                  await _eventService.updateEventById(
-                      widget.event.id!,
-                      Event(
-                          ownerId: 30,
-                          title: widget.event.title,
-                          completed: !widget.event.completed));
-                },
-                child: Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 4,
-                      color: _completed ? Colors.green : Colors.red,
-                    ),
-                  ),
-                  child: _completed
-                      ? const Icon(CupertinoIcons.checkmark_alt,
-                          color: Colors.green)
-                      : const Icon(CupertinoIcons.clear_thick,
-                          color: Colors.red),
-                ),
-                // child: Text('$_completed'),
-              )
-            ],
+  void _showDialog(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('New event...'),
+          content: InputField(
+            hintText: 'Event title',
+            controller: titleController,
           ),
-        ),
-      ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                if (titleController.text.isNotEmpty) {
+                  await _eventService.createEvent(
+                      Event(ownerId: 30, title: titleController.text));
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _events = _eventService.getEvents();
+                  });
+                }
+              },
+              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

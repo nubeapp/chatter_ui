@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui/domain/entities/user.dart';
 
 @immutable
 class Event {
@@ -6,6 +7,7 @@ class Event {
   final int ownerId;
   final String title;
   final bool completed;
+  final User? owner;
 
   // Constructor
   const Event({
@@ -13,6 +15,7 @@ class Event {
     required this.ownerId,
     required this.title,
     this.completed = false,
+    this.owner,
   });
 
   // Factory method to create a new instance from a Map (fromJson)
@@ -22,6 +25,7 @@ class Event {
       ownerId: json['owner_id'],
       title: json['title'],
       completed: json['completed'],
+      owner: User.fromJson(json['owner']),
     );
   }
 
