@@ -5,16 +5,18 @@ import 'package:ui/domain/services/email_service_interface.dart';
 import 'package:ui/presentation/styles/logger.dart';
 
 class EmailService implements IEmailService {
-  EmailService();
+  EmailService({required this.client});
 
-  static String get API_BASE_URL => 'http://localhost:8000/email';
+  final http.Client client;
+
+  static String get API_BASE_URL => 'http://0.0.0.0:8000/email';
 
   @override
   Future<void> sendCode(String email, String name, String code) async {
     Logger.debug('Sending email...');
     final emailData = EmailData(email: email, name: name, code: code);
     try {
-      final response = await http.post(
+      final response = await client.post(
         Uri.parse('$API_BASE_URL/send'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(emailData.toJson()),

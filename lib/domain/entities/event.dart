@@ -4,7 +4,7 @@ import 'package:ui/domain/entities/user.dart';
 @immutable
 class Event {
   final int? id;
-  final int ownerId;
+  final int? ownerId;
   final String title;
   final bool completed;
   final User? owner;
@@ -12,7 +12,7 @@ class Event {
   // Constructor
   const Event({
     this.id,
-    required this.ownerId,
+    this.ownerId,
     required this.title,
     this.completed = false,
     this.owner,

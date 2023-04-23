@@ -7,9 +7,9 @@ void main() {
   late IEventService eventService;
 
   List<Event> mockedEvents = const [
-    Event(id: 1, ownerId: 30, title: 'Event 1 with owner_id 30'),
-    Event(id: 2, ownerId: 30, title: 'Event 2 with owner_id 30'),
-    Event(id: 3, ownerId: 32, title: 'Event 1 with owner_id 32'),
+    Event(title: 'Event 1 with owner_id 30'),
+    Event(title: 'Event 2 with owner_id 30'),
+    Event(title: 'Event 1 with owner_id 32'),
   ];
 
   setUp(() async {
@@ -61,10 +61,8 @@ void main() {
     });
 
     group('createEvent', () {
-      Event newEvent =
-          const Event(ownerId: 30, title: "Event 3 with owner_id 30");
-      Event newEventError = const Event(
-          ownerId: 1, title: "Event with owner_id which does not exist");
+      Event newEvent = const Event(title: "Event 3 with owner_id 30");
+      Event newEventError = const Event(title: "Event does not exist");
 
       test('creates a new event and add it to the list', () async {
         final eventsDatabase = await eventService.getEvents();
@@ -127,7 +125,7 @@ void main() {
     group('deleteEventByOwnerId', () {
       test('delete event by ownerId on success', () async {
         final events = await eventService.getEvents();
-        final int ownerId = events.last.ownerId;
+        final int ownerId = events.last.ownerId!;
 
         await eventService.deleteEventsByOwnerId(ownerId);
 

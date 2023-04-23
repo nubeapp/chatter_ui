@@ -5,14 +5,15 @@ import 'package:ui/domain/services/user_service_interface.dart';
 import 'package:ui/presentation/styles/logger.dart';
 
 class UserService implements IUserService {
-  static String get API_BASE_URL => 'http://localhost:8000/users';
+  static String get API_BASE_URL => 'http://0.0.0.0:8000/users';
+  final http.Client client;
 
-  UserService();
+  UserService({required this.client});
 
   @override
   Future<List<User>> getUsers() async {
     Logger.debug('Requesting all users to database...');
-    final response = await http.get(Uri.parse(API_BASE_URL));
+    final response = await client.get(Uri.parse(API_BASE_URL));
     if (response.statusCode == 200) {
       final List<dynamic> responseData = jsonDecode(response.body);
       final List<User> users =
@@ -28,7 +29,7 @@ class UserService implements IUserService {
   @override
   Future<User> getUserByEmail(String email) async {
     Logger.debug('Requesting user with email $email...');
-    final response = await http.get(Uri.parse('$API_BASE_URL/$email'));
+    final response = await client.get(Uri.parse('$API_BASE_URL/$email'));
     if (response.statusCode == 200) {
       final dynamic responseData = jsonDecode(response.body);
       final User user = User.fromJson(responseData);
@@ -44,7 +45,7 @@ class UserService implements IUserService {
   @override
   Future<User> createUser(User user) async {
     Logger.debug('Creating user with email ${user.email}...');
-    final response = await http.post(
+    final response = await client.post(
       Uri.parse(API_BASE_URL),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -66,7 +67,7 @@ class UserService implements IUserService {
   @override
   Future<User> updateUserByEmail(String email, User user) async {
     Logger.debug('Updating user with email $email...');
-    final response = await http.put(
+    final response = await client.put(
       Uri.parse('$API_BASE_URL/$email'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -87,7 +88,7 @@ class UserService implements IUserService {
   @override
   Future<void> deleteUsers() async {
     Logger.debug('Deleting all the user in the database...');
-    final response = await http.delete(Uri.parse(API_BASE_URL));
+    final response = await client.delete(Uri.parse(API_BASE_URL));
     if (response.statusCode != 204) {
       Logger.error('Failed to delete users');
       throw Exception('Failed to delete users');
@@ -98,7 +99,7 @@ class UserService implements IUserService {
   @override
   Future<void> deleteUserByEmail(String email) async {
     Logger.debug('Deleting user with email $email...');
-    final response = await http.delete(Uri.parse('$API_BASE_URL/$email'));
+    final response = await client.delete(Uri.parse('$API_BASE_URL/$email'));
     if (response.statusCode != 204) {
       Logger.error('Failed to delete user');
       throw Exception('Failed to delete user');
