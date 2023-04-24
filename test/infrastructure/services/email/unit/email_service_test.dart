@@ -39,6 +39,30 @@ void main() {
       // expect(() => emailService.sendCode(email, name, code), returnsNormally);
     });
 
+    test('throws an exception if the http call completes with an error', () {
+      final mockClient = MockClient();
+      emailService = EmailService(client: mockClient);
+      const EmailData mockEmail =
+          EmailData(email: 'johndoe@example.com', name: 'John', code: '12345');
+
+      when(mockClient.post(
+        Uri.parse(API_BASE_URL),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(mockEmail.toJson()),
+      )).thenAnswer((_) async => http.Response('Error sending email', 404));
+
+      expect(
+          emailService.sendCode(
+              mockEmail.email, mockEmail.name, mockEmail.code),
+          throwsException);
+
+      verify(mockClient.post(
+        Uri.parse(API_BASE_URL),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(mockEmail.toJson()),
+      )).called(1);
+    });
+
     // test('sendCode() returns success with status code 200', () async {
     //   // Act
     //   final response = await http.post(

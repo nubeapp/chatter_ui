@@ -18,14 +18,17 @@ import 'package:http/http.dart' as http;
 abstract class Dependencies {
   static void injectDependencies() {
     GetIt.instance.registerLazySingleton<http.Client>(() => http.Client());
+
     GetIt.instance.registerLazySingleton<IApiService>(
         () => ApiService(client: GetIt.instance<http.Client>()));
     GetIt.instance.registerLazySingleton<IEmailService>(
         () => EmailService(client: GetIt.instance<http.Client>()));
     GetIt.instance.registerLazySingleton<IUserService>(
         () => UserService(client: GetIt.instance<http.Client>()));
-    GetIt.instance.registerLazySingleton<ICodeService>(() => CodeService());
-    GetIt.instance.registerLazySingleton<IEventService>(() => EventService());
+    GetIt.instance.registerLazySingleton<ICodeService>(
+        () => CodeService(client: GetIt.instance<http.Client>()));
+    GetIt.instance.registerLazySingleton<IEventService>(
+        () => EventService(client: GetIt.instance<http.Client>()));
     GetIt.instance.registerLazySingleton<IAuthService>(() => AuthService());
   }
 }

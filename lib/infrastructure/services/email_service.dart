@@ -28,6 +28,7 @@ class EmailService implements IEmailService {
       Logger.info('Email has been sent successfully!');
     } catch (error) {
       Logger.error('Error sending email: $error');
+      throw Exception('Error sending email: $error');
     }
   }
 }

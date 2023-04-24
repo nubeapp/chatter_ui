@@ -5,12 +5,15 @@ import 'package:ui/domain/services/event_service_interface.dart';
 import 'package:ui/presentation/styles/logger.dart';
 
 class EventService implements IEventService {
-  static String get API_BASE_URL => 'http://localhost:8000/events';
+  EventService({required this.client});
+
+  static String get API_BASE_URL => 'http://0.0.0.0:8000/events';
+  final http.Client client;
 
   @override
   Future<List<Event>> getEvents() async {
     Logger.debug('Requesting all events to database...');
-    final response = await http.get(Uri.parse(API_BASE_URL));
+    final response = await client.get(Uri.parse(API_BASE_URL));
     if (response.statusCode == 200) {
       Logger.info('Events have been retrieved successfully!');
       final List<dynamic> data = json.decode(response.body);
@@ -25,7 +28,8 @@ class EventService implements IEventService {
   @override
   Future<Event> getEventById(int eventId) async {
     Logger.debug('Requesting event with id $eventId...');
-    final response = await http.get(Uri.parse('$API_BASE_URL/event/$eventId'));
+    final response =
+        await client.get(Uri.parse('$API_BASE_URL/event/$eventId'));
     if (response.statusCode == 200) {
       Logger.info('Event with id $eventId was retrieved successfully!');
       final Map<String, dynamic> data = json.decode(response.body);
@@ -40,7 +44,7 @@ class EventService implements IEventService {
   @override
   Future<List<Event>> getEventsByOwnerId(int ownerId) async {
     Logger.debug('Requesting events by owner_id $ownerId...');
-    final response = await http.get(Uri.parse('$API_BASE_URL/$ownerId'));
+    final response = await client.get(Uri.parse('$API_BASE_URL/$ownerId'));
     if (response.statusCode == 200) {
       Logger.info(
           'Events of owner_id $ownerId have been retrieved succesfully!');
@@ -56,7 +60,7 @@ class EventService implements IEventService {
   @override
   Future<Event> createEvent(Event event) async {
     Logger.debug('Creating new event "${event.title}"...');
-    final response = await http.post(Uri.parse(API_BASE_URL),
+    final response = await client.post(Uri.parse(API_BASE_URL),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -75,7 +79,7 @@ class EventService implements IEventService {
   @override
   Future<Event> updateEventById(int eventId, Event updatedEvent) async {
     Logger.debug('Updating the event with id $eventId...');
-    final response = await http.put(Uri.parse('$API_BASE_URL/$eventId'),
+    final response = await client.put(Uri.parse('$API_BASE_URL/$eventId'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -95,7 +99,7 @@ class EventService implements IEventService {
   Future<void> deleteEventById(int eventId) async {
     Logger.debug('Deleting event with id $eventId...');
     final response =
-        await http.delete(Uri.parse('$API_BASE_URL/event/$eventId'));
+        await client.delete(Uri.parse('$API_BASE_URL/event/$eventId'));
     if (response.statusCode != 204) {
       Logger.error('Failed to delete event with id $eventId');
       throw Exception(
@@ -107,7 +111,7 @@ class EventService implements IEventService {
   @override
   Future<void> deleteEventsByOwnerId(int ownerId) async {
     Logger.debug('Deleting events by owner_id $ownerId...');
-    final response = await http.delete(Uri.parse('$API_BASE_URL/$ownerId'));
+    final response = await client.delete(Uri.parse('$API_BASE_URL/$ownerId'));
     if (response.statusCode != 204) {
       Logger.error('Failed to delete events by owner_id $ownerId');
       throw Exception(
@@ -119,7 +123,7 @@ class EventService implements IEventService {
   @override
   Future<void> deleteAllEvents() async {
     Logger.debug('Deleting all the events in the database...');
-    final response = await http.delete(Uri.parse(API_BASE_URL));
+    final response = await client.delete(Uri.parse(API_BASE_URL));
     if (response.statusCode != 204) {
       Logger.error('Failed to delete all events');
       throw Exception(
