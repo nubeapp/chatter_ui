@@ -42,18 +42,19 @@ class EventService implements IEventService {
   }
 
   @override
-  Future<List<Event>> getEventsByOwnerId(int ownerId) async {
-    Logger.debug('Requesting events by owner_id $ownerId...');
-    final response = await client.get(Uri.parse('$API_BASE_URL/$ownerId'));
+  Future<List<Event>> getEventsByOrganizationId(int organizationId) async {
+    Logger.debug('Requesting events by organization_id $organizationId...');
+    final response =
+        await client.get(Uri.parse('$API_BASE_URL/$organizationId'));
     if (response.statusCode == 200) {
       Logger.info(
-          'Events of owner_id $ownerId have been retrieved succesfully!');
+          'Events of organization_id $organizationId have been retrieved succesfully!');
       final List<dynamic> data = json.decode(response.body);
       return data.map((e) => Event.fromJson(e)).toList();
     } else {
-      Logger.error('Failed to get events by owner_id $ownerId');
+      Logger.error('Failed to get events by organizaion_id $organizationId');
       throw Exception(
-          'Failed to get events by owner id. Status code: ${response.statusCode}');
+          'Failed to get events by organization_id. Status code: ${response.statusCode}');
     }
   }
 
@@ -109,15 +110,18 @@ class EventService implements IEventService {
   }
 
   @override
-  Future<void> deleteEventsByOwnerId(int ownerId) async {
-    Logger.debug('Deleting events by owner_id $ownerId...');
-    final response = await client.delete(Uri.parse('$API_BASE_URL/$ownerId'));
+  Future<void> deleteEventsByOrganizationId(int organizationId) async {
+    Logger.debug('Deleting events by organization_id $organizationId...');
+    final response =
+        await client.delete(Uri.parse('$API_BASE_URL/$organizationId'));
     if (response.statusCode != 204) {
-      Logger.error('Failed to delete events by owner_id $ownerId');
+      Logger.error(
+          'Failed to delete events by organization_id $organizationId');
       throw Exception(
-          'Failed to delete events by owner id. Status code: ${response.statusCode}');
+          'Failed to delete events by organization_id. Status code: ${response.statusCode}');
     }
-    Logger.info('Events by owner_id $ownerId have been deleted successfully!');
+    Logger.info(
+        'Events by organization_id $organizationId have been deleted successfully!');
   }
 
   @override

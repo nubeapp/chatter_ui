@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:ui/domain/entities/event.dart';
@@ -8,6 +9,8 @@ import 'package:ui/domain/services/event_service_interface.dart';
 import 'package:ui/infrastructure/services/event_service.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../mocks/mock_objects.dart';
+import '../../../mocks/mock_responses.dart';
 import 'event_service_test.mocks.dart';
 
 @GenerateMocks([http.Client])
@@ -37,9 +40,7 @@ void main() {
         eventService = EventService(client: mockClient);
 
         when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async =>
-            http.Response(
-                '[{"id":1, "title":"Event title 1", "completed": false, "owner_id":1, "owner": {"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}}, {"id":2, "title":"Event title 2", "completed": false, "owner_id":1, "owner": {"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}}]',
-                200));
+            http.Response(json.encode(mockEventListResponse), 200));
 
         final events = await eventService.getEvents();
 
@@ -47,12 +48,22 @@ void main() {
         expect(events.length, equals(2));
         expect(events[0].id, equals(1));
         expect(events[1].id, equals(2));
-        expect(events[0].ownerId, equals(1));
-        expect(events[1].ownerId, equals(1));
-        expect(events[0].completed, false);
-        expect(events[1].completed, false);
-        expect(events[0].title, 'Event title 1');
-        expect(events[1].title, 'Event title 2');
+        expect(events[0].title, 'Bad Bunny Concert');
+        expect(events[1].title, 'Rosalia Concert');
+        expect(events[0].date,
+            DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'));
+        expect(events[1].date,
+            DateFormat("dd-MM-yyyy HH:mm").parse('14-12-2023 18:00'));
+        expect(events[0].venue, 'Wizink Center, Av. de Felipe II');
+        expect(events[1].venue, 'Wizink Center, Av. de Felipe II');
+        expect(events[0].ticketLimit, equals(1000));
+        expect(events[1].ticketLimit, equals(1000));
+        expect(events[0].organization!.id, equals(1));
+        expect(events[1].organization!.id, equals(1));
+        expect(events[0].organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(events[1].organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(events[0].organization!.code, 'UMS');
+        expect(events[1].organization!.code, 'UMS');
 
         verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
       });
@@ -69,66 +80,81 @@ void main() {
         verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
       });
 
-      test('getEventsByOwnerId returns a list of events', () async {
+      test('getEventsByOrganizationId returns a list of events', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
-        const int mockOwnerId = 1;
+        const int mockOrganizationId = 1;
 
-        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockOwnerId')))
-            .thenAnswer((_) async => http.Response(
-                '[{"id":1, "title":"Event title 1", "completed": false, "owner_id":1, "owner": {"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}}, {"id":2, "title":"Event title 2", "completed": false, "owner_id":1, "owner": {"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}}]',
-                200));
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockOrganizationId')))
+            .thenAnswer((_) async =>
+                http.Response(json.encode(mockEventListResponse), 200));
 
-        final events = await eventService.getEventsByOwnerId(mockOwnerId);
+        final events =
+            await eventService.getEventsByOrganizationId(mockOrganizationId);
 
         expect(events, isA<List<Event>>());
         expect(events.length, equals(2));
         expect(events[0].id, equals(1));
         expect(events[1].id, equals(2));
-        expect(events[0].ownerId, equals(1));
-        expect(events[1].ownerId, equals(1));
-        expect(events[0].completed, false);
-        expect(events[1].completed, false);
-        expect(events[0].title, 'Event title 1');
-        expect(events[1].title, 'Event title 2');
+        expect(events[0].title, 'Bad Bunny Concert');
+        expect(events[1].title, 'Rosalia Concert');
+        expect(events[0].date,
+            DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'));
+        expect(events[1].date,
+            DateFormat("dd-MM-yyyy HH:mm").parse('14-12-2023 18:00'));
+        expect(events[0].venue, 'Wizink Center, Av. de Felipe II');
+        expect(events[1].venue, 'Wizink Center, Av. de Felipe II');
+        expect(events[0].ticketLimit, equals(1000));
+        expect(events[1].ticketLimit, equals(1000));
+        expect(events[0].organization!.id, equals(1));
+        expect(events[1].organization!.id, equals(1));
+        expect(events[0].organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(events[1].organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(events[0].organization!.code, 'UMS');
+        expect(events[1].organization!.code, 'UMS');
 
-        verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockOwnerId')))
+        verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockOrganizationId')))
             .called(1);
       });
 
       test(
-          'throws an exception if the http call completes with an error (ByOwnerId)',
+          'throws an exception if the http call completes with an error (ByOrganizationId)',
           () {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
-        const int mockOwnerId = 1;
+        const int mockOrganizationId = 1;
 
-        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockOwnerId')))
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockOrganizationId')))
             .thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(eventService.getEventsByOwnerId(mockOwnerId), throwsException);
+        expect(eventService.getEventsByOrganizationId(mockOrganizationId),
+            throwsException);
 
-        verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockOwnerId')))
+        verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockOrganizationId')))
             .called(1);
       });
 
-      test('getEventsById returns a list of events', () async {
+      test('getEventsById returns an event', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockId = 1;
 
         when(mockClient.get(Uri.parse('$API_BASE_URL/event/$mockId')))
-            .thenAnswer((_) async => http.Response(
-                '{"id":1, "title":"Event title 1", "completed": false, "owner_id":1, "owner": {"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}}',
-                200));
+            .thenAnswer((_) async =>
+                http.Response(json.encode(mockEventResponse), 200));
 
         final event = await eventService.getEventById(mockId);
 
         expect(event, isA<Event>());
         expect(event.id, equals(1));
-        expect(event.ownerId, equals(1));
-        expect(event.completed, false);
-        expect(event.title, 'Event title 1');
+        expect(event.title, 'Bad Bunny Concert');
+        expect(event.date,
+            DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'));
+        expect(event.venue, 'Wizink Center, Av. de Felipe II');
+        expect(event.ticketLimit, equals(1000));
+        expect(event.organization!.id, equals(1));
+        expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(event.organization!.code, 'UMS');
 
         verify(mockClient.get(Uri.parse('$API_BASE_URL/event/$mockId')))
             .called(1);
@@ -191,55 +217,57 @@ void main() {
       test('createEvent creates new event', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
-        const mockEvent = Event(title: 'Event title 1');
 
         when(mockClient.post(Uri.parse(API_BASE_URL),
                 headers: <String, String>{
                   'Content-Type': 'application/json; charset=UTF-8',
                 },
-                body: json.encode(mockEvent.toJson())))
-            .thenAnswer((_) async => http.Response(
-                '{"id":1, "title":"Event title 1", "completed": false, "owner_id":1, "owner": {"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}}',
-                201));
+                body: json.encode(mockEventObject.toJson())))
+            .thenAnswer((_) async =>
+                http.Response(json.encode(mockEventResponse), 201));
 
-        final event = await eventService.createEvent(mockEvent);
+        final event = await eventService.createEvent(mockEventObject);
 
         expect(event, isA<Event>());
         expect(event.id, equals(1));
-        expect(event.title, 'Event title 1');
-        expect(event.ownerId, equals(1));
-        expect(event.completed, false);
+        expect(event.title, 'Bad Bunny Concert');
+        expect(event.date,
+            DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'));
+        expect(event.venue, 'Wizink Center, Av. de Felipe II');
+        expect(event.ticketLimit, equals(1000));
+        expect(event.organization!.id, equals(1));
+        expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(event.organization!.code, 'UMS');
 
         verify(mockClient.post(
           Uri.parse(API_BASE_URL),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockEvent.toJson()),
+          body: json.encode(mockEventObject.toJson()),
         )).called(1);
       });
 
       test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
-        const mockEvent = Event(title: 'Event title 1');
 
         when(mockClient.post(
           Uri.parse(API_BASE_URL),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockEvent.toJson()),
+          body: json.encode(mockEventObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(eventService.createEvent(mockEvent), throwsException);
+        expect(eventService.createEvent(mockEventObject), throwsException);
 
         verify(mockClient.post(
           Uri.parse(API_BASE_URL),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockEvent.toJson()),
+          body: json.encode(mockEventObject.toJson()),
         )).called(1);
       });
       // Event newEvent = const Event(title: "Event 3 with owner_id 30");
@@ -265,31 +293,35 @@ void main() {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockId = 1;
-        const mockEvent = Event(title: 'Event title 1 updated');
 
         when(mockClient.put(Uri.parse('$API_BASE_URL/$mockId'),
                 headers: <String, String>{
                   'Content-Type': 'application/json; charset=UTF-8',
                 },
-                body: json.encode(mockEvent.toJson())))
-            .thenAnswer((_) async => http.Response(
-                '{"id":1, "title":"Event title 1 updated", "completed": true, "owner_id":1, "owner": {"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}}',
-                200));
+                body: json.encode(mockEventObject.toJson())))
+            .thenAnswer((_) async =>
+                http.Response(json.encode(mockEventResponse), 200));
 
-        final event = await eventService.updateEventById(mockId, mockEvent);
+        final event =
+            await eventService.updateEventById(mockId, mockEventObject);
 
         expect(event, isA<Event>());
         expect(event.id, equals(1));
-        expect(event.title, 'Event title 1 updated');
-        expect(event.ownerId, equals(1));
-        expect(event.completed, true);
+        expect(event.title, 'Bad Bunny Concert');
+        expect(event.date,
+            DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'));
+        expect(event.venue, 'Wizink Center, Av. de Felipe II');
+        expect(event.ticketLimit, equals(1000));
+        expect(event.organization!.id, equals(1));
+        expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(event.organization!.code, 'UMS');
 
         verify(mockClient.put(
           Uri.parse('$API_BASE_URL/$mockId'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockEvent.toJson()),
+          body: json.encode(mockEventObject.toJson()),
         )).called(1);
       });
 
@@ -297,24 +329,23 @@ void main() {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockId = 1;
-        const mockEvent = Event(title: 'Event title 1 updated');
 
         when(mockClient.put(Uri.parse('$API_BASE_URL/$mockId'),
                 headers: <String, String>{
                   'Content-Type': 'application/json; charset=UTF-8',
                 },
-                body: json.encode(mockEvent.toJson())))
+                body: json.encode(mockEventObject.toJson())))
             .thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(
-            eventService.updateEventById(mockId, mockEvent), throwsException);
+        expect(eventService.updateEventById(mockId, mockEventObject),
+            throwsException);
 
         verify(mockClient.put(
           Uri.parse('$API_BASE_URL/$mockId'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockEvent.toJson()),
+          body: json.encode(mockEventObject.toJson()),
         )).called(1);
       });
       // Event updatedEvent =
@@ -377,45 +408,6 @@ void main() {
           Uri.parse('$API_BASE_URL/event/$mockId'),
         )).called(1);
       });
-
-      test('deleteEventByOwnerId is called once', () async {
-        final mockClient = MockClient();
-        eventService = EventService(client: mockClient);
-        const int mockOwnerId = 1;
-
-        // Use Mockito to return a successful response when it calls the
-        // provided http.Client.
-        when(mockClient.delete(
-          Uri.parse('$API_BASE_URL/$mockOwnerId'),
-        )).thenAnswer((_) async => http.Response('[]', 204));
-
-        await eventService.deleteEventsByOwnerId(mockOwnerId);
-
-        verify(mockClient.delete(
-          Uri.parse('$API_BASE_URL/$mockOwnerId'),
-        )).called(1);
-      });
-
-      test(
-          'throws an exception if the http call completes with an error (ByOwnerId)',
-          () {
-        final mockClient = MockClient();
-        eventService = EventService(client: mockClient);
-        const int mockOwnerId = 1;
-
-        // Use Mockito to return a successful response when it calls the
-        // provided http.Client.
-        when(mockClient.delete(
-          Uri.parse('$API_BASE_URL/$mockOwnerId'),
-        )).thenAnswer((_) async => http.Response('Not Found', 404));
-
-        expect(
-            eventService.deleteEventsByOwnerId(mockOwnerId), throwsException);
-
-        verify(mockClient.delete(
-          Uri.parse('$API_BASE_URL/$mockOwnerId'),
-        )).called(1);
-      });
       // test('delete event by eventId on success', () async {
       //   final events = await eventService.getEvents();
       //   final int eventId = events.last.id!;
@@ -433,7 +425,43 @@ void main() {
       // });
     });
 
-    group('deleteEventByOwnerId', () {
+    group('deleteEventByOrganizationId', () {
+      test('deleteEventByOrganizationId is called once', () async {
+        final mockClient = MockClient();
+        eventService = EventService(client: mockClient);
+        const int mockOrganizationId = 1;
+
+        // Use Mockito to return a successful response when it calls the
+        // provided http.Client.
+        when(mockClient.delete(
+          Uri.parse('$API_BASE_URL/$mockOrganizationId'),
+        )).thenAnswer((_) async => http.Response('[]', 204));
+
+        await eventService.deleteEventsByOrganizationId(mockOrganizationId);
+
+        verify(mockClient.delete(
+          Uri.parse('$API_BASE_URL/$mockOrganizationId'),
+        )).called(1);
+      });
+
+      test('throws an exception if the http call completes with an error', () {
+        final mockClient = MockClient();
+        eventService = EventService(client: mockClient);
+        const int mockOrganizationId = 1;
+
+        // Use Mockito to return a successful response when it calls the
+        // provided http.Client.
+        when(mockClient.delete(
+          Uri.parse('$API_BASE_URL/$mockOrganizationId'),
+        )).thenAnswer((_) async => http.Response('Not Found', 404));
+
+        expect(eventService.deleteEventsByOrganizationId(mockOrganizationId),
+            throwsException);
+
+        verify(mockClient.delete(
+          Uri.parse('$API_BASE_URL/$mockOrganizationId'),
+        )).called(1);
+      });
       // test('delete event by ownerId on success', () async {
       //   final events = await eventService.getEvents();
       //   final int ownerId = events.last.ownerId!;
@@ -443,16 +471,6 @@ void main() {
       //   final eventsByOwner = await eventService.getEventsByOwnerId(ownerId);
 
       //   expect(eventsByOwner.length, equals(0));
-      // });
-    });
-
-    group('deleteEvents', () {
-      // test('delete events on success', () async {
-      //   await eventService.deleteAllEvents();
-
-      //   final events = await eventService.getEvents();
-
-      //   expect(events.length, equals(0));
       // });
     });
   });

@@ -5,7 +5,7 @@ abstract class IEventService {
 
   Future<Event> getEventById(int eventId);
 
-  Future<List<Event>> getEventsByOwnerId(int ownerId);
+  Future<List<Event>> getEventsByOrganizationId(int organizationId);
 
   Future<Event> createEvent(Event event);
 
@@ -13,7 +13,7 @@ abstract class IEventService {
 
   Future<void> deleteEventById(int eventId);
 
-  Future<void> deleteEventsByOwnerId(int ownerId);
+  Future<void> deleteEventsByOrganizationId(int organizationId);
 
   Future<void> deleteAllEvents();
 }

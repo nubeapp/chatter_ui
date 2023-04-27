@@ -16,15 +16,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _eventService = GetIt.instance.get<IEventService>();
-  Future<List<Event>>? _events;
-
-  @override
-  void initState() {
-    super.initState();
-    _events = _eventService.getEvents();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,52 +25,65 @@ class _MainScreenState extends State<MainScreen> {
           IconButton(
             padding: const EdgeInsets.only(right: 16),
             icon: const Icon(CupertinoIcons.chat_bubble),
-            onPressed: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const UsersScreen())),
+            onPressed: () {},
+            // onPressed: () => Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => const UsersScreen())),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).bottomAppBarColor,
-        onPressed: () => _showDialog(context),
-        child: const Icon(
-          CupertinoIcons.add,
-          color: Colors.white,
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Theme.of(context).bottomAppBarColor,
+      //   onPressed: () => _showDialog(context),
+      //   child: const Icon(
+      //     CupertinoIcons.add,
+      //     color: Colors.white,
+      //   ),
+      // ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+        child: ListView.separated(
+          itemCount: 3,
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 20,
+          ),
+          itemBuilder: (context, index) => const Center(
+            child: EventTile(),
+          ),
         ),
       ),
-      body: FutureBuilder<List<Event>>(
-        future: _events,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.data!.isNotEmpty) {
-              final users = snapshot.data!;
-              return ListView.builder(
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  final Event event = users[index];
-                  return EventTile(event: event);
-                },
-              );
-            } else if (snapshot.hasError) {
-              Logger.error('Error loading events: ${snapshot.error}');
-              return Center(
-                child: Text('Error loading events: ${snapshot.error}'),
-              );
-            } else {
-              Logger.warning('No events found');
-              return const Center(
-                child: Text(
-                  'No events found',
-                ),
-              );
-            }
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
+      // body: FutureBuilder<List<Event>>(
+      //   // future: _events,
+      //   builder: (context, snapshot) {
+      //     if (snapshot.connectionState == ConnectionState.done) {
+      //       if (snapshot.data!.isNotEmpty) {
+      //         final users = snapshot.data!;
+      //         return ListView.builder(
+      //           itemCount: users.length,
+      //           itemBuilder: (context, index) {
+      //             final Event event = users[index];
+      //             return EventTile(event: event);
+      //           },
+      //         );
+      //       } else if (snapshot.hasError) {
+      //         Logger.error('Error loading events: ${snapshot.error}');
+      //         return Center(
+      //           child: Text('Error loading events: ${snapshot.error}'),
+      //         );
+      //       } else {
+      //         Logger.warning('No events found');
+      //         return const Center(
+      //           child: Text(
+      //             'No events found',
+      //           ),
+      //         );
+      //       }
+      //     } else {
+      //       return const Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     }
+      //   },
+      // ),
     );
   }
 
@@ -97,16 +101,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              onPressed: () async {
-                if (titleController.text.isNotEmpty) {
-                  await _eventService.createEvent(
-                      Event(ownerId: 30, title: titleController.text));
-                  Navigator.of(context).pop();
-                  setState(() {
-                    _events = _eventService.getEvents();
-                  });
-                }
-              },
+              onPressed: () {},
               child: const Text('Add'),
             ),
           ],

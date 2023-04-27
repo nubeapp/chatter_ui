@@ -1,40 +1,57 @@
 import 'package:flutter/material.dart';
-import 'package:ui/domain/entities/user.dart';
+import 'package:ui/domain/entities/organization.dart';
+import 'package:intl/intl.dart';
 
 @immutable
 class Event {
   final int? id;
-  final int? ownerId;
   final String title;
-  final bool completed;
-  final User? owner;
+  final String code;
+  final DateTime date;
+  final String venue;
+  final int ticketLimit;
+  final int ticketAvailable;
+  final int organizationId;
+  final Organization? organization;
 
   // Constructor
   const Event({
     this.id,
-    this.ownerId,
     required this.title,
-    this.completed = false,
-    this.owner,
+    required this.code,
+    required this.date,
+    required this.venue,
+    required this.ticketLimit,
+    required this.ticketAvailable,
+    required this.organizationId,
+    this.organization,
   });
 
   // Factory method to create a new instance from a Map (fromJson)
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
       id: json['id'],
-      ownerId: json['owner_id'],
       title: json['title'],
-      completed: json['completed'],
-      owner: User.fromJson(json['owner']),
+      code: json['code'],
+      date: DateFormat("dd-MM-yyyy HH:mm").parse(json['date']),
+      venue: json['venue'],
+      ticketLimit: json['ticket_limit'],
+      ticketAvailable: json['ticket_available'],
+      organizationId: json['organization_id'],
+      organization: Organization.fromJson(json['organization']),
     );
   }
 
   // Method to convert the instance to a Map (toJson)
   Map<String, dynamic> toJson() {
     return {
-      'owner_id': ownerId,
       'title': title,
-      'completed': completed,
+      'code': code,
+      'date': date.toString(),
+      'venue': venue,
+      'ticket_limit': ticketLimit,
+      'ticket_available': ticketAvailable,
+      'organization_id': organizationId,
     };
   }
 }
