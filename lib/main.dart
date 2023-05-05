@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:ui/application/services/dependency_injection/dependencies.dart';
-import 'package:ui/domain/services/api_service_interface.dart';
 import 'package:ui/presentation/styles/theme.dart';
 
 import 'presentation/pages/pages.dart';
 
+/// TODO:
+/// - Test method generateTicketReferencesByEventId()
+/// - Fix images of EventTile
+/// - Store image of EventTile in database, and how to save it
+/// - How to store all the codes generated for each event
+/// -
+
 void main() async {
   Dependencies.injectDependencies();
-  final apiService = GetIt.instance.get<IApiService>();
-  await apiService.connectAPI();
+  //final apiService = GetIt.instance.get<IApiService>();
+  //await apiService.connectAPI();
   runApp(
     MyApp(
       appTheme: AppTheme(),
@@ -41,7 +46,7 @@ class MyApp extends StatelessWidget {
 /*                       HomeScreen                                                                                  */
 /*                                                                                                                   */
 /*    |---------------------------------------------|                               MessagesPage                     */
-/*    |                    AppBar                   |                                                                */ 
+/*    |                    AppBar                   |                                                                */
 /*    |---------------------------------------------|              ---------------------------------------------     */
 /*    |                                             |             |  -----------------------------------------  |    */
 /*    |                                             |             | |                  Stories                | |    */

@@ -5,6 +5,7 @@ import 'package:ui/domain/entities/user.dart';
 @immutable
 class Ticket {
   final int? id;
+  final double price;
   final int userId;
   final int eventId;
   final int organizationId;
@@ -14,6 +15,7 @@ class Ticket {
 
   const Ticket({
     this.id,
+    required this.price,
     required this.userId,
     required this.eventId,
     required this.organizationId,
@@ -25,6 +27,7 @@ class Ticket {
   factory Ticket.fromJson(Map<String, dynamic> json) {
     return Ticket(
         id: json['id'],
+        price: json['price'],
         userId: json['user_id'],
         eventId: json['event_id'],
         organizationId: json['organization_id'],
@@ -36,6 +39,7 @@ class Ticket {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'price': price,
       'user_id': userId,
       'event_id': eventId,
       'reference': reference,

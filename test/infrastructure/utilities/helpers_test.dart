@@ -22,22 +22,40 @@ void main() {
     expect(result.isBefore(maxDate), true);
   });
 
-  group('CodeGenerator', () {
-    test('generateRandomCode() should generate a random code of length 5', () {
-      final code = Helpers.randomCode();
-      expect(code.length, equals(5));
+  group('randomNumericCode', () {
+    const length = 5;
+    test('returns a string with the specified length', () {
+      final code = Helpers.randomNumericCode(length);
+      expect(code.length, equals(length));
     });
 
-    test('_generateRandomCode() should generate a code containing only digits',
-        () {
-      final code = Helpers.randomCode();
-      final isDigitsOnly = int.tryParse(code) != null;
-      expect(isDigitsOnly, isTrue);
+    test('returns a string containing only digits', () {
+      final code = Helpers.randomNumericCode(length);
+      expect(RegExp(r'^\d+$').hasMatch(code), isTrue);
     });
 
-    test('_generateRandomCode() should generate unique codes', () {
-      final code1 = Helpers.randomCode();
-      final code2 = Helpers.randomCode();
+    test('returns a different string on multiple invocations', () {
+      final code1 = Helpers.randomNumericCode(length);
+      final code2 = Helpers.randomNumericCode(length);
+      expect(code1, isNot(equals(code2)));
+    });
+  });
+
+  group('ReferenceGenerator', () {
+    const length = 20;
+    test('returns a string with the specified length', () {
+      final code = Helpers.randomReference(length);
+      expect(code.length, equals(length));
+    });
+
+    test('returns a string containing only uppercase letters and digits', () {
+      final code = Helpers.randomReference(length);
+      expect(RegExp(r'^[A-Z0-9]+$').hasMatch(code), isTrue);
+    });
+
+    test('returns a different string on multiple invocations', () {
+      final code1 = Helpers.randomReference(length);
+      final code2 = Helpers.randomReference(length);
       expect(code1, isNot(equals(code2)));
     });
   });

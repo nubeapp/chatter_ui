@@ -74,7 +74,7 @@ class RegisterScreen extends StatelessWidget {
                         _surnameController.text.isNotEmpty &&
                         _passwordController.text.isNotEmpty) {
                       // 2. Generate random code of 5 digits
-                      String randomCode = Helpers.randomCode();
+                      String randomCode = Helpers.randomNumericCode(5);
                       // 3. Store code in database
                       Code code =
                           Code(email: _emailController.text, code: randomCode);

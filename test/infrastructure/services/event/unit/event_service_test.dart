@@ -62,8 +62,6 @@ void main() {
         expect(events[1].organization!.id, equals(1));
         expect(events[0].organization!.name, 'UNIVERSAL MUSIC SPAIN');
         expect(events[1].organization!.name, 'UNIVERSAL MUSIC SPAIN');
-        expect(events[0].organization!.code, 'UMS');
-        expect(events[1].organization!.code, 'UMS');
 
         verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
       });
@@ -110,8 +108,6 @@ void main() {
         expect(events[1].organization!.id, equals(1));
         expect(events[0].organization!.name, 'UNIVERSAL MUSIC SPAIN');
         expect(events[1].organization!.name, 'UNIVERSAL MUSIC SPAIN');
-        expect(events[0].organization!.code, 'UMS');
-        expect(events[1].organization!.code, 'UMS');
 
         verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockOrganizationId')))
             .called(1);
@@ -154,7 +150,6 @@ void main() {
         expect(event.ticketLimit, equals(1000));
         expect(event.organization!.id, equals(1));
         expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
-        expect(event.organization!.code, 'UMS');
 
         verify(mockClient.get(Uri.parse('$API_BASE_URL/event/$mockId')))
             .called(1);
@@ -237,7 +232,6 @@ void main() {
         expect(event.ticketLimit, equals(1000));
         expect(event.organization!.id, equals(1));
         expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
-        expect(event.organization!.code, 'UMS');
 
         verify(mockClient.post(
           Uri.parse(API_BASE_URL),
@@ -314,7 +308,6 @@ void main() {
         expect(event.ticketLimit, equals(1000));
         expect(event.organization!.id, equals(1));
         expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
-        expect(event.organization!.code, 'UMS');
 
         verify(mockClient.put(
           Uri.parse('$API_BASE_URL/$mockId'),

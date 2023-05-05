@@ -5,7 +5,7 @@ import 'package:ui/presentation/styles/logger.dart';
 class ApiService implements IApiService {
   ApiService({required this.client});
 
-  static String get API_BASE_URL => 'https://fastapi-course-o7v1.onrender.com';
+  static String get API_BASE_URL => 'http://0.0.0.0:8000/';
   final http.Client client;
 
   @override

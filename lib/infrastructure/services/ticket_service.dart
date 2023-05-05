@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:ui/domain/entities/event_queue_entry.dart';
 import 'package:ui/domain/entities/ticket.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:http/http.dart' as http;
+import 'package:ui/infrastructure/utilities/helpers.dart';
 
 class TicketService implements ITicketService {
   static String get API_BASE_URL => 'http://0.0.0.0:8000/tickets';
@@ -46,19 +46,32 @@ class TicketService implements ITicketService {
     }
   }
 
-  // This method is to get the current queue of people that are subscribe to the queue
+  // This method generates all the references for each ticket for specific event
   @override
-  Future<List<EventQueueEntry>> getEventQueueByEventId(int eventId) async {
-    final response =
-        await client.get(Uri.parse('$API_BASE_URL/events/$eventId/queue'));
+  List<String> generateTicketReferencesByEventId(int eventId, int ticketLimit) {
+    final Set<String> uniqueCodes = {};
 
-    if (response.statusCode == 200) {
-      final jsonList = jsonDecode(response.body) as List<dynamic>;
-      return jsonList.map((json) => EventQueueEntry.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to get event queue');
+    while (uniqueCodes.length < ticketLimit) {
+      final code = Helpers.randomReference(20); // or any length you want
+      uniqueCodes.add(code);
     }
+
+    return uniqueCodes.toList();
   }
+
+  // This method is to get the current queue of people that are subscribe to the queue
+  // @override
+  // Future<List<EventQueueEntry>> getEventQueueByEventId(int eventId) async {
+  //   final response =
+  //       await client.get(Uri.parse('$API_BASE_URL/events/$eventId/queue'));
+
+  //   if (response.statusCode == 200) {
+  //     final jsonList = jsonDecode(response.body) as List<dynamic>;
+  //     return jsonList.map((json) => EventQueueEntry.fromJson(json)).toList();
+  //   } else {
+  //     throw Exception('Failed to get event queue');
+  //   }
+  // }
 
   // // This method is used to sell a ticket from one user to another user
   // @override

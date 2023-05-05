@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 class Event {
   final int? id;
   final String title;
-  final String code;
   final DateTime date;
   final String venue;
   final int ticketLimit;
@@ -18,7 +17,6 @@ class Event {
   const Event({
     this.id,
     required this.title,
-    required this.code,
     required this.date,
     required this.venue,
     required this.ticketLimit,
@@ -32,7 +30,6 @@ class Event {
     return Event(
       id: json['id'],
       title: json['title'],
-      code: json['code'],
       date: DateFormat("dd-MM-yyyy HH:mm").parse(json['date']),
       venue: json['venue'],
       ticketLimit: json['ticket_limit'],
@@ -46,7 +43,6 @@ class Event {
   Map<String, dynamic> toJson() {
     return {
       'title': title,
-      'code': code,
       'date': date.toString(),
       'venue': venue,
       'ticket_limit': ticketLimit,

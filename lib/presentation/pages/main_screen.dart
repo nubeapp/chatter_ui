@@ -1,12 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
 import 'package:ui/domain/entities/event.dart';
-import 'package:ui/domain/services/event_service_interface.dart';
-import 'package:ui/presentation/pages/users_screen.dart';
-import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/event_tile.dart';
-import 'package:ui/presentation/widgets/input_field.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -16,6 +12,39 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final fakeEvents = [
+    Event(
+      title: 'Bad Bunny Concert',
+      date: DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'),
+      venue: 'Wizink Center, Av. de Felipe II',
+      ticketLimit: 1000,
+      ticketAvailable: 90,
+      organizationId: 1,
+    ),
+    Event(
+      title: 'Rosalia Concert',
+      date: DateFormat("dd-MM-yyyy HH:mm").parse('14-12-2023 18:00'),
+      venue: 'Wizink Center, Av. de Felipe II',
+      ticketLimit: 1000,
+      ticketAvailable: 0,
+      organizationId: 1,
+    ),
+    Event(
+      title: 'Don Omar Concert',
+      date: DateFormat("dd-MM-yyyy HH:mm").parse('21-12-2023 18:00'),
+      venue: 'Wizink Center, Av. de Felipe II',
+      ticketLimit: 1000,
+      ticketAvailable: 500,
+      organizationId: 1,
+    ),
+  ];
+
+  final fakeImages = [
+    'badbunny.png',
+    'rosalia.png',
+    'donomar.png',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,8 +75,11 @@ class _MainScreenState extends State<MainScreen> {
           separatorBuilder: (context, index) => const SizedBox(
             height: 20,
           ),
-          itemBuilder: (context, index) => const Center(
-            child: EventTile(),
+          itemBuilder: (context, index) => Center(
+            child: EventTile(
+              event: fakeEvents[index],
+              image: fakeImages[index],
+            ),
           ),
         ),
       ),
@@ -89,24 +121,24 @@ class _MainScreenState extends State<MainScreen> {
 
   TextEditingController titleController = TextEditingController();
 
-  void _showDialog(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('New event...'),
-          content: InputField(
-            hintText: 'Event title',
-            controller: titleController,
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {},
-              child: const Text('Add'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  // void _showDialog(BuildContext context) {
+  //   showDialog<void>(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('New event...'),
+  //         content: InputField(
+  //           hintText: 'Event title',
+  //           controller: titleController,
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             onPressed: () {},
+  //             child: const Text('Add'),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 }

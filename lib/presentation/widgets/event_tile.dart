@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ui/domain/entities/event.dart';
+import 'package:ui/infrastructure/utilities/helpers.dart';
 
 class EventTile extends StatelessWidget {
-  const EventTile({super.key});
+  const EventTile({super.key, required this.event, required this.image});
+
+  final Event event;
+  final String image;
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +40,33 @@ class EventTile extends StatelessWidget {
               ).createShader(bounds),
               blendMode: BlendMode.dstIn,
               child: Image.asset(
-                'badbunny.png',
+                image,
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          Row(
-            children: [
-              Text('hola'),
-              Text('hello'),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(top: 12, left: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    event.title,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(Helpers.formatDate(event.date.toString())),
+                ),
+                Text(event.venue),
+              ],
+            ),
           )
         ],
       ),
