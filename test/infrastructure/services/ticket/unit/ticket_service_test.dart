@@ -43,9 +43,9 @@ void main() {
         expect(ticket.reference, '001AUMS20230426ABAD');
         expect(ticket.user.name, 'John');
         expect(ticket.user.email, 'johndoe@example.com');
-        expect(ticket.event.date,
-            DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'));
-        expect(ticket.event.venue, 'Wizink Center, Av. de Felipe II');
+        expect(ticket.event.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
+        expect(ticket.event.time, '18:00');
+        expect(ticket.event.venue, 'Wizink Center');
 
         verify(mockClient.post(
           Uri.parse('$API_BASE_URL/buy'),
@@ -111,11 +111,13 @@ void main() {
         expect(tickets[0].user.email, 'johndoe@example.com');
         expect(tickets[1].user.email, 'johndoe@example.com');
         expect(tickets[0].event.date,
-            DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'));
+            DateFormat("dd-MM-yyyy").parse('07-12-2023'));
+        expect(tickets[0].event.time, '18:00');
         expect(tickets[1].event.date,
-            DateFormat("dd-MM-yyyy HH:mm").parse('14-12-2023 18:00'));
-        expect(tickets[0].event.venue, 'Wizink Center, Av. de Felipe II');
-        expect(tickets[1].event.venue, 'Wizink Center, Av. de Felipe II');
+            DateFormat("dd-MM-yyyy").parse('14-12-2023'));
+        expect(tickets[1].event.time, '18:00');
+        expect(tickets[0].event.venue, 'Wizink Center');
+        expect(tickets[1].event.venue, 'Wizink Center');
         expect(tickets[0].event.title, 'Bad Bunny Concert');
         expect(tickets[1].event.title, 'Rosalia Concert');
 

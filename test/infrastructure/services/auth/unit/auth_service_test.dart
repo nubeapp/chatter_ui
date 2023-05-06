@@ -1,10 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/token.dart';
 import 'package:ui/domain/services/auth_service_interface.dart';
 import 'package:ui/infrastructure/services/auth_service.dart';

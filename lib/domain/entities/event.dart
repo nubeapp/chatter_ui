@@ -7,6 +7,7 @@ class Event {
   final int? id;
   final String title;
   final DateTime date;
+  final String time;
   final String venue;
   final int ticketLimit;
   final int ticketAvailable;
@@ -18,6 +19,7 @@ class Event {
     this.id,
     required this.title,
     required this.date,
+    required this.time,
     required this.venue,
     required this.ticketLimit,
     required this.ticketAvailable,
@@ -30,7 +32,8 @@ class Event {
     return Event(
       id: json['id'],
       title: json['title'],
-      date: DateFormat("dd-MM-yyyy HH:mm").parse(json['date']),
+      date: DateFormat("dd-MM-yyyy").parse(json['date']),
+      time: json['time'],
       venue: json['venue'],
       ticketLimit: json['ticket_limit'],
       ticketAvailable: json['ticket_available'],

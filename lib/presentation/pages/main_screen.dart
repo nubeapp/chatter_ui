@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ui/domain/entities/event.dart';
+import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/event_tile.dart';
 
 class MainScreen extends StatefulWidget {
@@ -15,24 +16,27 @@ class _MainScreenState extends State<MainScreen> {
   final fakeEvents = [
     Event(
       title: 'Bad Bunny Concert',
-      date: DateFormat("dd-MM-yyyy HH:mm").parse('07-12-2023 18:00'),
-      venue: 'Wizink Center, Av. de Felipe II',
+      date: DateFormat("dd-MM-yyyy").parse('07-12-2023'),
+      time: '18:00',
+      venue: 'Wizink Center',
       ticketLimit: 1000,
       ticketAvailable: 90,
       organizationId: 1,
     ),
     Event(
       title: 'Rosalia Concert',
-      date: DateFormat("dd-MM-yyyy HH:mm").parse('14-12-2023 18:00'),
-      venue: 'Wizink Center, Av. de Felipe II',
+      date: DateFormat("dd-MM-yyyy").parse('14-12-2023'),
+      time: '18:00',
+      venue: 'Wizink Center',
       ticketLimit: 1000,
       ticketAvailable: 0,
       organizationId: 1,
     ),
     Event(
       title: 'Don Omar Concert',
-      date: DateFormat("dd-MM-yyyy HH:mm").parse('21-12-2023 18:00'),
-      venue: 'Wizink Center, Av. de Felipe II',
+      date: DateFormat("dd-MM-yyyy").parse('21-12-2023'),
+      time: '18:00',
+      venue: 'Wizink Center',
       ticketLimit: 1000,
       ticketAvailable: 500,
       organizationId: 1,

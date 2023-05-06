@@ -7,8 +7,9 @@ import 'package:ui/domain/entities/user.dart';
 
 final mockEventObject = Event(
   title: 'Bad Bunny Concert',
-  date: DateFormat("dd-MM-yyyy HH:mm").parse("07-12-2023 18:00"),
-  venue: 'Wizink Center, Av. de Felipe II',
+  date: DateFormat("dd-MM-yyyy").parse("07-12-2023"),
+  time: '18:00',
+  venue: 'Wizink Center',
   ticketLimit: 1000,
   ticketAvailable: 1000,
   organizationId: 1,
