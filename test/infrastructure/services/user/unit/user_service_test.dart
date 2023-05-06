@@ -8,6 +8,8 @@ import 'package:ui/infrastructure/services/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 
+import '../../../mocks/mock_objects.dart';
+import '../../../mocks/mock_responses.dart';
 import 'user_service_test.mocks.dart';
 
 @GenerateMocks([http.Client])
@@ -49,10 +51,8 @@ void main() {
 
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
-        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async =>
-            http.Response(
-                '[{"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}, {"id": 2, "name": "Jane", "surname": "Smith", "email": "janesmith@example.com"}]',
-                200));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer(
+            (_) async => http.Response(json.encode(mockUserListResponse), 200));
 
         final users = await userService.getUsers();
 
@@ -107,9 +107,7 @@ void main() {
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
         when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer(
-            (_) async => http.Response(
-                '{"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}',
-                200));
+            (_) async => http.Response(json.encode(mockUserResponse), 200));
 
         final user = await userService.getUserByEmail(mockEmail);
 
@@ -156,8 +154,6 @@ void main() {
       test('createUser returns a user', () async {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
-        const User mockUser =
-            User(email: 'johndoe@example.com', name: 'John', surname: 'Doe');
 
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
@@ -166,12 +162,11 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
-        )).thenAnswer((_) async => http.Response(
-            '{"id": 1, "name": "John", "surname": "Doe", "email": "johndoe@example.com"}',
-            201));
+          body: jsonEncode(mockUserObject.toJson()),
+        )).thenAnswer(
+            (_) async => http.Response(json.encode(mockUserResponse), 201));
 
-        final user = await userService.createUser(mockUser);
+        final user = await userService.createUser(mockUserObject);
 
         expect(user, isA<User>());
         expect(user.id, equals(1));
@@ -184,15 +179,13 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
+          body: jsonEncode(mockUserObject.toJson()),
         )).called(1);
       });
 
       test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
-        const User mockUser =
-            User(email: 'johndoe@example.com', name: 'John', surname: 'Doe');
 
         // Use Mockito to return an unsuccessful response when it calls the
         // provided http.Client.
@@ -201,17 +194,17 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
+          body: jsonEncode(mockUserObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(userService.createUser(mockUser), throwsException);
+        expect(userService.createUser(mockUserObject), throwsException);
 
         verify(mockClient.post(
           Uri.parse(API_BASE_URL),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
+          body: jsonEncode(mockUserObject.toJson()),
         )).called(1);
       });
 
@@ -238,11 +231,6 @@ void main() {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
-        const User mockUser = User(
-          email: 'johndoe@example.com',
-          name: 'John Updated',
-          surname: 'Doe Updated',
-        );
 
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
@@ -251,25 +239,25 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
-        )).thenAnswer((_) async => http.Response(
-            '{"id": 1, "name": "John Updated", "surname": "Doe Updated", "email": "johndoe@example.com"}',
-            200));
+          body: jsonEncode(mockUserObject.toJson()),
+        )).thenAnswer(
+            (_) async => http.Response(json.encode(mockUserResponse), 200));
 
-        final user = await userService.updateUserByEmail(mockEmail, mockUser);
+        final user =
+            await userService.updateUserByEmail(mockEmail, mockUserObject);
 
         expect(user, isA<User>());
         expect(user.id, equals(1));
         expect(user.email, 'johndoe@example.com');
-        expect(user.name, 'John Updated');
-        expect(user.surname, 'Doe Updated');
+        expect(user.name, 'John');
+        expect(user.surname, 'Doe');
 
         verify(mockClient.put(
           Uri.parse('$API_BASE_URL/$mockEmail'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
+          body: jsonEncode(mockUserObject.toJson()),
         )).called(1);
       });
 
@@ -277,11 +265,6 @@ void main() {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
-        const User mockUser = User(
-          email: 'johndoe@example.com',
-          name: 'John Updated',
-          surname: 'Doe Updated',
-        );
 
         // Use Mockito to return an unsuccessful response when it calls the
         // provided http.Client.
@@ -290,10 +273,10 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
+          body: jsonEncode(mockUserObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(userService.updateUserByEmail(mockEmail, mockUser),
+        expect(userService.updateUserByEmail(mockEmail, mockUserObject),
             throwsException);
 
         verify(mockClient.put(
@@ -301,7 +284,7 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockUser.toJson()),
+          body: jsonEncode(mockUserObject.toJson()),
         )).called(1);
       });
       //   test('returns message on success', () async {

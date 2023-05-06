@@ -7,7 +7,6 @@ class User {
   final String email;
   final String surname;
   final String? password;
-  final String? profileImage;
 
   const User({
     this.id,
@@ -15,16 +14,15 @@ class User {
     required this.name,
     required this.surname,
     this.password,
-    this.profileImage,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-        id: json['id'],
-        email: json['email'],
-        name: json['name'],
-        surname: json['surname'],
-        profileImage: json['profile_image']);
+      id: json['id'],
+      email: json['email'],
+      name: json['name'],
+      surname: json['surname'],
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -34,7 +32,6 @@ class User {
       'name': name,
       'surname': surname,
       'password': password,
-      'profile_image': profileImage
     };
   }
 }

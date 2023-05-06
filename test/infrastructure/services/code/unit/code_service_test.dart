@@ -8,6 +8,8 @@ import 'package:ui/domain/services/code_service_interface.dart';
 import 'package:ui/infrastructure/services/code_service.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../mocks/mock_objects.dart';
+import '../../../mocks/mock_responses.dart';
 import 'code_service_test.mocks.dart';
 
 @GenerateMocks([http.Client])
@@ -33,10 +35,8 @@ void main() {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
 
-        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async =>
-            http.Response(
-                '[{"email":"johndoe@example.com", "code": "12345"},{"email":"janesmith@example.com", "code":"67890"}]',
-                200));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer(
+            (_) async => http.Response(json.encode(mockCodeListResponse), 200));
 
         // Act
         final codes = await codeService.getCodes();
@@ -73,8 +73,7 @@ void main() {
         const String mockEmail = 'johndoe@example.com';
 
         when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer(
-            (_) async => http.Response(
-                '{"email":"johndoe@example.com", "code": "12345"}', 200));
+            (_) async => http.Response(json.encode(mockCodeResponse), 200));
 
         final code = await codeService.getCodeByEmail(mockEmail);
 
@@ -118,15 +117,14 @@ void main() {
       test('createCode creates a new code', () async {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
-        const mockCode = Code(email: 'johndoe@example.com', code: '12345');
 
         when(mockClient.post((Uri.parse(API_BASE_URL)),
                 headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCode.toJson())))
-            .thenAnswer((_) async => http.Response(
-                '{"email":"johndoe@example.com", "code":"12345"}', 201));
+                body: jsonEncode(mockCodeObject.toJson())))
+            .thenAnswer(
+                (_) async => http.Response(json.encode(mockCodeResponse), 201));
 
-        final code = await codeService.createCode(mockCode);
+        final code = await codeService.createCode(mockCodeObject);
 
         expect(code, isA<Code>());
         expect(code.email, 'johndoe@example.com');
@@ -134,26 +132,25 @@ void main() {
 
         verify(mockClient.post((Uri.parse(API_BASE_URL)),
                 headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCode.toJson())))
+                body: jsonEncode(mockCodeObject.toJson())))
             .called(1);
       });
 
       test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
-        const mockCode = Code(email: 'johndoe@example.com', code: '12345');
 
         when(mockClient.post((Uri.parse(API_BASE_URL)),
                 headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCode.toJson())))
+                body: jsonEncode(mockCodeObject.toJson())))
             .thenAnswer((_) async => http.Response('Not Found', 404));
 
         // Act
-        expect(codeService.createCode(mockCode), throwsException);
+        expect(codeService.createCode(mockCodeObject), throwsException);
 
         verify(mockClient.post((Uri.parse(API_BASE_URL)),
                 headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCode.toJson())))
+                body: jsonEncode(mockCodeObject.toJson())))
             .called(1);
       });
       // test('creates a new code and adds it to the list', () async {
@@ -178,7 +175,6 @@ void main() {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
-        const mockCode = Code(email: 'johndoe@example.com', code: '12345');
 
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
@@ -187,11 +183,12 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockCode.toJson()),
-        )).thenAnswer((_) async => http.Response(
-            '{"email":"johndoe@example.com", "code":"12345"}', 200));
+          body: jsonEncode(mockCodeObject.toJson()),
+        )).thenAnswer(
+            (_) async => http.Response(json.encode(mockCodeResponse), 200));
 
-        final code = await codeService.updateCodeByEmail(mockEmail, mockCode);
+        final code =
+            await codeService.updateCodeByEmail(mockEmail, mockCodeObject);
 
         expect(code, isA<Code>());
         expect(code.email, 'johndoe@example.com');
@@ -202,7 +199,7 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockCode.toJson()),
+          body: jsonEncode(mockCodeObject.toJson()),
         )).called(1);
       });
 
@@ -210,7 +207,6 @@ void main() {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
-        const mockCode = Code(email: 'johndoe@example.com', code: '12345');
 
         // Use Mockito to return an unsuccessful response when it calls the
         // provided http.Client.
@@ -219,10 +215,10 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockCode.toJson()),
+          body: jsonEncode(mockCodeObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(codeService.updateCodeByEmail(mockEmail, mockCode),
+        expect(codeService.updateCodeByEmail(mockEmail, mockCodeObject),
             throwsException);
 
         verify(mockClient.put(
@@ -230,7 +226,7 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(mockCode.toJson()),
+          body: jsonEncode(mockCodeObject.toJson()),
         )).called(1);
       });
       // test('update code on success', () async {
@@ -288,6 +284,7 @@ void main() {
           Uri.parse('$API_BASE_URL/$mockEmail'),
         )).called(1);
       });
+
       // test('delete code on success', () async {
       //   // Act
       //   await codeService.deleteCodeByEmail('johndoe@example.com');

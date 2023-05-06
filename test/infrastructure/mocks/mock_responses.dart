@@ -140,6 +140,61 @@ const mockEventResponse = {
 
 /* 
   +----------------------------+
+  |     Mock Auth Responses    |
+  +----------------------------+
+*/
+
+const mockCredentialsResponse = {
+  "accessToken":
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "type": "bearer"
+};
+
+/* 
+  +----------------------------+
+  |     Mock Code Responses    |
+  +----------------------------+
+*/
+
+const mockCodeListResponse = [
+  {"email": "johndoe@example.com", "code": "12345"},
+  {"email": "janesmith@example.com", "code": "67890"}
+];
+
+const mockCodeResponse = {
+  "email": "johndoe@example.com",
+  "code": "12345",
+};
+
+/* 
+  +----------------------------+
+  |     Mock Code Responses    |
+  +----------------------------+
+*/
+
+const mockUserListResponse = [
+  {
+    "id": 1,
+    "name": "John",
+    "surname": "Doe",
+    "email": "johndoe@example.com",
+  },
+  {
+    "id": 2,
+    "name": "Jane",
+    "surname": "Smith",
+    "email": "janesmith@example.com"
+  }
+];
+
+const mockUserResponse = {
+  "id": 1,
+  "name": "John",
+  "surname": "Doe",
+  "email": "johndoe@example.com"
+};
+/* 
+  +----------------------------+
   | Mock Event Queue Responses |
   +----------------------------+
 */

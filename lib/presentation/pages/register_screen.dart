@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ui/domain/entities/code.dart';
+import 'package:ui/domain/entities/email_data.dart';
 import 'package:ui/domain/entities/user.dart';
 import 'package:ui/domain/services/api_service_interface.dart';
 import 'package:ui/domain/services/code_service_interface.dart';
@@ -96,11 +97,11 @@ class RegisterScreen extends StatelessWidget {
                             ),
                           ));
                       // 6. Send the code through email
-                      await emailService.sendCode(
-                        _emailController.text,
-                        _nameController.text,
-                        randomCode,
-                      );
+                      final emailData = EmailData(
+                          email: _emailController.text,
+                          name: _nameController.text,
+                          code: randomCode);
+                      await emailService.sendCode(emailData);
                     }
                   },
                 ),

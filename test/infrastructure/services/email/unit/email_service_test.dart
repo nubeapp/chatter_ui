@@ -7,6 +7,7 @@ import 'package:ui/domain/entities/email_data.dart';
 import 'package:ui/domain/services/email_service_interface.dart';
 import 'package:ui/infrastructure/services/email_service.dart';
 
+import '../../../mocks/mock_objects.dart';
 import 'email_service_test.mocks.dart';
 
 @GenerateMocks([http.Client])
@@ -18,22 +19,19 @@ void main() {
     test('sendCode send code through email without exception', () async {
       final mockClient = MockClient();
       emailService = EmailService(client: mockClient);
-      const EmailData mockEmail =
-          EmailData(email: 'johndoe@example.com', name: 'John', code: '12345');
 
       when(mockClient.post(
         Uri.parse(API_BASE_URL),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(mockEmail.toJson()),
+        body: json.encode(mockEmailDataObject.toJson()),
       )).thenAnswer((_) async => http.Response('', 200));
 
-      await emailService.sendCode(
-          mockEmail.email, mockEmail.name, mockEmail.code);
+      await emailService.sendCode(mockEmailDataObject);
 
       verify(mockClient.post(
         Uri.parse(API_BASE_URL),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(mockEmail.toJson()),
+        body: json.encode(mockEmailDataObject.toJson()),
       )).called(1);
       // Act & Assert
       // expect(() => emailService.sendCode(email, name, code), returnsNormally);
@@ -42,24 +40,19 @@ void main() {
     test('throws an exception if the http call completes with an error', () {
       final mockClient = MockClient();
       emailService = EmailService(client: mockClient);
-      const EmailData mockEmail =
-          EmailData(email: 'johndoe@example.com', name: 'John', code: '12345');
 
       when(mockClient.post(
         Uri.parse(API_BASE_URL),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(mockEmail.toJson()),
+        body: json.encode(mockEmailDataObject.toJson()),
       )).thenAnswer((_) async => http.Response('Error sending email', 404));
 
-      expect(
-          emailService.sendCode(
-              mockEmail.email, mockEmail.name, mockEmail.code),
-          throwsException);
+      expect(emailService.sendCode(mockEmailDataObject), throwsException);
 
       verify(mockClient.post(
         Uri.parse(API_BASE_URL),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode(mockEmail.toJson()),
+        body: json.encode(mockEmailDataObject.toJson()),
       )).called(1);
     });
 

@@ -9,6 +9,8 @@ import 'package:ui/domain/entities/token.dart';
 import 'package:ui/domain/services/auth_service_interface.dart';
 import 'package:ui/infrastructure/services/auth_service.dart';
 
+import '../../../mocks/mock_objects.dart';
+import '../../../mocks/mock_responses.dart';
 import 'auth_service_test.mocks.dart';
 
 @GenerateMocks([http.Client])
@@ -21,20 +23,17 @@ void main() {
       test('returns a token', () async {
         final mockClient = MockClient();
         authService = AuthService(client: mockClient);
-        const mockCredentials =
-            Credentials(email: 'johndoe@example.com', password: 'johndoe');
 
         when(mockClient.post(
           Uri.parse(API_BASE_URL),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockCredentials.toJson()),
-        )).thenAnswer((_) async => http.Response(
-            '{"accessToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c", "type":"bearer"}',
-            200));
+          body: json.encode(mockCredentialsObject.toJson()),
+        )).thenAnswer((_) async =>
+            http.Response(json.encode(mockCredentialsResponse), 200));
 
-        final token = await authService.login(mockCredentials);
+        final token = await authService.login(mockCredentialsObject);
 
         expect(token, isA<Token>());
         expect(token.accessToken,
@@ -46,32 +45,30 @@ void main() {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockCredentials.toJson()),
+          body: json.encode(mockCredentialsObject.toJson()),
         )).called(1);
       });
 
       test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         authService = AuthService(client: mockClient);
-        const mockCredentials =
-            Credentials(email: 'johndoe@example.com', password: 'johndoe');
 
         when(mockClient.post(
           Uri.parse(API_BASE_URL),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockCredentials.toJson()),
+          body: json.encode(mockCredentialsObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(authService.login(mockCredentials), throwsException);
+        expect(authService.login(mockCredentialsObject), throwsException);
 
         verify(mockClient.post(
           Uri.parse(API_BASE_URL),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: json.encode(mockCredentials.toJson()),
+          body: json.encode(mockCredentialsObject.toJson()),
         )).called(1);
       });
     });

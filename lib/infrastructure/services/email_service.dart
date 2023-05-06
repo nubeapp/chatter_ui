@@ -12,9 +12,8 @@ class EmailService implements IEmailService {
   static String get API_BASE_URL => 'http://0.0.0.0:8000/email';
 
   @override
-  Future<void> sendCode(String email, String name, String code) async {
+  Future<void> sendCode(EmailData emailData) async {
     Logger.debug('Sending email...');
-    final emailData = EmailData(email: email, name: name, code: code);
     try {
       final response = await client.post(
         Uri.parse('$API_BASE_URL/send'),
