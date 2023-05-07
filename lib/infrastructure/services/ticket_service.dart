@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/entities/ticket.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:ui/infrastructure/utilities/helpers.dart';
+import 'package:ui/presentation/styles/logger.dart';
 
 class TicketService implements ITicketService {
   static String get API_BASE_URL => 'http://0.0.0.0:8000/tickets';
@@ -48,15 +50,26 @@ class TicketService implements ITicketService {
 
   // This method generates all the references for each ticket for specific event
   @override
-  List<String> generateTicketReferencesByEventId(int eventId, int ticketLimit) {
-    final Set<String> uniqueCodes = {};
+  Future<List<Ticket>> createTicketsByEvent(Event event) async {
+    List<Ticket> tickets = _generateTicketsByEvent(event);
 
-    while (uniqueCodes.length < ticketLimit) {
-      final code = Helpers.randomReference(20); // or any length you want
-      uniqueCodes.add(code);
+    Logger.debug('Creating tickets...');
+    final response = await client.post(
+      Uri.parse(API_BASE_URL),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(tickets.map((ticket) => ticket.toJson()).toList()),
+    );
+
+    if (response.statusCode == 201) {
+      final jsonList = jsonDecode(response.body) as List<dynamic>;
+      Logger.info('Tickets have been created successfully!');
+      return jsonList.map((json) => Ticket.fromJson(json)).toList();
+    } else {
+      Logger.error('Failed to create tickets');
+      throw Exception('Failed to create tickets');
     }
-
-    return uniqueCodes.toList();
   }
 
   // This method is to get the current queue of people that are subscribe to the queue
@@ -99,4 +112,22 @@ class TicketService implements ITicketService {
   //     throw Exception('Failed to subscribe to ticket queue');
   //   }
   // }
+
+  /// Private functions
+
+  List<Ticket> _generateTicketsByEvent(Event event) {
+    List<String> references =
+        Helpers.generateRandomReferenceListByLimit(event.ticketLimit);
+    List<Ticket> tickets = List.empty(growable: true);
+    for (String reference in references) {
+      Ticket ticket = Ticket(
+          price: 80.0,
+          reference: reference,
+          eventId: event.id!,
+          organizationId: event.organization!.id!,
+          event: event);
+      tickets.add(ticket);
+    }
+    return tickets;
+  }
 }

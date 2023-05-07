@@ -9,15 +9,8 @@ const mockTicketListResponse = [
     "id": 1,
     "price": 80.0,
     "reference": "001AUMS20230426ABAD",
-    "user_id": 1,
     "event_id": 1,
     "organization_id": 1,
-    "user": {
-      "id": 1,
-      "name": "John",
-      "surname": "Doe",
-      "email": "johndoe@example.com"
-    },
     "event": {
       "id": 1,
       "title": "Bad Bunny Concert",
@@ -37,15 +30,8 @@ const mockTicketListResponse = [
     "id": 2,
     "price": 60.0,
     "reference": "001AUMS20230426AROS",
-    "user_id": 1,
     "event_id": 2,
     "organization_id": 1,
-    "user": {
-      "id": 1,
-      "name": "John",
-      "surname": "Doe",
-      "email": "johndoe@example.com"
-    },
     "event": {
       "id": 2,
       "title": "Rosalia Concert",
@@ -67,15 +53,8 @@ const mockTicketResponse = {
   "id": 1,
   "price": 80.0,
   "reference": "001AUMS20230426ABAD",
-  "user_id": 1,
   "event_id": 1,
   "organization_id": 1,
-  "user": {
-    "id": 1,
-    "name": "John",
-    "surname": "Doe",
-    "email": "johndoe@example.com"
-  },
   "event": {
     "id": 1,
     "title": "Bad Bunny Concert",

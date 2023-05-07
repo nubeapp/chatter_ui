@@ -5,11 +5,11 @@ import 'package:ui/presentation/styles/theme.dart';
 import 'presentation/pages/pages.dart';
 
 /// TODO:
-/// - Test method generateTicketReferencesByEventId()
+/// - Test method createTicketsByEvent()
 /// - Fix images of EventTile
 /// - Store image of EventTile in database, and how to save it
-/// - How to store all the codes generated for each event
-/// -
+/// - Manage Assistant table and Tickets table.
+/// - Change event_id by ticket_id in Assistant in FastAPI. I need to know wich ticket has each user.
 
 void main() async {
   Dependencies.injectDependencies();

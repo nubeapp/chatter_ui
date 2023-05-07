@@ -41,8 +41,6 @@ void main() {
         expect(ticket.id, equals(1));
         expect(ticket.price, equals(80.0));
         expect(ticket.reference, '001AUMS20230426ABAD');
-        expect(ticket.user.name, 'John');
-        expect(ticket.user.email, 'johndoe@example.com');
         expect(ticket.event.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
         expect(ticket.event.time, '18:00');
         expect(ticket.event.venue, 'Wizink Center');
@@ -106,10 +104,6 @@ void main() {
         expect(tickets[1].price, equals(60.0));
         expect(tickets[0].reference, '001AUMS20230426ABAD');
         expect(tickets[1].reference, '001AUMS20230426AROS');
-        expect(tickets[0].user.name, 'John');
-        expect(tickets[1].user.name, 'John');
-        expect(tickets[0].user.email, 'johndoe@example.com');
-        expect(tickets[1].user.email, 'johndoe@example.com');
         expect(tickets[0].event.date,
             DateFormat("dd-MM-yyyy").parse('07-12-2023'));
         expect(tickets[0].event.time, '18:00');
