@@ -9,7 +9,7 @@ const mockTicketListResponse = [
     "id": 1,
     "price": 80.0,
     "reference": "001AUMS20230426ABAD",
-    "event_id": 1,
+    "status": "SOLD",
     "organization_id": 1,
     "event": {
       "id": 1,
@@ -17,8 +17,6 @@ const mockTicketListResponse = [
       "date": "07-12-2023",
       "time": "18:00",
       "venue": "Wizink Center",
-      "ticket_limit": 1000,
-      "ticket_available": 999,
       "organization_id": 1,
       "organization": {
         "id": 1,
@@ -30,7 +28,7 @@ const mockTicketListResponse = [
     "id": 2,
     "price": 60.0,
     "reference": "001AUMS20230426AROS",
-    "event_id": 2,
+    "status": "SOLD",
     "organization_id": 1,
     "event": {
       "id": 2,
@@ -38,8 +36,6 @@ const mockTicketListResponse = [
       "date": "14-12-2023",
       "time": "18:00",
       "venue": "Wizink Center",
-      "ticket_limit": 1000,
-      "ticket_available": 999,
       "organization_id": 1,
       "organization": {
         "id": 1,
@@ -53,7 +49,7 @@ const mockTicketResponse = {
   "id": 1,
   "price": 80.0,
   "reference": "001AUMS20230426ABAD",
-  "event_id": 1,
+  "status": "SOLD",
   "organization_id": 1,
   "event": {
     "id": 1,
@@ -61,8 +57,6 @@ const mockTicketResponse = {
     "date": "07-12-2023",
     "time": "18:00",
     "venue": "Wizink Center",
-    "ticket_limit": 1000,
-    "ticket_available": 999,
     "organization_id": 1,
     "organization": {
       "id": 1,

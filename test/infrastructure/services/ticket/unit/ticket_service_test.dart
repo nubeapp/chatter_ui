@@ -9,6 +9,7 @@ import 'package:ui/domain/entities/ticket.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/infrastructure/services/ticket_service.dart';
 
+import '../../../mocks/mock_objects.dart';
 import '../../../mocks/mock_responses.dart';
 import 'ticket_service_test.mocks.dart';
 
@@ -19,69 +20,57 @@ void main() {
 
   group('TicketService', () {
     group('buyTicket', () {
-      test('returns the ticket bought', () async {
+      test('returns the tickets bought', () async {
         final mockClient = MockClient();
         ticketService = TicketService(client: mockClient);
-        const mockEventId = 1;
 
         when(mockClient.post(
           Uri.parse('$API_BASE_URL/buy'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: {
-            'event_id': mockEventId,
-          },
-        )).thenAnswer(
-            (_) async => http.Response(json.encode(mockTicketResponse), 200));
+          body: json.encode(mockOrderObject.toJson()),
+        )).thenAnswer((_) async =>
+            http.Response(json.encode(mockTicketListResponse), 201));
 
-        final ticket = await ticketService.buyTicket(mockEventId);
+        final tickets = await ticketService.buyTicket(mockOrderObject);
 
-        expect(ticket, isA<Ticket>());
-        expect(ticket.id, equals(1));
-        expect(ticket.price, equals(80.0));
-        expect(ticket.reference, '001AUMS20230426ABAD');
-        expect(ticket.event.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(ticket.event.time, '18:00');
-        expect(ticket.event.venue, 'Wizink Center');
+        expect(tickets, isA<List<Ticket>>());
+        expect(tickets[0].id, equals(1));
+        expect(tickets[0].price, equals(80.0));
+        expect(tickets[0].reference, '001AUMS20230426ABAD');
+        expect(tickets[0].event!.date,
+            DateFormat("dd-MM-yyyy").parse('07-12-2023'));
+        expect(tickets[0].event!.time, '18:00');
+        expect(tickets[0].event!.venue, 'Wizink Center');
 
-        verify(mockClient.post(
-          Uri.parse('$API_BASE_URL/buy'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: {
-            'event_id': mockEventId,
-          },
-        )).called(1);
+        verify(mockClient.post(Uri.parse('$API_BASE_URL/buy'),
+                headers: <String, String>{
+                  'Content-Type': 'application/json; charset=UTF-8',
+                },
+                body: json.encode(mockOrderObject.toJson())))
+            .called(1);
       });
 
       test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         ticketService = TicketService(client: mockClient);
-        const mockEventId = 1;
 
-        when(mockClient.post(
-          Uri.parse('$API_BASE_URL/buy'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: {
-            'event_id': mockEventId,
-          },
-        )).thenAnswer((_) async => http.Response('Not Found', 404));
+        when(mockClient.post(Uri.parse('$API_BASE_URL/buy'),
+                headers: <String, String>{
+                  'Content-Type': 'application/json; charset=UTF-8',
+                },
+                body: json.encode(mockOrderObject.toJson())))
+            .thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(ticketService.buyTicket(mockEventId), throwsException);
+        expect(ticketService.buyTicket(mockOrderObject), throwsException);
 
-        verify(mockClient.post(
-          Uri.parse('$API_BASE_URL/buy'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-          },
-          body: {
-            'event_id': mockEventId,
-          },
-        )).called(1);
+        verify(mockClient.post(Uri.parse('$API_BASE_URL/buy'),
+                headers: <String, String>{
+                  'Content-Type': 'application/json; charset=UTF-8',
+                },
+                body: json.encode(mockOrderObject.toJson())))
+            .called(1);
       });
     });
 
@@ -96,7 +85,7 @@ void main() {
             .thenAnswer((_) async =>
                 http.Response(json.encode(mockTicketListResponse), 200));
 
-        final tickets = await ticketService.getTicketsByUserId(mockUserId);
+        final tickets = await ticketService.getTicketsByUserId();
 
         expect(tickets, isA<List<Ticket>>());
         expect(tickets.length, equals(2));
@@ -104,16 +93,16 @@ void main() {
         expect(tickets[1].price, equals(60.0));
         expect(tickets[0].reference, '001AUMS20230426ABAD');
         expect(tickets[1].reference, '001AUMS20230426AROS');
-        expect(tickets[0].event.date,
+        expect(tickets[0].event!.date,
             DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(tickets[0].event.time, '18:00');
-        expect(tickets[1].event.date,
+        expect(tickets[0].event!.time, '18:00');
+        expect(tickets[1].event!.date,
             DateFormat("dd-MM-yyyy").parse('14-12-2023'));
-        expect(tickets[1].event.time, '18:00');
-        expect(tickets[0].event.venue, 'Wizink Center');
-        expect(tickets[1].event.venue, 'Wizink Center');
-        expect(tickets[0].event.title, 'Bad Bunny Concert');
-        expect(tickets[1].event.title, 'Rosalia Concert');
+        expect(tickets[1].event!.time, '18:00');
+        expect(tickets[0].event!.venue, 'Wizink Center');
+        expect(tickets[1].event!.venue, 'Wizink Center');
+        expect(tickets[0].event!.title, 'Bad Bunny Concert');
+        expect(tickets[1].event!.title, 'Rosalia Concert');
 
         verify(mockClient
                 .get(Uri.parse('$API_BASE_URL/users/$mockUserId/tickets')))
@@ -129,57 +118,12 @@ void main() {
                 .get(Uri.parse('$API_BASE_URL/users/$mockUserId/tickets')))
             .thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(ticketService.getTicketsByUserId(mockUserId), throwsException);
+        expect(ticketService.getTicketsByUserId(), throwsException);
 
         verify(mockClient
                 .get(Uri.parse('$API_BASE_URL/users/$mockUserId/tickets')))
             .called(1);
       });
     });
-
-    // group('getEventQueueByEventId', () {
-    //   test('returns the queue of an event', () async {
-    //     final mockClient = MockClient();
-    //     ticketService = TicketService(client: mockClient);
-    //     const mockEventId = 1;
-
-    //     when(mockClient
-    //             .get(Uri.parse('$API_BASE_URL/events/$mockEventId/queue')))
-    //         .thenAnswer((_) async =>
-    //             http.Response(json.encode(mockQueueResponse), 200));
-
-    //     final queue = await ticketService.getEventQueueByEventId(mockEventId);
-
-    //     expect(queue, isA<List<EventQueueEntry>>());
-    //     expect(queue.length, equals(3));
-    //     expect(queue[0].eventId, equals(1));
-    //     expect(queue[1].eventId, equals(1));
-    //     expect(queue[2].eventId, equals(2));
-    //     expect(queue[0].user.email, 'johndoe@example.com');
-    //     expect(queue[1].user.email, 'janesmith@example.com');
-    //     expect(queue[2].user.email, 'johndoe@example.com');
-
-    //     verify(mockClient
-    //             .get(Uri.parse('$API_BASE_URL/events/$mockEventId/queue')))
-    //         .called(1);
-    //   });
-
-    //   test('throws an exception if the http call completes with an error', () {
-    //     final mockClient = MockClient();
-    //     ticketService = TicketService(client: mockClient);
-    //     const mockEventId = 1;
-
-    //     when(mockClient
-    //             .get(Uri.parse('$API_BASE_URL/events/$mockEventId/queue')))
-    //         .thenAnswer((_) async => http.Response('Not Found', 404));
-
-    //     expect(
-    //         ticketService.getEventQueueByEventId(mockEventId), throwsException);
-
-    //     verify(mockClient
-    //             .get(Uri.parse('$API_BASE_URL/events/$mockEventId/queue')))
-    //         .called(1);
-    //   });
-    // });
   });
 }

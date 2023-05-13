@@ -3,6 +3,7 @@ import 'package:ui/domain/entities/code.dart';
 import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/email_data.dart';
 import 'package:ui/domain/entities/event.dart';
+import 'package:ui/domain/entities/order.dart';
 import 'package:ui/domain/entities/user.dart';
 
 final mockEventObject = Event(
@@ -25,3 +26,5 @@ const mockEmailDataObject =
 
 const mockUserObject =
     User(email: 'johndoe@example.com', name: 'John', surname: 'Doe');
+
+const mockOrderObject = Order(eventId: 1, quantity: 1);

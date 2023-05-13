@@ -6,17 +6,15 @@ class Ticket {
   final int? id;
   final double price;
   final String reference;
-  final int eventId;
-  final int organizationId;
-  final Event event;
+  final int? eventId;
+  final Event? event;
 
   const Ticket({
     this.id,
     required this.price,
     required this.reference,
-    required this.eventId,
-    required this.organizationId,
-    required this.event,
+    this.eventId,
+    this.event,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) {
@@ -25,7 +23,6 @@ class Ticket {
         price: json['price'],
         reference: json['reference'],
         eventId: json['event_id'],
-        organizationId: json['organization_id'],
         event: Event.fromJson(json['event']));
   }
 
@@ -34,7 +31,6 @@ class Ticket {
       'id': id,
       'price': price,
       'event_id': eventId,
-      'organization_id': organizationId,
       'reference': reference,
     };
   }

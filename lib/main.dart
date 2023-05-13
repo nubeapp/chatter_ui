@@ -5,11 +5,10 @@ import 'package:ui/presentation/styles/theme.dart';
 import 'presentation/pages/pages.dart';
 
 /// TODO:
-/// - Test method createTicketsByEvent()
-/// - Fix images of EventTile
-/// - Store image of EventTile in database, and how to save it
-/// - Manage Assistant table and Tickets table.
-/// - Change event_id by ticket_id in Assistant in FastAPI. I need to know wich ticket has each user.
+/// - Test OrderService
+/// - Test getTicketsByUserIdEventId(int eventId);
+/// - Test getTicketsByUserId();
+/// - Test createTickets(Event event, int ticketLimit);
 
 void main() async {
   Dependencies.injectDependencies();

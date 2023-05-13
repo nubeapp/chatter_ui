@@ -9,8 +9,8 @@ class Event {
   final DateTime date;
   final String time;
   final String venue;
-  final int ticketLimit;
-  final int ticketAvailable;
+  final int? ticketLimit;
+  final int? ticketAvailable;
   final int organizationId;
   final Organization? organization;
 
@@ -21,8 +21,8 @@ class Event {
     required this.date,
     required this.time,
     required this.venue,
-    required this.ticketLimit,
-    required this.ticketAvailable,
+    this.ticketLimit,
+    this.ticketAvailable,
     required this.organizationId,
     this.organization,
   });
