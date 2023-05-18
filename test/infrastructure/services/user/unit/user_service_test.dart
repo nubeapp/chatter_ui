@@ -16,32 +16,6 @@ import 'user_service_test.mocks.dart';
 void main() {
   late IUserService userService;
   const String API_BASE_URL = 'http://0.0.0.0:8000/users';
-  // const User john = User(
-  //   email: 'johndoe@example.com',
-  //   name: 'John',
-  //   surname: 'Doe',
-  //   password: 'johndoe',
-  // );
-  // const User jane = User(
-  //   email: 'janedoe@example.com',
-  //   name: 'Jane',
-  //   surname: 'Doe',
-  //   password: 'janedoe',
-  // );
-  // final User updatedJohn = User(
-  //   email: john.email,
-  //   name: 'Updated John',
-  //   surname: 'Updated Doe',
-  //   password: john.password,
-  // );
-
-  // setUp(() {
-  // await userService.createUser(john);
-  // });
-
-  // tearDown(() async {
-  // userService.deleteUserByEmail(john.email);
-  // });
 
   group('UserService', () {
     group('Get Users', () {
@@ -83,19 +57,6 @@ void main() {
 
         verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
       });
-
-      // test('returns list of users on success', () async {
-      //   // Act
-      //   final users = await userService.getUsers();
-
-      //   // Assert
-      //   // It has to be modified because now it is been used the same database for
-      //   // production and for testing
-      //   expect(users.length, equals(4));
-      //   expect(users.last.email, john.email);
-      //   expect(users.last.name, john.name);
-      //   expect(users.last.surname, john.surname);
-      // });
     });
 
     group('Get Users By', () {
@@ -134,20 +95,6 @@ void main() {
 
         verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).called(1);
       });
-
-      //   test('returns user on success', () async {
-      //     // Act
-      //     final user = await userService.getUserByEmail(john.email);
-
-      //     // Assert
-      //     expect(user.email, 'johndoe@example.com');
-      //     expect(user.name, 'John');
-      //     expect(user.surname, 'Doe');
-      //   });
-
-      //   test('throws exception on failure', () async {
-      //     expect(() => userService.getUserByEmail(jane.email), throwsException);
-      //   });
     });
 
     group('Create Users', () {
@@ -207,23 +154,6 @@ void main() {
           body: jsonEncode(mockUserObject.toJson()),
         )).called(1);
       });
-
-      //   test('creates a new user and adds it to the list', () async {
-      //     // Act
-      //     final initialUsers = await userService.getUsers();
-      //     await userService.createUser(jane);
-      //     final updatedUsers = await userService.getUsers();
-
-      //     // Assert
-      //     expect(updatedUsers.length, initialUsers.length + 1);
-      //     expect(updatedUsers.last.email, 'janedoe@example.com');
-      //     expect(updatedUsers.last.name, 'Jane');
-      //     expect(updatedUsers.last.surname, 'Doe');
-      //   });
-
-      //   test('throws exception on failure', () async {
-      //     expect(() => userService.createUser(john), throwsException);
-      //   });
     });
 
     group('Update Users', () {
@@ -287,21 +217,6 @@ void main() {
           body: jsonEncode(mockUserObject.toJson()),
         )).called(1);
       });
-      //   test('returns message on success', () async {
-      //     // Act
-      //     final user =
-      //         await userService.updateUserByEmail(john.email, updatedJohn);
-      //     final johnAfterUpdate = await userService.getUserByEmail(john.email);
-
-      //     // Assert
-      //     expect(user.name, johnAfterUpdate.name);
-      //     expect(user.surname, johnAfterUpdate.surname);
-      //   });
-
-      //   test('throws exception on failure', () async {
-      //     expect(() => userService.updateUserByEmail(jane.email, updatedJohn),
-      //         throwsException);
-      //   });
     });
 
     group('Delete Users', () {
@@ -340,18 +255,6 @@ void main() {
           Uri.parse('$API_BASE_URL/$mockEmail'),
         )).called(1);
       });
-      //   test('delete user on success', () async {
-      //     // Act
-      //     await userService.deleteUserByEmail(john.email);
-
-      //     // Assert
-      //     expect(() => userService.getUserByEmail(john.email), throwsException);
-      //   });
-
-      //   test('throws exception on failure', () async {
-      //     expect(
-      //         () => userService.deleteUserByEmail(jane.email), throwsException);
-      //   });
     });
   });
 }

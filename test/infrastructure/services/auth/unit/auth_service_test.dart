@@ -29,8 +29,7 @@ void main() {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: json.encode(mockCredentialsObject.toJson()),
-        )).thenAnswer((_) async =>
-            http.Response(json.encode(mockCredentialsResponse), 200));
+        )).thenAnswer((_) async => http.Response(json.encode(mockTokenResponse), 200));
 
         final token = await authService.login(mockCredentialsObject);
 

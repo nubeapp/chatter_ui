@@ -5,10 +5,9 @@ import 'package:ui/presentation/styles/theme.dart';
 import 'presentation/pages/pages.dart';
 
 /// TODO:
-/// - Test OrderService
-/// - Test getTicketsByUserIdEventId(int eventId);
-/// - Test getTicketsByUserId();
-/// - Test createTickets(Event event, int ticketLimit);
+/// - OrganizationService (Interface, Service and Tests)
+/// - Test OrderService (Methods and match mockResponses)
+/// - Test TicketService (Methods and match mockResponses)
 
 void main() async {
   Dependencies.injectDependencies();

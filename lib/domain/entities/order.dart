@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ui/domain/entities/ticket.dart';
+import 'package:ui/domain/entities/ticket/ticket.dart';
 
 @immutable
 class Order {

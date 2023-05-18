@@ -25,17 +25,12 @@ void main() {
       expect(status, 'Server is running...');
 
       verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
-
-      // Verify the expected behavior
-      // expect(() => apiService.connectAPI(), returnsNormally);
     });
 
     test('throws an exception if the http call completes with an error', () {
       final mockClient = MockClient();
       apiService = ApiService(client: mockClient);
 
-      // Use Mockito to return an unsuccessful response when it calls the
-      // provided http.Client.
       when(mockClient.get(Uri.parse(API_BASE_URL)))
           .thenAnswer((_) async => http.Response('Internal Server Error', 500));
 
@@ -43,14 +38,5 @@ void main() {
 
       verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
     });
-
-    // test('connectAPI returns error on non 200 response', () async {
-    //   // Set up mock response
-    //   final response =
-    //       await http.get(Uri.parse('${ApiService.API_BASE_URL}/error'));
-
-    //   // Verify the expected behavior
-    //   expect(response.statusCode, isNot(equals(200)));
-    // });
   });
 }

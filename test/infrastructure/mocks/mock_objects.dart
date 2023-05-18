@@ -12,19 +12,32 @@ final mockEventObject = Event(
   time: '18:00',
   venue: 'Wizink Center',
   ticketLimit: 1000,
-  ticketAvailable: 1000,
   organizationId: 1,
 );
 
-const mockCredentialsObject =
-    Credentials(email: 'johndoe@example.com', password: 'johndoe');
+const mockCredentialsObject = Credentials(
+  email: 'johndoe@example.com',
+  password: 'johndoe',
+);
 
-const mockCodeObject = Code(email: 'johndoe@example.com', code: '12345');
+const mockCodeObject = Code(
+  email: 'johndoe@example.com',
+  code: '12345',
+);
 
-const mockEmailDataObject =
-    EmailData(email: 'johndoe@example.com', name: 'John', code: '12345');
+const mockEmailDataObject = EmailData(
+  email: 'johndoe@example.com',
+  name: 'John',
+  code: '12345',
+);
 
-const mockUserObject =
-    User(email: 'johndoe@example.com', name: 'John', surname: 'Doe');
+const mockUserObject = User(
+  email: 'johndoe@example.com',
+  name: 'John',
+  surname: 'Doe',
+);
 
-const mockOrderObject = Order(eventId: 1, quantity: 1);
+const mockOrderObject = Order(
+  eventId: 1,
+  quantity: 1,
+);

@@ -13,7 +13,7 @@ import 'email_service_test.mocks.dart';
 @GenerateMocks([http.Client])
 void main() {
   group('EmailService', () {
-    const String API_BASE_URL = 'http://0.0.0.0:8000/email/send';
+    const String API_BASE_URL = 'http://0.0.0.0:8000/email';
     late IEmailService emailService;
 
     test('sendCode send code through email without exception', () async {
@@ -21,7 +21,7 @@ void main() {
       emailService = EmailService(client: mockClient);
 
       when(mockClient.post(
-        Uri.parse(API_BASE_URL),
+        Uri.parse('$API_BASE_URL/send'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(mockEmailDataObject.toJson()),
       )).thenAnswer((_) async => http.Response('', 200));
@@ -42,7 +42,7 @@ void main() {
       emailService = EmailService(client: mockClient);
 
       when(mockClient.post(
-        Uri.parse(API_BASE_URL),
+        Uri.parse('$API_BASE_URL/send'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(mockEmailDataObject.toJson()),
       )).thenAnswer((_) async => http.Response('Error sending email', 404));
@@ -55,28 +55,5 @@ void main() {
         body: json.encode(mockEmailDataObject.toJson()),
       )).called(1);
     });
-
-    // test('sendCode() returns success with status code 200', () async {
-    //   // Act
-    //   final response = await http.post(
-    //     Uri.parse(url),
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: json.encode(emailData.toJson()),
-    //   );
-    //   // Assert
-    //   expect(response.statusCode, 200);
-    // });
-
-    // test('sendCode() returns success data in body', () async {
-    //   // Act
-    //   final response = await http.post(
-    //     Uri.parse(url),
-    //     headers: {'Content-Type': 'application/json'},
-    //     body: json.encode(emailData.toJson()),
-    //   );
-    //   final responseBody = jsonDecode(response.body) as Map<String, dynamic>;
-    //   // Assert
-    //   expect(responseBody, equals({'message': 'Email sent successfully'}));
-    // });
   });
 }

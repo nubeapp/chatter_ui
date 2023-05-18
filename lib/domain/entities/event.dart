@@ -10,7 +10,6 @@ class Event {
   final String time;
   final String venue;
   final int? ticketLimit;
-  final int? ticketAvailable;
   final int organizationId;
   final Organization? organization;
 
@@ -22,7 +21,6 @@ class Event {
     required this.time,
     required this.venue,
     this.ticketLimit,
-    this.ticketAvailable,
     required this.organizationId,
     this.organization,
   });
@@ -36,7 +34,6 @@ class Event {
       time: json['time'],
       venue: json['venue'],
       ticketLimit: json['ticket_limit'],
-      ticketAvailable: json['ticket_available'],
       organizationId: json['organization_id'],
       organization: Organization.fromJson(json['organization']),
     );
@@ -49,7 +46,6 @@ class Event {
       'date': date.toString(),
       'venue': venue,
       'ticket_limit': ticketLimit,
-      'ticket_available': ticketAvailable,
       'organization_id': organizationId,
     };
   }

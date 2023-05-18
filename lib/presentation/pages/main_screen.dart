@@ -19,7 +19,6 @@ class _MainScreenState extends State<MainScreen> {
       time: '18:00',
       venue: 'Wizink Center',
       ticketLimit: 1000,
-      ticketAvailable: 90,
       organizationId: 1,
     ),
     Event(
@@ -28,7 +27,6 @@ class _MainScreenState extends State<MainScreen> {
       time: '18:00',
       venue: 'Wizink Center',
       ticketLimit: 1000,
-      ticketAvailable: 0,
       organizationId: 1,
     ),
     Event(
@@ -37,7 +35,6 @@ class _MainScreenState extends State<MainScreen> {
       time: '18:00',
       venue: 'Wizink Center',
       ticketLimit: 1000,
-      ticketAvailable: 500,
       organizationId: 1,
     ),
   ];
