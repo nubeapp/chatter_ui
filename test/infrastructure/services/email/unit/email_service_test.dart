@@ -29,7 +29,7 @@ void main() {
       await emailService.sendCode(mockEmailDataObject);
 
       verify(mockClient.post(
-        Uri.parse(API_BASE_URL),
+        Uri.parse('$API_BASE_URL/send'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(mockEmailDataObject.toJson()),
       )).called(1);
@@ -50,7 +50,7 @@ void main() {
       expect(emailService.sendCode(mockEmailDataObject), throwsException);
 
       verify(mockClient.post(
-        Uri.parse(API_BASE_URL),
+        Uri.parse('$API_BASE_URL/send'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(mockEmailDataObject.toJson()),
       )).called(1);

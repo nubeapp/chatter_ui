@@ -18,8 +18,7 @@ abstract class Helpers {
   static String randomNumericCode(int length) {
     const charset = '0123456789';
     final random = Random();
-    return String.fromCharCodes(Iterable.generate(
-        length, (_) => charset.codeUnitAt(random.nextInt(charset.length))));
+    return String.fromCharCodes(Iterable.generate(length, (_) => charset.codeUnitAt(random.nextInt(charset.length))));
   }
 
   static String formatDate(String dateTimeString) {
@@ -30,24 +29,6 @@ abstract class Helpers {
     // String hour = dateTime.hour.toString().padLeft(2, '0');
     // String minute = dateTime.minute.toString().padLeft(2, '0');
     return '$day $month $year';
-  }
-
-  static String randomReference(int length) {
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final random = Random();
-    return String.fromCharCodes(Iterable.generate(
-        length, (_) => charset.codeUnitAt(random.nextInt(charset.length))));
-  }
-
-  static List<String> generateRandomReferenceListByLimit(int limit) {
-    final Set<String> uniqueCodes = {};
-
-    while (uniqueCodes.length < limit) {
-      final code = randomReference(20); // or any length you want
-      uniqueCodes.add(code);
-    }
-
-    return uniqueCodes.toList();
   }
 
   /// Private functions

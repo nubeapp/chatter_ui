@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
 
 void main() {
-  test('Test randomPictureUrl()', () {
+  test('Random PictureUrl Tests', () {
     String url = Helpers.randomPictureUrl();
 
     // Assert that the URL starts with 'https://picsum.photos/seed/'
@@ -11,7 +11,7 @@ void main() {
     expect(regex.hasMatch(url), true);
   });
 
-  test('Test randomDateTime()', () {
+  test('Random DateTime Tests', () {
     DateTime result = Helpers.randomDateTime();
 
     // Assert that the returned DateTime is within a valid range
@@ -22,7 +22,7 @@ void main() {
     expect(result.isBefore(maxDate), true);
   });
 
-  group('randomNumericCode', () {
+  group('Random Numeric Code Tests', () {
     const length = 5;
     test('returns a string with the specified length', () {
       final code = Helpers.randomNumericCode(length);
@@ -41,22 +41,39 @@ void main() {
     });
   });
 
-  group('ReferenceGenerator', () {
-    const length = 20;
-    test('returns a string with the specified length', () {
-      final code = Helpers.randomReference(length);
-      expect(code.length, equals(length));
+  // group('Reference Generator Tests', () {
+  //   const length = 20;
+  //   test('returns a string with the specified length', () {
+  //     final code = Helpers.randomReference(length);
+  //     expect(code.length, equals(length));
+  //   });
+
+  //   test('returns a string containing only uppercase letters and digits', () {
+  //     final code = Helpers.randomReference(length);
+  //     expect(RegExp(r'^[A-Z0-9]+$').hasMatch(code), isTrue);
+  //   });
+
+  //   test('returns a different string on multiple invocations', () {
+  //     final code1 = Helpers.randomReference(length);
+  //     final code2 = Helpers.randomReference(length);
+  //     expect(code1, isNot(equals(code2)));
+  //   });
+  // });
+
+  group('Date Formatting Tests', () {
+    test('formatDate should format the date correctly', () {
+      String result = Helpers.formatDate('2023-05-18T12:34:56');
+      expect(result, '18 may 2023');
     });
 
-    test('returns a string containing only uppercase letters and digits', () {
-      final code = Helpers.randomReference(length);
-      expect(RegExp(r'^[A-Z0-9]+$').hasMatch(code), isTrue);
+    test('formatDate should handle single-digit day and month correctly', () {
+      String result = Helpers.formatDate('2023-02-03T09:05:00');
+      expect(result, '3 feb 2023');
     });
 
-    test('returns a different string on multiple invocations', () {
-      final code1 = Helpers.randomReference(length);
-      final code2 = Helpers.randomReference(length);
-      expect(code1, isNot(equals(code2)));
+    test('formatDate should handle invalid month correctly', () {
+      String result = Helpers.formatDate('2023-13-01T00:00:00');
+      expect(result, '1 jan 2024');
     });
   });
 }

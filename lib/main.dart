@@ -7,12 +7,11 @@ import 'presentation/pages/pages.dart';
 /// TODO:
 /// - OrganizationService (Interface, Service and Tests)
 /// - Test OrderService (Methods and match mockResponses)
-/// - Test TicketService (Methods and match mockResponses)
+/// - Test TicketService -> move random reference generator to back-end ✅
+/// - Test Helpers ✅
 
 void main() async {
   Dependencies.injectDependencies();
-  //final apiService = GetIt.instance.get<IApiService>();
-  //await apiService.connectAPI();
   runApp(
     MyApp(
       appTheme: AppTheme(),

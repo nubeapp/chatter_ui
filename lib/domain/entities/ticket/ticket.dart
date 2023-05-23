@@ -39,11 +39,7 @@ class Ticket {
           orElse: () => TicketStatus.AVAILABLE,
         ),
         eventId: json['event_id'],
-        userId: json['user_id'],
-        orderId: json['order_id'],
-        event: Event.fromJson(json['event']),
-        user: User.fromJson(json['user']),
-        order: Order.fromJson(json['order']));
+        event: Event.fromJson(json['event']));
   }
 
   Map<String, dynamic> toJson() {

@@ -1,12 +1,10 @@
 import 'dart:convert';
 
-import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/entities/order.dart';
+import 'package:ui/domain/entities/ticket/create_ticket.dart';
 import 'package:ui/domain/entities/ticket/ticket.dart';
-import 'package:ui/domain/entities/ticket/ticket_status.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:http/http.dart' as http;
-import 'package:ui/infrastructure/utilities/helpers.dart';
 import 'package:ui/presentation/styles/logger.dart';
 
 class TicketService implements ITicketService {
@@ -49,16 +47,14 @@ class TicketService implements ITicketService {
 
   // This method generates all the references for each ticket for specific event
   @override
-  Future<List<Ticket>> createTickets(Event event, double price, int ticketLimit) async {
-    List<Ticket> tickets = _generateTicketsByEvent(event, price, ticketLimit);
-
+  Future<List<Ticket>> createTickets(CreateTicket ticketData) async {
     Logger.debug('Creating tickets...');
     final response = await client.post(
       Uri.parse(API_BASE_URL),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(tickets.map((ticket) => ticket.toJson()).toList()),
+      body: json.encode(ticketData.toJson()),
     );
 
     if (response.statusCode == 201) {
@@ -97,24 +93,5 @@ class TicketService implements ITicketService {
       Logger.error('Failed to buy ticket');
       throw Exception('Failed to buy ticket');
     }
-  }
-
-  /// Private functions
-
-  List<Ticket> _generateTicketsByEvent(Event event, double price, int ticketLimit) {
-    Logger.debug('Generating $ticketLimit tickets for event ${event.id}...');
-    List<String> references = Helpers.generateRandomReferenceListByLimit(ticketLimit);
-    List<Ticket> tickets = List.empty(growable: true);
-    for (String reference in references) {
-      Ticket ticket = Ticket(
-        price: price,
-        reference: reference,
-        eventId: event.id!,
-        status: TicketStatus.AVAILABLE,
-      );
-      tickets.add(ticket);
-    }
-    Logger.info('Tickets have been generated successfully!');
-    return tickets;
   }
 }

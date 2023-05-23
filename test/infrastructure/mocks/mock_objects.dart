@@ -4,6 +4,7 @@ import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/email_data.dart';
 import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/entities/order.dart';
+import 'package:ui/domain/entities/ticket/create_ticket.dart';
 import 'package:ui/domain/entities/user.dart';
 
 final mockEventObject = Event(
@@ -41,3 +42,5 @@ const mockOrderObject = Order(
   eventId: 1,
   quantity: 1,
 );
+
+const mockCreateTicketObject = CreateTicket(eventId: 1, price: 50.0, limit: 2);

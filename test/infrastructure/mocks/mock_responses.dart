@@ -13,7 +13,12 @@ const mockUserListResponse = [
     "surname": "Doe",
     "email": "johndoe@example.com",
   },
-  {"id": 2, "name": "Jane", "surname": "Smith", "email": "janesmith@example.com"}
+  {
+    "id": 2,
+    "name": "Jane",
+    "surname": "Smith",
+    "email": "janesmith@example.com",
+  }
 ];
 
 const mockUserResponse = {

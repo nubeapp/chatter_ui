@@ -47,7 +47,6 @@ POST Event
     "time": "18:00",
     "venue": "Wizink Center",
     "ticket_limit": 5,
-    "ticket_available": 5,
     "organization_id": 1
 }
 {
@@ -56,7 +55,6 @@ POST Event
     "time": "18:00",
     "venue": "Wizink Center",
     "ticket_limit": 5,
-    "ticket_available": 5,
     "organization_id": 2
 }
 {
@@ -65,7 +63,6 @@ POST Event
     "time": "21:00",
     "venue": "Teatro Antón Martín",
     "ticket_limit": 5,
-    "ticket_available": 5,
     "organization_id": 3
 }
 {
@@ -74,7 +71,6 @@ POST Event
     "time": "21:00",
     "venue": "Wizink Center",
     "ticket_limit": 5,
-    "ticket_available": 5,
     "organization_id": 2
 }
 {
@@ -83,7 +79,6 @@ POST Event
     "time": "19:00",
     "venue": "Sala8",
     "ticket_limit": 5,
-    "ticket_available": 5,
     "organization_id": 1
 }
 
