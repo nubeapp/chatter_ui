@@ -9,7 +9,7 @@ import 'presentation/pages/pages.dart';
 /// - Test OrderService (Methods and match mockResponses) ✅
 /// - Test TicketService -> move random reference generator to back-end ✅
 /// - Test Helpers ✅
-/// - Check all names of tests ❌
+/// - Check all names of tests ✅
 /// - Try-Catch on every call ❌
 
 void main() async {

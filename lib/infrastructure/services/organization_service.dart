@@ -13,47 +13,62 @@ class OrganizationService implements IOrganizationService {
 
   @override
   Future<List<Organization>> getOrganizations() async {
-    Logger.debug('Requesting all organizations to database...');
-    final response = await client.get(Uri.parse(API_BASE_URL));
-    if (response.statusCode == 200) {
-      Logger.info('Organizations have been retrieved successfully!');
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((e) => Organization.fromJson(e)).toList();
-    } else {
-      Logger.error('Failed to get organizations');
-      throw Exception('Failed to get organizations. Status code: ${response.statusCode}');
+    try {
+      Logger.debug('Requesting all organizations to the database...');
+      final response = await client.get(Uri.parse(API_BASE_URL));
+      if (response.statusCode == 200) {
+        Logger.info('Organizations have been retrieved successfully!');
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((e) => Organization.fromJson(e)).toList();
+      } else {
+        Logger.error('Failed to get organizations');
+        throw Exception('Failed to get organizations. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      Logger.error('An error occurred while getting organizations: $e');
+      throw Exception('Failed to get organizations');
     }
   }
 
   @override
   Future<Organization> getOrganizationById(int organizationId) async {
-    Logger.debug('Requesting organization with id $organizationId...');
-    final response = await client.get(Uri.parse('$API_BASE_URL/$organizationId'));
-    if (response.statusCode == 200) {
-      Logger.info('Organization has been retrieved successfully!');
-      final Map<String, dynamic> data = json.decode(response.body);
-      return Organization.fromJson(data);
-    } else {
-      Logger.error('Failed to get organization');
-      throw Exception('Failed to get organization. Status code: ${response.statusCode}');
+    try {
+      Logger.debug('Requesting organization with id $organizationId...');
+      final response = await client.get(Uri.parse('$API_BASE_URL/$organizationId'));
+      if (response.statusCode == 200) {
+        Logger.info('Organization has been retrieved successfully!');
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Organization.fromJson(data);
+      } else {
+        Logger.error('Failed to get organization');
+        throw Exception('Failed to get organization. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      Logger.error('An error occurred while getting organization: $e');
+      throw Exception('Failed to get organization');
     }
   }
 
   @override
   Future<Organization> createOrganization(Organization organization) async {
-    Logger.debug('Creating organization...');
-    final response = await client.post(Uri.parse(API_BASE_URL),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode(organization.toJson()));
-    if (response.statusCode == 201) {
-      Logger.info('Organization has been created successfully!');
-      final Map<String, dynamic> data = json.decode(response.body);
-      return Organization.fromJson(data);
-    } else {
-      Logger.error('Failed to create organization');
-      throw Exception('Failed to create organization. Status code: ${response.statusCode}');
+    try {
+      Logger.debug('Creating organization...');
+      final response = await client.post(Uri.parse(API_BASE_URL),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: json.encode(organization.toJson()));
+      if (response.statusCode == 201) {
+        Logger.info('Organization has been created successfully!');
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Organization.fromJson(data);
+      } else {
+        Logger.error('Failed to create organization');
+        throw Exception('Failed to create organization. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      Logger.error('An error occurred while creating organization: $e');
+      throw Exception('Failed to create organization');
     }
   }
 }

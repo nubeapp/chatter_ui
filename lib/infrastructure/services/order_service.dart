@@ -13,15 +13,20 @@ class OrderService implements IOrderService {
 
   @override
   Future<List<Order>> getOrdersByUserId() async {
-    Logger.debug('Requesting orders...');
-    final response = await client.get(Uri.parse(API_BASE_URL));
+    try {
+      Logger.debug('Requesting orders...');
+      final response = await client.get(Uri.parse(API_BASE_URL));
 
-    if (response.statusCode == 200) {
-      Logger.info('Orders have been retrieved successfully!');
-      final jsonList = jsonDecode(response.body) as List<dynamic>;
-      return jsonList.map((json) => Order.fromJson(json)).toList();
-    } else {
-      Logger.error('Failed to get orders');
+      if (response.statusCode == 200) {
+        Logger.info('Orders have been retrieved successfully!');
+        final jsonList = jsonDecode(response.body) as List<dynamic>;
+        return jsonList.map((json) => Order.fromJson(json)).toList();
+      } else {
+        Logger.error('Failed to get orders');
+        throw Exception('Failed to get orders');
+      }
+    } catch (e) {
+      Logger.error('An error occurred while getting orders: $e');
       throw Exception('Failed to get orders');
     }
   }

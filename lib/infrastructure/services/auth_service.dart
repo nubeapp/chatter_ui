@@ -12,20 +12,26 @@ class AuthService implements IAuthService {
 
   @override
   Future<Token> login(Credentials credentials) async {
-    Logger.debug('Trying to log in user ${credentials.email}...');
-    final response = await client.post(
-      Uri.parse(API_BASE_URL),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: json.encode(credentials.toJson()),
-    );
-    if (response.statusCode == 200) {
-      Logger.info('Logged in successfully!');
-      final json = jsonDecode(response.body);
-      return Token.fromJson(json);
-    } else {
-      Logger.error('Failed to login');
+    try {
+      Logger.debug('Trying to log in user ${credentials.email}...');
+      final response = await client.post(
+        Uri.parse(API_BASE_URL),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode(credentials.toJson()),
+      );
+
+      if (response.statusCode == 200) {
+        Logger.info('Logged in successfully!');
+        final json = jsonDecode(response.body);
+        return Token.fromJson(json);
+      } else {
+        Logger.error('Failed to login');
+        throw Exception('Failed to login');
+      }
+    } catch (e) {
+      Logger.error('An error occurred during login: $e');
       throw Exception('Failed to login');
     }
   }
