@@ -19,12 +19,11 @@ void main() {
 
   group('CodeService', () {
     group('getCodes', () {
-      test('getCodes returns a list of codes', () async {
+      test('returns a list of codes', () async {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
 
-        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer(
-            (_) async => http.Response(json.encode(mockCodeListResponse), 200));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async => http.Response(json.encode(mockCodeListResponse), 200));
 
         // Act
         final codes = await codeService.getCodes();
@@ -44,8 +43,7 @@ void main() {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
 
-        when(mockClient.get(Uri.parse(API_BASE_URL)))
-            .thenAnswer((_) async => http.Response('Not Found', 404));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async => http.Response('Not Found', 404));
 
         // Act
         expect(codeService.getCodes(), throwsException);
@@ -55,13 +53,12 @@ void main() {
     });
 
     group('getCodeByEmail', () {
-      test('getCodeByEmail returns a code', () async {
+      test('returns a code by specified email', () async {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
 
-        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer(
-            (_) async => http.Response(json.encode(mockCodeResponse), 200));
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer((_) async => http.Response(json.encode(mockCodeResponse), 200));
 
         final code = await codeService.getCodeByEmail(mockEmail);
 
@@ -77,8 +74,7 @@ void main() {
         codeService = CodeService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
 
-        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail')))
-            .thenAnswer((_) async => http.Response('Not Found', 404));
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer((_) async => http.Response('Not Found', 404));
 
         // Act
         expect(codeService.getCodeByEmail(mockEmail), throwsException);
@@ -88,15 +84,12 @@ void main() {
     });
 
     group('createCode', () {
-      test('createCode creates a new code', () async {
+      test('creates a new code', () async {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
 
-        when(mockClient.post((Uri.parse(API_BASE_URL)),
-                headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCodeObject.toJson())))
-            .thenAnswer(
-                (_) async => http.Response(json.encode(mockCodeResponse), 201));
+        when(mockClient.post((Uri.parse(API_BASE_URL)), headers: {'Content-Type': 'application/json'}, body: jsonEncode(mockCodeObject.toJson())))
+            .thenAnswer((_) async => http.Response(json.encode(mockCodeResponse), 201));
 
         final code = await codeService.createCode(mockCodeObject);
 
@@ -104,33 +97,25 @@ void main() {
         expect(code.email, 'johndoe@example.com');
         expect(code.code, '12345');
 
-        verify(mockClient.post((Uri.parse(API_BASE_URL)),
-                headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCodeObject.toJson())))
-            .called(1);
+        verify(mockClient.post((Uri.parse(API_BASE_URL)), headers: {'Content-Type': 'application/json'}, body: jsonEncode(mockCodeObject.toJson()))).called(1);
       });
 
       test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
 
-        when(mockClient.post((Uri.parse(API_BASE_URL)),
-                headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCodeObject.toJson())))
+        when(mockClient.post((Uri.parse(API_BASE_URL)), headers: {'Content-Type': 'application/json'}, body: jsonEncode(mockCodeObject.toJson())))
             .thenAnswer((_) async => http.Response('Not Found', 404));
 
         // Act
         expect(codeService.createCode(mockCodeObject), throwsException);
 
-        verify(mockClient.post((Uri.parse(API_BASE_URL)),
-                headers: {'Content-Type': 'application/json'},
-                body: jsonEncode(mockCodeObject.toJson())))
-            .called(1);
+        verify(mockClient.post((Uri.parse(API_BASE_URL)), headers: {'Content-Type': 'application/json'}, body: jsonEncode(mockCodeObject.toJson()))).called(1);
       });
     });
 
-    group('updateCode', () {
-      test('updateCodeByEmail returns a code', () async {
+    group('updateCodeByEmail', () {
+      test('returns an updated code', () async {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
@@ -143,11 +128,9 @@ void main() {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode(mockCodeObject.toJson()),
-        )).thenAnswer(
-            (_) async => http.Response(json.encode(mockCodeResponse), 200));
+        )).thenAnswer((_) async => http.Response(json.encode(mockCodeResponse), 200));
 
-        final code =
-            await codeService.updateCodeByEmail(mockEmail, mockCodeObject);
+        final code = await codeService.updateCodeByEmail(mockEmail, mockCodeObject);
 
         expect(code, isA<Code>());
         expect(code.email, 'johndoe@example.com');
@@ -177,8 +160,7 @@ void main() {
           body: jsonEncode(mockCodeObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(codeService.updateCodeByEmail(mockEmail, mockCodeObject),
-            throwsException);
+        expect(codeService.updateCodeByEmail(mockEmail, mockCodeObject), throwsException);
 
         verify(mockClient.put(
           Uri.parse('$API_BASE_URL/$mockEmail'),
@@ -191,7 +173,7 @@ void main() {
     });
 
     group('deleteCodeByEmail', () {
-      test('deleteCodeByEmail is called once', () async {
+      test('is called once', () async {
         final mockClient = MockClient();
         codeService = CodeService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';

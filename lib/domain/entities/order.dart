@@ -4,14 +4,14 @@ import 'package:ui/domain/entities/ticket/ticket.dart';
 @immutable
 class Order {
   final int? id;
-  final int eventId;
-  final int quantity;
+  final int? eventId;
+  final int? quantity;
   final List<Ticket>? tickets;
 
   const Order({
     this.id,
-    required this.eventId,
-    required this.quantity,
+    this.eventId,
+    this.quantity,
     this.tickets,
   });
 

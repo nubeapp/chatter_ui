@@ -20,7 +20,7 @@ void main() {
 
   group('EventService', () {
     group('getEvents', () {
-      test('getEvents returns a list of events', () async {
+      test('returns a list of events', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
 
@@ -60,8 +60,10 @@ void main() {
 
         verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
       });
+    });
 
-      test('getEventsByOrganizationId returns a list of events', () async {
+    group('getEventsByOrganizationId', () {
+      test('returns a list of events by specified organization', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockOrganizationId = 1;
@@ -92,7 +94,7 @@ void main() {
         verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockOrganizationId'))).called(1);
       });
 
-      test('throws an exception if the http call completes with an error (ByOrganizationId)', () {
+      test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockOrganizationId = 1;
@@ -103,8 +105,10 @@ void main() {
 
         verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockOrganizationId'))).called(1);
       });
+    });
 
-      test('getEventsById returns an event', () async {
+    group('getEventById', () {
+      test('returns an event', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockId = 1;
@@ -126,7 +130,7 @@ void main() {
         verify(mockClient.get(Uri.parse('$API_BASE_URL/event/$mockId'))).called(1);
       });
 
-      test('throws an exception if the http call completes with an error (ById)', () {
+      test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockId = 1;
@@ -140,7 +144,7 @@ void main() {
     });
 
     group('createEvent', () {
-      test('createEvent creates new event', () async {
+      test('creates new event', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
 
@@ -197,7 +201,7 @@ void main() {
     });
 
     group('updateEvent', () {
-      test('updateEvent updates an event', () async {
+      test('updates an event', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockId = 1;
@@ -255,7 +259,7 @@ void main() {
     });
 
     group('deleteEventById', () {
-      test('deleteEventById is called once', () async {
+      test('is called once', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockId = 1;
@@ -289,7 +293,7 @@ void main() {
     });
 
     group('deleteEventByOrganizationId', () {
-      test('deleteEventByOrganizationId is called once', () async {
+      test('is called once', () async {
         final mockClient = MockClient();
         eventService = EventService(client: mockClient);
         const int mockOrganizationId = 1;

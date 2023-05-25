@@ -18,15 +18,14 @@ void main() {
   const String API_BASE_URL = 'http://0.0.0.0:8000/users';
 
   group('UserService', () {
-    group('Get Users', () {
-      test('getUsers returns a list of users', () async {
+    group('getUsers', () {
+      test('returns a list of users', () async {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
 
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
-        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer(
-            (_) async => http.Response(json.encode(mockUserListResponse), 200));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async => http.Response(json.encode(mockUserListResponse), 200));
 
         final users = await userService.getUsers();
 
@@ -50,8 +49,7 @@ void main() {
 
         // Use Mockito to return an unsuccessful response when it calls the
         // provided http.Client.
-        when(mockClient.get(Uri.parse(API_BASE_URL)))
-            .thenAnswer((_) async => http.Response('Not Found', 404));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async => http.Response('Not Found', 404));
 
         expect(userService.getUsers(), throwsException);
 
@@ -59,16 +57,15 @@ void main() {
       });
     });
 
-    group('Get Users By', () {
-      test('getUserByEmail returns a user', () async {
+    group('getUserByEmail', () {
+      test('returns a user by specified email', () async {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
 
         // Use Mockito to return a successful response when it calls the
         // provided http.Client.
-        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer(
-            (_) async => http.Response(json.encode(mockUserResponse), 200));
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer((_) async => http.Response(json.encode(mockUserResponse), 200));
 
         final user = await userService.getUserByEmail(mockEmail);
 
@@ -88,8 +85,7 @@ void main() {
 
         // Use Mockito to return an unsuccessful response when it calls the
         // provided http.Client.
-        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail')))
-            .thenAnswer((_) async => http.Response('Not Found', 404));
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEmail'))).thenAnswer((_) async => http.Response('Not Found', 404));
 
         expect(userService.getUserByEmail(mockEmail), throwsException);
 
@@ -97,8 +93,8 @@ void main() {
       });
     });
 
-    group('Create Users', () {
-      test('createUser returns a user', () async {
+    group('createUser', () {
+      test('create a user', () async {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
 
@@ -110,8 +106,7 @@ void main() {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode(mockUserObject.toJson()),
-        )).thenAnswer(
-            (_) async => http.Response(json.encode(mockUserResponse), 201));
+        )).thenAnswer((_) async => http.Response(json.encode(mockUserResponse), 201));
 
         final user = await userService.createUser(mockUserObject);
 
@@ -156,8 +151,8 @@ void main() {
       });
     });
 
-    group('Update Users', () {
-      test('updateUserByEmail returns a user', () async {
+    group('updateUserByEmail', () {
+      test('returns an updated user', () async {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';
@@ -170,11 +165,9 @@ void main() {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode(mockUserObject.toJson()),
-        )).thenAnswer(
-            (_) async => http.Response(json.encode(mockUserResponse), 200));
+        )).thenAnswer((_) async => http.Response(json.encode(mockUserResponse), 200));
 
-        final user =
-            await userService.updateUserByEmail(mockEmail, mockUserObject);
+        final user = await userService.updateUserByEmail(mockEmail, mockUserObject);
 
         expect(user, isA<User>());
         expect(user.id, equals(1));
@@ -206,8 +199,7 @@ void main() {
           body: jsonEncode(mockUserObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(userService.updateUserByEmail(mockEmail, mockUserObject),
-            throwsException);
+        expect(userService.updateUserByEmail(mockEmail, mockUserObject), throwsException);
 
         verify(mockClient.put(
           Uri.parse('$API_BASE_URL/$mockEmail'),
@@ -219,8 +211,8 @@ void main() {
       });
     });
 
-    group('Delete Users', () {
-      test('deleteUserByEmail is called once', () async {
+    group('deleteUserByEmail', () {
+      test('is called once', () async {
         final mockClient = MockClient();
         userService = UserService(client: mockClient);
         const String mockEmail = 'johndoe@example.com';

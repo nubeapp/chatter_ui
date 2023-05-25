@@ -13,30 +13,30 @@ void main() {
     late ApiService apiService;
     const String API_BASE_URL = 'http://0.0.0.0:8000/';
 
-    test('connectAPI returns "Server is running..."', () async {
-      final mockClient = MockClient();
-      apiService = ApiService(client: mockClient);
+    group('connectAPI', () {
+      test('returns "Server is running..."', () async {
+        final mockClient = MockClient();
+        apiService = ApiService(client: mockClient);
 
-      when(mockClient.get(Uri.parse(API_BASE_URL)))
-          .thenAnswer((_) async => http.Response('Server is running...', 200));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async => http.Response('Server is running...', 200));
 
-      String status = await apiService.connectAPI();
+        String status = await apiService.connectAPI();
 
-      expect(status, 'Server is running...');
+        expect(status, 'Server is running...');
 
-      verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
-    });
+        verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
+      });
 
-    test('throws an exception if the http call completes with an error', () {
-      final mockClient = MockClient();
-      apiService = ApiService(client: mockClient);
+      test('throws an exception if the http call completes with an error', () {
+        final mockClient = MockClient();
+        apiService = ApiService(client: mockClient);
 
-      when(mockClient.get(Uri.parse(API_BASE_URL)))
-          .thenAnswer((_) async => http.Response('Internal Server Error', 500));
+        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async => http.Response('Internal Server Error', 500));
 
-      expect(apiService.connectAPI(), throwsException);
+        expect(apiService.connectAPI(), throwsException);
 
-      verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
+        verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
+      });
     });
   });
 }

@@ -133,7 +133,7 @@ void main() {
     });
 
     group('createTickets', () {
-      test('returns list of tickets created', () async {
+      test('create a list of tickets', () async {
         final mockClient = MockClient();
         ticketService = TicketService(client: mockClient);
 

@@ -20,41 +20,35 @@ class EventService implements IEventService {
       return data.map((e) => Event.fromJson(e)).toList();
     } else {
       Logger.error('Failed to get events');
-      throw Exception(
-          'Failed to get events. Status code: ${response.statusCode}');
+      throw Exception('Failed to get events. Status code: ${response.statusCode}');
     }
   }
 
   @override
   Future<Event> getEventById(int eventId) async {
     Logger.debug('Requesting event with id $eventId...');
-    final response =
-        await client.get(Uri.parse('$API_BASE_URL/event/$eventId'));
+    final response = await client.get(Uri.parse('$API_BASE_URL/event/$eventId'));
     if (response.statusCode == 200) {
       Logger.info('Event with id $eventId was retrieved successfully!');
       final Map<String, dynamic> data = json.decode(response.body);
       return Event.fromJson(data);
     } else {
       Logger.error('Failed to get event with id $eventId');
-      throw Exception(
-          'Failed to get event by id. Status code: ${response.statusCode}');
+      throw Exception('Failed to get event by id. Status code: ${response.statusCode}');
     }
   }
 
   @override
   Future<List<Event>> getEventsByOrganizationId(int organizationId) async {
     Logger.debug('Requesting events by organization_id $organizationId...');
-    final response =
-        await client.get(Uri.parse('$API_BASE_URL/$organizationId'));
+    final response = await client.get(Uri.parse('$API_BASE_URL/$organizationId'));
     if (response.statusCode == 200) {
-      Logger.info(
-          'Events of organization_id $organizationId have been retrieved succesfully!');
+      Logger.info('Events of organization_id $organizationId have been retrieved succesfully!');
       final List<dynamic> data = json.decode(response.body);
       return data.map((e) => Event.fromJson(e)).toList();
     } else {
       Logger.error('Failed to get events by organizaion_id $organizationId');
-      throw Exception(
-          'Failed to get events by organization_id. Status code: ${response.statusCode}');
+      throw Exception('Failed to get events by organization_id. Status code: ${response.statusCode}');
     }
   }
 
@@ -72,8 +66,7 @@ class EventService implements IEventService {
       return Event.fromJson(data);
     } else {
       Logger.error('Failed to create the event');
-      throw Exception(
-          'Failed to create event. Status code: ${response.statusCode}');
+      throw Exception('Failed to create event. Status code: ${response.statusCode}');
     }
   }
 
@@ -91,20 +84,17 @@ class EventService implements IEventService {
       return Event.fromJson(data);
     } else {
       Logger.error('Failed to update event with id $eventId');
-      throw Exception(
-          'Failed to update event by id. Status code: ${response.statusCode}');
+      throw Exception('Failed to update event by id. Status code: ${response.statusCode}');
     }
   }
 
   @override
   Future<void> deleteEventById(int eventId) async {
     Logger.debug('Deleting event with id $eventId...');
-    final response =
-        await client.delete(Uri.parse('$API_BASE_URL/event/$eventId'));
+    final response = await client.delete(Uri.parse('$API_BASE_URL/event/$eventId'));
     if (response.statusCode != 204) {
       Logger.error('Failed to delete event with id $eventId');
-      throw Exception(
-          'Failed to delete event by id. Status code: ${response.statusCode}');
+      throw Exception('Failed to delete event by id. Status code: ${response.statusCode}');
     }
     Logger.info('Event with id $eventId has been deleted successfully!');
   }
@@ -112,16 +102,12 @@ class EventService implements IEventService {
   @override
   Future<void> deleteEventsByOrganizationId(int organizationId) async {
     Logger.debug('Deleting events by organization_id $organizationId...');
-    final response =
-        await client.delete(Uri.parse('$API_BASE_URL/$organizationId'));
+    final response = await client.delete(Uri.parse('$API_BASE_URL/$organizationId'));
     if (response.statusCode != 204) {
-      Logger.error(
-          'Failed to delete events by organization_id $organizationId');
-      throw Exception(
-          'Failed to delete events by organization_id. Status code: ${response.statusCode}');
+      Logger.error('Failed to delete events by organization_id $organizationId');
+      throw Exception('Failed to delete events by organization_id. Status code: ${response.statusCode}');
     }
-    Logger.info(
-        'Events by organization_id $organizationId have been deleted successfully!');
+    Logger.info('Events by organization_id $organizationId have been deleted successfully!');
   }
 
   @override
@@ -130,8 +116,7 @@ class EventService implements IEventService {
     final response = await client.delete(Uri.parse(API_BASE_URL));
     if (response.statusCode != 204) {
       Logger.error('Failed to delete all events');
-      throw Exception(
-          'Failed to delete all events. Status code: ${response.statusCode}');
+      throw Exception('Failed to delete all events. Status code: ${response.statusCode}');
     }
     Logger.info('All the events have been deleted successfully!');
   }

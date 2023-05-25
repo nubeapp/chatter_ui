@@ -177,3 +177,77 @@ final mockTicketResponse = {
     },
   }
 };
+
+/* 
+  +----------------------------+
+  |    Mock Order Responses    |
+  +----------------------------+
+*/
+
+final mockOrderListResponse = [
+  {
+    "id": 1,
+    "tickets": [
+      {
+        "id": 1,
+        "price": 80.0,
+        "reference": "001AUMS20230426ABAD",
+        "status": TicketStatus.SOLD.name,
+        "event_id": 1,
+        "event": {
+          "id": 1,
+          "title": "Bad Bunny Concert",
+          "date": "07-12-2023",
+          "time": "18:00",
+          "venue": "Wizink Center",
+          "organization_id": 1,
+          "organization": {
+            "id": 1,
+            "name": "UNIVERSAL MUSIC SPAIN",
+          },
+        }
+      },
+    ]
+  },
+  {
+    "id": 2,
+    "tickets": [
+      {
+        "id": 2,
+        "price": 60.0,
+        "reference": "001AUMS20230426AROS",
+        "status": TicketStatus.SOLD.name,
+        "event_id": 2,
+        "event": {
+          "id": 2,
+          "title": "Rosalia Concert",
+          "date": "14-12-2023",
+          "time": "18:00",
+          "venue": "Wizink Center",
+          "organization_id": 1,
+          "organization": {
+            "id": 1,
+            "name": "UNIVERSAL MUSIC SPAIN",
+          },
+        }
+      },
+    ]
+  },
+];
+
+/* 
+  +----------------------------+
+  | Mock Organization Responses|
+  +----------------------------+
+*/
+
+final mockOrganizationResponse = {
+  "id": 1,
+  "name": "UNIVERSAL MUSIC SPAIN",
+};
+
+const mockOrganizationListResponse = [
+  {"id": 1, "name": "UNIVERSAL MUSIC SPAIN"},
+  {"id": 2, "name": "WARNER BROS MUSIC"},
+  {"id": 3, "name": "SONY MUSIC ENTERTAINMENT"}
+];
