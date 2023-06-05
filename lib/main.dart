@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/application/services/dependency_injection/dependencies.dart';
-import 'package:ui/presentation/bloc/purchase_bloc.dart';
+import 'package:ui/presentation/bloc/event_bloc.dart';
 
 import 'presentation/pages/pages.dart';
 
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => PurchaseBloc(),
+          create: (_) => EventBloc(),
         )
       ],
       child: const MaterialApp(

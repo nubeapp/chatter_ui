@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PurchaseBloc extends Cubit<int> {
-  PurchaseBloc() : super(1);
+class EventBloc extends Cubit<int> {
+  EventBloc() : super(1);
 
   void decrementTicketCounter() {
     if (state > 1) {

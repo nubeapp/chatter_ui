@@ -5,13 +5,13 @@ import 'package:lorem_ipsum/lorem_ipsum.dart';
 import 'package:ui/domain/entities/event.dart';
 import 'package:ui/extensions/extensions.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
-import 'package:ui/presentation/bloc/purchase_bloc.dart';
+import 'package:ui/presentation/bloc/event_bloc.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/avatar.dart';
 import 'package:ui/presentation/widgets/button.dart';
 
-class PurchaseScreen extends StatelessWidget {
-  const PurchaseScreen({
+class EventScreen extends StatelessWidget {
+  const EventScreen({
     super.key,
     required this.event,
   });
@@ -20,65 +20,68 @@ class PurchaseScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BoxDecoration backgroundGradient() => const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF507188),
+              Color(0xFFABB7C1),
+            ],
+          ),
+        );
+    PreferredSizeWidget customAppBar() => AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(event.title),
+          actions: [
+            IconButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              padding: const EdgeInsets.only(right: 16),
+              icon: const Icon(
+                CupertinoIcons.ellipsis_vertical,
+                size: 26,
+              ),
+              onPressed: () => Logger.debug('todo more actions'),
+            ),
+          ],
+          leading: IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            padding: const EdgeInsets.only(left: 16),
+            icon: const Icon(
+              CupertinoIcons.left_chevron,
+              size: 26,
+            ),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        );
+
     return Container(
       decoration: backgroundGradient(),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: customAppBar(context),
+        appBar: customAppBar(),
         body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: PurchaseEventCard(url: 'https://picsum.photos/id/1/1024/1024', event: event),
+              child: EventCard(url: 'https://picsum.photos/id/1/1024/1024', event: event),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: PurchaseTicketCard(),
+              child: EventTicketCard(),
             ),
           ],
         ),
       ),
     );
   }
-
-  BoxDecoration backgroundGradient() => const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF507188),
-            Color(0xFFABB7C1),
-          ],
-        ),
-      );
-
-  PreferredSizeWidget customAppBar(BuildContext context) => AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(event.title),
-        actions: [
-          IconButton(
-            padding: const EdgeInsets.only(right: 16),
-            icon: const Icon(
-              CupertinoIcons.ellipsis_vertical,
-              size: 26,
-            ),
-            onPressed: () => Logger.debug('todo more actions'),
-          ),
-        ],
-        leading: IconButton(
-          padding: const EdgeInsets.only(left: 16),
-          icon: const Icon(
-            CupertinoIcons.left_chevron,
-            size: 26,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      );
 }
 
-class PurchaseEventCard extends StatelessWidget {
-  const PurchaseEventCard({
+class EventCard extends StatelessWidget {
+  const EventCard({
     Key? key,
     required this.url,
     required this.event,
@@ -265,11 +268,11 @@ class PurchaseEventCard extends StatelessWidget {
   }
 }
 
-class PurchaseShapeClipper extends CustomClipper<Path> {
+class EventShapeClipper extends CustomClipper<Path> {
   final double width;
   final double height;
 
-  PurchaseShapeClipper({required this.width, required this.height});
+  EventShapeClipper({required this.width, required this.height});
 
   @override
   Path getClip(Size size) {
@@ -321,7 +324,7 @@ class PurchaseShapeClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(PurchaseShapeClipper oldClipper) => true;
+  bool shouldReclip(EventShapeClipper oldClipper) => true;
 }
 
 class EventStack extends StatelessWidget {
@@ -337,7 +340,7 @@ class EventStack extends StatelessWidget {
     return Stack(
       children: [
         ClipPath(
-          clipper: PurchaseShapeClipper(width: context.w, height: context.h),
+          clipper: EventShapeClipper(width: context.w, height: context.h),
           child: Image.network(
             url,
             fit: BoxFit.cover,
@@ -386,14 +389,14 @@ class EventStack extends StatelessWidget {
   }
 }
 
-class PurchaseTicketCard extends StatelessWidget {
-  PurchaseTicketCard({Key? key}) : super(key: key);
+class EventTicketCard extends StatelessWidget {
+  EventTicketCard({Key? key}) : super(key: key);
 
-  late PurchaseBloc _purchaseBloc;
+  late EventBloc _eventBloc;
 
   @override
   Widget build(BuildContext context) {
-    _purchaseBloc = BlocProvider.of<PurchaseBloc>(context);
+    _eventBloc = BlocProvider.of<EventBloc>(context);
     return Container(
       width: context.w,
       height: context.h * 0.12,
@@ -405,7 +408,7 @@ class PurchaseTicketCard extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
-            child: BlocBuilder<PurchaseBloc, int>(
+            child: BlocBuilder<EventBloc, int>(
               builder: (context, ticketCounter) => Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -454,7 +457,7 @@ class PurchaseTicketCard extends StatelessWidget {
           Button(
             text: 'Buy',
             width: context.w * 0.4,
-            onPressed: () => Logger.debug('buy ${_purchaseBloc.state} tickets'),
+            onPressed: () => Logger.debug('buy ${_eventBloc.state} tickets'),
           ),
         ],
       ),
@@ -477,10 +480,10 @@ class PurchaseTicketCard extends StatelessWidget {
   }
 
   void _decrementTicketCounter() {
-    _purchaseBloc.decrementTicketCounter();
+    _eventBloc.decrementTicketCounter();
   }
 
   void _incrementTicketCounter() {
-    _purchaseBloc.incrementTicketCounter();
+    _eventBloc.incrementTicketCounter();
   }
 }

@@ -70,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
                     itemBuilder: (context, index) {
                       // var random = Random();
                       // int id = random.nextInt(100) + 1;
-                      return EventCard(
+                      return CarouselEventCard(
                         url: 'https://picsum.photos/id/1/500/500',
                         event: fakeEvents[index],
                       );
@@ -102,6 +102,8 @@ class _MainScreenState extends State<MainScreen> {
         ),
         actions: [
           IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             padding: const EdgeInsets.only(right: 16),
             icon: const Icon(
               CupertinoIcons.tickets,
@@ -111,6 +113,8 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
         leading: IconButton(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
           padding: const EdgeInsets.only(left: 16),
           icon: const Icon(
             CupertinoIcons.bell,
@@ -132,8 +136,8 @@ class _MainScreenState extends State<MainScreen> {
       );
 }
 
-class EventCard extends StatelessWidget {
-  const EventCard({
+class CarouselEventCard extends StatelessWidget {
+  const CarouselEventCard({
     Key? key,
     required this.url,
     required this.event,
@@ -145,7 +149,7 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => PurchaseScreen(event: event))),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventScreen(event: event))),
       child: Container(
         width: context.w * 0.7 - 24,
         height: context.h * 0.28,
@@ -158,7 +162,7 @@ class EventCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: ClipPath(
-                clipper: ShapeClipper(width: context.w, height: context.h),
+                clipper: CarouselEventShapeClipper(width: context.w, height: context.h),
                 child: Image.network(
                   url,
                   fit: BoxFit.cover,
@@ -291,11 +295,11 @@ class EventCard extends StatelessWidget {
   }
 }
 
-class ShapeClipper extends CustomClipper<Path> {
+class CarouselEventShapeClipper extends CustomClipper<Path> {
   final double width;
   final double height;
 
-  ShapeClipper({required this.width, required this.height});
+  CarouselEventShapeClipper({required this.width, required this.height});
 
   @override
   Path getClip(Size size) {
@@ -347,5 +351,5 @@ class ShapeClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(ShapeClipper oldClipper) => true;
+  bool shouldReclip(CarouselEventShapeClipper oldClipper) => true;
 }
