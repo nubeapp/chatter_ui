@@ -40,8 +40,7 @@ class AppTheme {
         brightness: Brightness.light,
         colorScheme: lightBase.colorScheme.copyWith(secondary: accentColor),
         visualDensity: visualDensity,
-        textTheme:
-            GoogleFonts.mulishTextTheme().apply(bodyColor: AppColors.textDark),
+        textTheme: GoogleFonts.mulishTextTheme().apply(bodyColor: AppColors.textDark),
         backgroundColor: _LightColors.background,
         appBarTheme: lightBase.appBarTheme.copyWith(
           iconTheme: lightBase.iconTheme,
@@ -57,9 +56,7 @@ class AppTheme {
         ),
         scaffoldBackgroundColor: _LightColors.background,
         elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: AppColors.secondary),
+          style: ElevatedButton.styleFrom(foregroundColor: Colors.white, backgroundColor: AppColors.secondary),
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
@@ -108,8 +105,7 @@ class AppTheme {
         brightness: Brightness.dark,
         colorScheme: darkBase.colorScheme.copyWith(secondary: accentColor),
         visualDensity: visualDensity,
-        textTheme:
-            GoogleFonts.interTextTheme().apply(bodyColor: AppColors.textLigth),
+        textTheme: GoogleFonts.interTextTheme().apply(bodyColor: AppColors.textLigth),
         backgroundColor: _DarkColors.background,
         appBarTheme: darkBase.appBarTheme.copyWith(
           backgroundColor: Colors.transparent,

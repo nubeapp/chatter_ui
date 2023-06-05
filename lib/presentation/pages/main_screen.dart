@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ui/domain/entities/event.dart';
-import 'package:ui/presentation/widgets/event_tile.dart';
+import 'package:ui/infrastructure/utilities/helpers.dart';
+import 'package:ui/presentation/pages/pages.dart';
+import 'package:ui/presentation/styles/logger.dart';
+import 'package:ui/extensions/extensions.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -13,132 +16,336 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final fakeEvents = [
+    Event(id: 1, title: 'Bad Bunny Tour', date: DateFormat("dd-MM-yyyy").parse('07-12-2023'), time: '18.00', venue: 'Wizink Center', organizationId: 1),
+    Event(id: 2, title: 'Lola Indigo Tour', date: DateFormat("dd-MM-yyyy").parse('14-12-2023'), time: '18.00', venue: 'Wizink Center', organizationId: 1),
     Event(
-      title: 'Bad Bunny Concert',
-      date: DateFormat("dd-MM-yyyy").parse('07-12-2023'),
-      time: '18:00',
-      venue: 'Wizink Center',
-      ticketLimit: 1000,
-      organizationId: 1,
-    ),
-    Event(
-      title: 'Rosalia Concert',
-      date: DateFormat("dd-MM-yyyy").parse('14-12-2023'),
-      time: '18:00',
-      venue: 'Wizink Center',
-      ticketLimit: 1000,
-      organizationId: 1,
-    ),
-    Event(
-      title: 'Don Omar Concert',
-      date: DateFormat("dd-MM-yyyy").parse('21-12-2023'),
-      time: '18:00',
-      venue: 'Wizink Center',
-      ticketLimit: 1000,
-      organizationId: 1,
-    ),
-  ];
-
-  final fakeImages = [
-    'badbunny.png',
-    'rosalia.png',
-    'donomar.png',
+        id: 3,
+        title: 'Antonio Díaz: El Mago Pop',
+        date: DateFormat("dd-MM-yyyy").parse('14-12-2023'),
+        time: '20.00',
+        venue: 'Teatro Apollo',
+        organizationId: 2),
+    Event(id: 4, title: 'Blake en concierto', date: DateFormat("dd-MM-yyyy").parse('14-02-2023'), time: '21.00', venue: 'Sala8', organizationId: 3),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Events'),
-        actions: [
-          IconButton(
-            padding: const EdgeInsets.only(right: 16),
-            icon: const Icon(CupertinoIcons.chat_bubble),
-            onPressed: () {},
-            // onPressed: () => Navigator.push(context,
-            //     MaterialPageRoute(builder: (context) => const UsersScreen())),
-          ),
-        ],
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   backgroundColor: Theme.of(context).bottomAppBarColor,
-      //   onPressed: () => _showDialog(context),
-      //   child: const Icon(
-      //     CupertinoIcons.add,
-      //     color: Colors.white,
-      //   ),
-      // ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-        child: ListView.separated(
-          itemCount: 3,
-          separatorBuilder: (context, index) => const SizedBox(
-            height: 20,
-          ),
-          itemBuilder: (context, index) => Center(
-            child: EventTile(
-              event: fakeEvents[index],
-              image: fakeImages[index],
-            ),
+    return Container(
+      decoration: backgroundGradient(),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: customAppBar(),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Plan your best event',
+                style: TextStyle(
+                  fontSize: 32,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w100,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: context.h * 0.005, bottom: context.h * 0.03),
+                child: const Text(
+                  'Explore the best events around you',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: context.h * 0.28,
+                child: ListView.separated(
+                    separatorBuilder: (context, index) => const SizedBox(
+                          width: 24,
+                        ),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: fakeEvents.length,
+                    itemBuilder: (context, index) {
+                      // var random = Random();
+                      // int id = random.nextInt(100) + 1;
+                      return EventCard(
+                        url: 'https://picsum.photos/id/1/500/500',
+                        event: fakeEvents[index],
+                      );
+                    }),
+              ),
+            ],
           ),
         ),
       ),
-      // body: FutureBuilder<List<Event>>(
-      //   // future: _events,
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.done) {
-      //       if (snapshot.data!.isNotEmpty) {
-      //         final users = snapshot.data!;
-      //         return ListView.builder(
-      //           itemCount: users.length,
-      //           itemBuilder: (context, index) {
-      //             final Event event = users[index];
-      //             return EventTile(event: event);
-      //           },
-      //         );
-      //       } else if (snapshot.hasError) {
-      //         Logger.error('Error loading events: ${snapshot.error}');
-      //         return Center(
-      //           child: Text('Error loading events: ${snapshot.error}'),
-      //         );
-      //       } else {
-      //         Logger.warning('No events found');
-      //         return const Center(
-      //           child: Text(
-      //             'No events found',
-      //           ),
-      //         );
-      //       }
-      //     } else {
-      //       return const Center(
-      //         child: CircularProgressIndicator(),
-      //       );
-      //     }
-      //   },
-      // ),
     );
   }
 
-  TextEditingController titleController = TextEditingController();
+  PreferredSizeWidget customAppBar() => AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(CupertinoIcons.globe),
+            SizedBox(
+              width: context.w * 0.02,
+            ),
+            GestureDetector(
+              onTap: () => Logger.debug('todo location'),
+              behavior: HitTestBehavior.opaque,
+              child: const Text('Madrid, Spain'),
+            ),
+          ],
+        ),
+        actions: [
+          IconButton(
+            padding: const EdgeInsets.only(right: 16),
+            icon: const Icon(
+              CupertinoIcons.tickets,
+              size: 26,
+            ),
+            onPressed: () => Logger.debug('todo tickets'),
+          ),
+        ],
+        leading: IconButton(
+          padding: const EdgeInsets.only(left: 16),
+          icon: const Icon(
+            CupertinoIcons.bell,
+            size: 26,
+          ),
+          onPressed: () => Logger.debug('todo notifications'),
+        ),
+      );
 
-  // void _showDialog(BuildContext context) {
-  //   showDialog<void>(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('New event...'),
-  //         content: InputField(
-  //           hintText: 'Event title',
-  //           controller: titleController,
-  //         ),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             onPressed: () {},
-  //             child: const Text('Add'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  BoxDecoration backgroundGradient() => const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF507188),
+            Color(0xFFABB7C1),
+          ],
+        ),
+      );
+}
+
+class EventCard extends StatelessWidget {
+  const EventCard({
+    Key? key,
+    required this.url,
+    required this.event,
+  }) : super(key: key);
+
+  final String url;
+  final Event event;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => PurchaseScreen(event: event))),
+      child: Container(
+        width: context.w * 0.7 - 24,
+        height: context.h * 0.28,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20), topLeft: Radius.circular(20)),
+          color: Colors.white,
+        ),
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: ClipPath(
+                clipper: ShapeClipper(width: context.w, height: context.h),
+                child: Image.network(
+                  url,
+                  fit: BoxFit.cover,
+                  width: context.w,
+                  height: context.h,
+                ),
+              ),
+            ),
+            Positioned(
+              top: context.h * 0.22,
+              right: 0,
+              left: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      flex: 10,
+                      child: Text(
+                        event.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                          letterSpacing: 0.5,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 4,
+                      child: Text(
+                        event.time,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              top: context.h * 0.25,
+              right: 0,
+              left: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Flexible(
+                      flex: 10,
+                      child: Text(
+                        'A world tour event!',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black54,
+                          letterSpacing: 0.5,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 6,
+                      child: Text(
+                        Helpers.formatDate(event.date.toString()),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black54,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Positioned(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: context.w * 0.19,
+                  height: context.h * 0.0355,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.05),
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(18)),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Music',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: context.h * 0.155,
+              right: 0,
+              child: GestureDetector(
+                onTap: () => Logger.debug('todo favourite'),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Container(
+                    width: context.w * 0.115,
+                    height: context.h * 0.055,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.05),
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(18)),
+                    ),
+                    child: const Icon(CupertinoIcons.heart),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ShapeClipper extends CustomClipper<Path> {
+  final double width;
+  final double height;
+
+  ShapeClipper({required this.width, required this.height});
+
+  @override
+  Path getClip(Size size) {
+    final imagePath = Path();
+    final favouritePath = Path();
+    final tagPath = Path();
+
+    final image = imagePath
+      ..addRRect(
+        RRect.fromLTRBAndCorners(
+          0,
+          0,
+          width * 0.6,
+          height * 0.2,
+          topRight: const Radius.circular(15),
+          bottomRight: const Radius.circular(20),
+          topLeft: const Radius.circular(20),
+        ),
+      );
+
+    final favourite = favouritePath
+      ..addRRect(
+        RRect.fromLTRBAndCorners(
+          width * 0.47,
+          height * 0.14,
+          width * 0.6,
+          height * 0.3,
+          topLeft: const Radius.circular(20),
+        ),
+      )
+      ..close();
+
+    final tag = tagPath
+      ..addRRect(
+        RRect.fromLTRBAndCorners(
+          0,
+          0,
+          width * 0.2,
+          height * 0.04,
+          topLeft: const Radius.circular(20),
+          bottomRight: const Radius.circular(20),
+        ),
+      )
+      ..close();
+
+    final newPath = Path.combine(PathOperation.difference, Path.combine(PathOperation.difference, image, favourite), tag);
+
+    return newPath;
+  }
+
+  @override
+  bool shouldReclip(ShapeClipper oldClipper) => true;
 }

@@ -1,5 +1,7 @@
 import 'dart:math' show Random;
 
+import 'package:intl/intl.dart';
+
 abstract class Helpers {
   static final random = Random();
 
@@ -23,44 +25,16 @@ abstract class Helpers {
 
   static String formatDate(String dateTimeString) {
     DateTime dateTime = DateTime.parse(dateTimeString);
-    String day = dateTime.day.toString();
-    String month = _getMonthName(dateTime.month);
-    String year = dateTime.year.toString();
-    // String hour = dateTime.hour.toString().padLeft(2, '0');
-    // String minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$day $month $year';
+
+    String dayOfWeek = DateFormat('EEE').format(dateTime);
+    String dayOfMonth = DateFormat('d').format(dateTime);
+    String month = _getAbbreviatedMonthName(dateTime.month);
+
+    return '$dayOfWeek, $dayOfMonth $month';
   }
 
-  /// Private functions
-
-  static String _getMonthName(int monthNumber) {
-    switch (monthNumber) {
-      case 1:
-        return 'jan';
-      case 2:
-        return 'feb';
-      case 3:
-        return 'mar';
-      case 4:
-        return 'apr';
-      case 5:
-        return 'may';
-      case 6:
-        return 'jun';
-      case 7:
-        return 'jul';
-      case 8:
-        return 'aug';
-      case 9:
-        return 'sep';
-      case 10:
-        return 'oct';
-      case 11:
-        return 'nov';
-      case 12:
-        return 'dec';
-      default:
-        return '';
-    }
+  static String _getAbbreviatedMonthName(int month) {
+    List<String> months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month];
   }
 }
