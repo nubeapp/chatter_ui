@@ -5,7 +5,7 @@ import 'package:lorem_ipsum/lorem_ipsum.dart';
 import 'package:ui/domain/entities/event.dart';
 import 'package:ui/extensions/extensions.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
-import 'package:ui/presentation/bloc/event_bloc.dart';
+import 'package:ui/presentation/bloc/ticket_counter_bloc.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/avatar.dart';
 import 'package:ui/presentation/widgets/button.dart';
@@ -54,7 +54,10 @@ class EventScreen extends StatelessWidget {
               CupertinoIcons.left_chevron,
               size: 26,
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              BlocProvider.of<TicketCounterBloc>(context).resetTicketCounter();
+              Navigator.of(context).pop();
+            },
           ),
         );
 
@@ -71,7 +74,7 @@ class EventScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: EventTicketCard(),
+              child: EventTicketCounterCard(),
             ),
           ],
         ),
@@ -389,82 +392,98 @@ class EventStack extends StatelessWidget {
   }
 }
 
-class EventTicketCard extends StatelessWidget {
-  EventTicketCard({Key? key}) : super(key: key);
-
-  late EventBloc _eventBloc;
+class EventTicketCounterCard extends StatelessWidget {
+  const EventTicketCounterCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    _eventBloc = BlocProvider.of<EventBloc>(context);
-    return Container(
-      width: context.w,
-      height: context.h * 0.12,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20)),
-        color: Colors.white,
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
-            child: BlocBuilder<EventBloc, int>(
-              builder: (context, ticketCounter) => Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const Text(
-                    'General - ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                      height: 2,
-                    ),
-                  ),
-                  const Text(
-                    '80 €',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                      height: 2,
-                    ),
-                  ),
-                  SizedBox(
-                    width: context.w * 0.4,
-                  ),
-                  IconButton(
-                    onPressed: _decrementTicketCounter,
-                    icon: const Icon(CupertinoIcons.minus_circle_fill),
-                    padding: const EdgeInsets.only(top: 8, right: 10),
-                    constraints: const BoxConstraints(),
-                    iconSize: 18,
-                    color: ticketCounter == 1 ? Colors.black26 : Colors.black87,
-                  ),
-                  _counterText(ticketCounter),
-                  IconButton(
-                    onPressed: _incrementTicketCounter,
-                    icon: const Icon(CupertinoIcons.add_circled_solid),
-                    padding: const EdgeInsets.only(top: 8, left: 10),
-                    constraints: const BoxConstraints(),
-                    iconSize: 18,
-                    color: ticketCounter == 4 ? Colors.black26 : Colors.black87,
-                  ),
-                ],
+    return BlocBuilder<TicketCounterBloc, TicketCounterState>(
+      builder: (context, state) {
+        final ticketCounterBloc = BlocProvider.of<TicketCounterBloc>(context);
+        return Container(
+          width: context.w,
+          height: context.h * 0.12,
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20)),
+            color: Colors.white,
+          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
+                child: _buildContent(context, state),
               ),
-            ),
+              Button(
+                text: 'Buy',
+                width: context.w * 0.4,
+                onPressed: () => Logger.debug('buy ${ticketCounterBloc.ticketCounter} tickets'),
+              ),
+            ],
           ),
-          Button(
-            text: 'Buy',
-            width: context.w * 0.4,
-            onPressed: () => Logger.debug('buy ${_eventBloc.state} tickets'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  SizedBox _counterText(int ticketCounter) {
+  Widget _buildContent(BuildContext context, TicketCounterState state) {
+    if (state is TicketCounterUpdatedState) {
+      return _buildContentRow(context, state.ticketCounter);
+    } else {
+      return _buildContentRow(context, 1); // Default initial state
+    }
+  }
+
+  Widget _buildContentRow(BuildContext context, int ticketCounter) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'General - ',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+            height: 2,
+          ),
+        ),
+        const Text(
+          '80 €',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+            height: 2,
+          ),
+        ),
+        SizedBox(
+          width: context.w * 0.4,
+        ),
+        IconButton(
+          onPressed: () {
+            context.read<TicketCounterBloc>().decrementTicketCounter();
+          },
+          icon: const Icon(CupertinoIcons.minus_circle_fill),
+          padding: const EdgeInsets.only(top: 8, right: 10),
+          constraints: const BoxConstraints(),
+          iconSize: 18,
+          color: ticketCounter == 1 ? Colors.black26 : Colors.black87,
+        ),
+        _ticketCounterText(ticketCounter),
+        IconButton(
+          onPressed: () {
+            context.read<TicketCounterBloc>().incrementTicketCounter();
+          },
+          icon: const Icon(CupertinoIcons.add_circled_solid),
+          padding: const EdgeInsets.only(top: 8, left: 10),
+          constraints: const BoxConstraints(),
+          iconSize: 18,
+          color: ticketCounter == 4 ? Colors.black26 : Colors.black87,
+        ),
+      ],
+    );
+  }
+
+  SizedBox _ticketCounterText(int ticketCounter) {
     return SizedBox(
       width: 12,
       child: Text(
@@ -477,13 +496,5 @@ class EventTicketCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _decrementTicketCounter() {
-    _eventBloc.decrementTicketCounter();
-  }
-
-  void _incrementTicketCounter() {
-    _eventBloc.incrementTicketCounter();
   }
 }

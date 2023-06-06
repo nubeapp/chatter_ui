@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/application/services/dependency_injection/dependencies.dart';
-import 'package:ui/presentation/bloc/event_bloc.dart';
+import 'package:ui/presentation/bloc/ticket_counter_bloc.dart';
 
 import 'presentation/pages/pages.dart';
 
@@ -37,11 +37,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => EventBloc(),
+        BlocProvider<TicketCounterBloc>(
+          create: (context) => TicketCounterBloc(),
         )
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
         // theme: appTheme.light,
         // darkTheme: appTheme.dark,

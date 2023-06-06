@@ -7,14 +7,9 @@ import 'package:ui/presentation/pages/pages.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/extensions/extensions.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+class MainScreen extends StatelessWidget {
+  MainScreen({Key? key}) : super(key: key);
 
-  @override
-  State<MainScreen> createState() => _MainScreenState();
-}
-
-class _MainScreenState extends State<MainScreen> {
   final fakeEvents = [
     Event(id: 1, title: 'Bad Bunny Tour', date: DateFormat("dd-MM-yyyy").parse('07-12-2023'), time: '18.00', venue: 'Wizink Center', organizationId: 1),
     Event(id: 2, title: 'Lola Indigo Tour', date: DateFormat("dd-MM-yyyy").parse('14-12-2023'), time: '18.00', venue: 'Wizink Center', organizationId: 1),
@@ -30,6 +25,58 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    PreferredSizeWidget customAppBar() => AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(CupertinoIcons.globe),
+              SizedBox(
+                width: context.w * 0.02,
+              ),
+              GestureDetector(
+                onTap: () => Logger.debug('todo location'),
+                behavior: HitTestBehavior.opaque,
+                child: const Text('Madrid, Spain'),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              padding: const EdgeInsets.only(right: 16),
+              icon: const Icon(
+                CupertinoIcons.tickets,
+                size: 26,
+              ),
+              onPressed: () => Logger.debug('todo tickets'),
+            ),
+          ],
+          leading: IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            padding: const EdgeInsets.only(left: 16),
+            icon: const Icon(
+              CupertinoIcons.bell,
+              size: 26,
+            ),
+            onPressed: () => Logger.debug('todo notifications'),
+          ),
+        );
+
+    BoxDecoration backgroundGradient() => const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF507188),
+              Color(0xFFABB7C1),
+            ],
+          ),
+        );
+
     return Container(
       decoration: backgroundGradient(),
       child: Scaffold(
@@ -82,58 +129,6 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
-
-  PreferredSizeWidget customAppBar() => AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(CupertinoIcons.globe),
-            SizedBox(
-              width: context.w * 0.02,
-            ),
-            GestureDetector(
-              onTap: () => Logger.debug('todo location'),
-              behavior: HitTestBehavior.opaque,
-              child: const Text('Madrid, Spain'),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            padding: const EdgeInsets.only(right: 16),
-            icon: const Icon(
-              CupertinoIcons.tickets,
-              size: 26,
-            ),
-            onPressed: () => Logger.debug('todo tickets'),
-          ),
-        ],
-        leading: IconButton(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          padding: const EdgeInsets.only(left: 16),
-          icon: const Icon(
-            CupertinoIcons.bell,
-            size: 26,
-          ),
-          onPressed: () => Logger.debug('todo notifications'),
-        ),
-      );
-
-  BoxDecoration backgroundGradient() => const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF507188),
-            Color(0xFFABB7C1),
-          ],
-        ),
-      );
 }
 
 class CarouselEventCard extends StatelessWidget {
@@ -162,7 +157,7 @@ class CarouselEventCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8),
               child: ClipPath(
-                clipper: CarouselEventShapeClipper(width: context.w, height: context.h),
+                clipper: CarouselEventCardShapeClipper(width: context.w, height: context.h),
                 child: Image.network(
                   url,
                   fit: BoxFit.cover,
@@ -295,11 +290,11 @@ class CarouselEventCard extends StatelessWidget {
   }
 }
 
-class CarouselEventShapeClipper extends CustomClipper<Path> {
+class CarouselEventCardShapeClipper extends CustomClipper<Path> {
   final double width;
   final double height;
 
-  CarouselEventShapeClipper({required this.width, required this.height});
+  CarouselEventCardShapeClipper({required this.width, required this.height});
 
   @override
   Path getClip(Size size) {
@@ -351,5 +346,5 @@ class CarouselEventShapeClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(CarouselEventShapeClipper oldClipper) => true;
+  bool shouldReclip(CarouselEventCardShapeClipper oldClipper) => true;
 }
