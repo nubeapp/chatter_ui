@@ -5,7 +5,8 @@ import 'package:lorem_ipsum/lorem_ipsum.dart';
 import 'package:ui/domain/entities/event.dart';
 import 'package:ui/extensions/extensions.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
-import 'package:ui/presentation/bloc/ticket_counter_bloc.dart';
+import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_bloc.dart';
+import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_state.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/avatar.dart';
 import 'package:ui/presentation/widgets/button.dart';
@@ -14,9 +15,11 @@ class EventScreen extends StatelessWidget {
   const EventScreen({
     super.key,
     required this.event,
+    required this.url,
   });
 
   final Event event;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +73,10 @@ class EventScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: EventCard(url: 'https://picsum.photos/id/1/1024/1024', event: event),
+              child: EventCard(url: url, event: event),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: EventTicketCounterCard(),
             ),
           ],
@@ -104,166 +107,177 @@ class EventCard extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      flex: 10,
-                      child: Text(
-                        event.title,
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                          letterSpacing: 0.5,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 4,
-                      child: Text(
-                        event.time,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black87,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Flexible(
-                      flex: 10,
-                      child: Text(
-                        'A world tour event!',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black45,
-                          letterSpacing: 0.5,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 6,
-                      child: Text(
-                        Helpers.formatDate(event.date.toString()),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black45,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Flexible(
-                        flex: 1,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 12),
-                          child: Icon(
-                            CupertinoIcons.location_solid,
-                            color: Colors.black45,
-                            size: 16,
+        child: ShaderMask(
+          shaderCallback: (Rect rect) {
+            return const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.transparent, Colors.white],
+              stops: [0.92, 1.0], // 10% purple, 80% transparent, 10% purple
+            ).createShader(rect);
+          },
+          blendMode: BlendMode.dstOut,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        flex: 10,
+                        child: Text(
+                          event.title,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                            letterSpacing: 0.5,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        )),
-                    Flexible(
-                      flex: 10,
-                      child: Text(
-                        event.venue,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black45,
-                          letterSpacing: 1,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: EventStack(url: url),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Avatar.medium(
-                      url: Helpers.randomPictureUrl(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            'UNIVERSAL MUSIC SPAIN',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black87,
-                              height: 2,
-                            ),
+                      Flexible(
+                        flex: 4,
+                        child: Text(
+                          event.time,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                            letterSpacing: 1,
                           ),
-                          Text(
-                            '473 Followers',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black45,
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 24),
-                      child: Button(
-                        text: 'Follow',
-                        width: context.w * 0.2,
-                        onPressed: () => Logger.debug('follow'),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: SizedBox(
-                  width: context.w * 0.9 - 12,
-                  child: Text(
-                    loremIpsum(words: 100),
-                    textAlign: TextAlign.justify,
-                    style: const TextStyle(color: Colors.black45),
+                    ],
                   ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Flexible(
+                        flex: 10,
+                        child: Text(
+                          'A world tour event!',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black45,
+                            letterSpacing: 0.5,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        flex: 6,
+                        child: Text(
+                          Helpers.formatDate(event.date.toString()),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black45,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Flexible(
+                          flex: 1,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12),
+                            child: Icon(
+                              CupertinoIcons.location_solid,
+                              color: Colors.black45,
+                              size: 16,
+                            ),
+                          )),
+                      Flexible(
+                        flex: 10,
+                        child: Text(
+                          event.venue,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black45,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: EventStack(url: url),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Avatar.medium(
+                        url: Helpers.randomPictureUrl(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'UNIVERSAL MUSIC SPAIN',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black87,
+                                height: 2,
+                              ),
+                            ),
+                            Text(
+                              '473 Followers',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 24),
+                        child: Button(
+                          text: 'Follow',
+                          width: context.w * 0.2,
+                          onPressed: () => Logger.debug('follow'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 12),
+                  child: SizedBox(
+                    width: context.w * 0.9 - 12,
+                    child: Text(
+                      loremIpsum(words: 100),
+                      textAlign: TextAlign.justify,
+                      style: const TextStyle(color: Colors.black45),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

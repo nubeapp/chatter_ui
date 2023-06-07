@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:ui/domain/entities/event.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
 import 'package:ui/presentation/pages/pages.dart';
+import 'package:ui/presentation/pages/ticket_screen.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/extensions/extensions.dart';
 
@@ -51,7 +52,7 @@ class MainScreen extends StatelessWidget {
                 CupertinoIcons.tickets,
                 size: 26,
               ),
-              onPressed: () => Logger.debug('todo tickets'),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const TicketScreen())),
             ),
           ],
           leading: IconButton(
@@ -118,7 +119,7 @@ class MainScreen extends StatelessWidget {
                       // var random = Random();
                       // int id = random.nextInt(100) + 1;
                       return CarouselEventCard(
-                        url: 'https://picsum.photos/id/1/500/500',
+                        url: 'https://picsum.photos/id/${index + 10}/1024/1024',
                         event: fakeEvents[index],
                       );
                     }),
@@ -144,7 +145,11 @@ class CarouselEventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => EventScreen(event: event))),
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => EventScreen(
+                event: event,
+                url: url,
+              ))),
       child: Container(
         width: context.w * 0.7 - 24,
         height: context.h * 0.28,
