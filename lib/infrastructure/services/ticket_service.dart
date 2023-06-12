@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ui/domain/entities/order.dart';
 import 'package:ui/domain/entities/ticket/create_ticket.dart';
 import 'package:ui/domain/entities/ticket/ticket.dart';
+import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:ui/presentation/styles/logger.dart';
@@ -36,15 +37,18 @@ class TicketService implements ITicketService {
 
 // It returns all the tickets that have a user for every event
   @override
-  Future<List<Ticket>> getTicketsByUserId() async {
+  Future<List<TicketSummary>> getTicketsByUserId(String token) async {
     try {
       Logger.debug('Requesting tickets...');
-      final response = await client.get(Uri.parse(API_BASE_URL));
+      final response = await client.get(Uri.parse(API_BASE_URL), headers: {'Authorization': 'Bearer $token'});
 
       if (response.statusCode == 200) {
+        final List<dynamic> jsonList = json.decode(response.body);
         Logger.info('Tickets have been retrieved successfully!');
-        final jsonList = jsonDecode(response.body) as List<dynamic>;
-        return jsonList.map((json) => Ticket.fromJson(json)).toList();
+        return jsonList.map((json) => TicketSummary.fromJson(json)).toList();
+      } else if (response.statusCode == 401) {
+        Logger.warning('Unauthorize operation');
+        throw Exception('Unauthorize operation');
       } else {
         Logger.error('Failed to get tickets');
         throw Exception('Failed to get tickets');

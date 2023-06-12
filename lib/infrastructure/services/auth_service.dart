@@ -13,13 +13,13 @@ class AuthService implements IAuthService {
   @override
   Future<Token> login(Credentials credentials) async {
     try {
-      Logger.debug('Trying to log in user ${credentials.email}...');
+      Logger.debug('Trying to log in user ${credentials.username}...');
       final response = await client.post(
         Uri.parse(API_BASE_URL),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
+        body: {
+          'username': credentials.username,
+          'password': credentials.password,
         },
-        body: json.encode(credentials.toJson()),
       );
 
       if (response.statusCode == 200) {

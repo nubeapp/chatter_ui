@@ -18,7 +18,7 @@ final mockEventObject = Event(
 );
 
 const mockCredentialsObject = Credentials(
-  email: 'johndoe@example.com',
+  username: 'johndoe@example.com',
   password: 'johndoe',
 );
 

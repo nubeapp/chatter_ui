@@ -1,28 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:get_it/get_it.dart';
+import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/event.dart';
+import 'package:ui/domain/services/auth_service_interface.dart';
+import 'package:ui/domain/services/event_service_interface.dart';
+import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
+import 'package:ui/main.dart';
 import 'package:ui/presentation/pages/pages.dart';
 import 'package:ui/presentation/pages/ticket_screen.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/extensions/extensions.dart';
 
-class MainScreen extends StatelessWidget {
-  MainScreen({Key? key}) : super(key: key);
+class MainScreen extends StatefulWidget {
+  const MainScreen({Key? key}) : super(key: key);
 
-  final fakeEvents = [
-    Event(id: 1, title: 'Bad Bunny Tour', date: DateFormat("dd-MM-yyyy").parse('07-12-2023'), time: '18.00', venue: 'Wizink Center', organizationId: 1),
-    Event(id: 2, title: 'Lola Indigo Tour', date: DateFormat("dd-MM-yyyy").parse('14-12-2023'), time: '18.00', venue: 'Wizink Center', organizationId: 1),
-    Event(
-        id: 3,
-        title: 'Antonio Díaz: El Mago Pop',
-        date: DateFormat("dd-MM-yyyy").parse('14-12-2023'),
-        time: '20.00',
-        venue: 'Teatro Apollo',
-        organizationId: 2),
-    Event(id: 4, title: 'Blake en concierto', date: DateFormat("dd-MM-yyyy").parse('14-02-2023'), time: '21.00', venue: 'Sala8', organizationId: 3),
-  ];
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  final _authService = GetIt.instance<IAuthService>();
+  final _ticketService = GetIt.instance<ITicketService>();
+  final _eventService = GetIt.instance<IEventService>();
+  // late final Token token;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      token = await _authService.login(const Credentials(username: 'alvarolopsi@gmail.com', password: 'alvarolopsi'));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +73,10 @@ class MainScreen extends StatelessWidget {
               CupertinoIcons.bell,
               size: 26,
             ),
-            onPressed: () => Logger.debug('todo notifications'),
+            onPressed: () async {
+              final tickets = await _ticketService.getTicketsByUserId(token.accessToken);
+              Logger.debug(tickets.toList().toString());
+            },
           ),
         );
 
@@ -109,20 +122,46 @@ class MainScreen extends StatelessWidget {
               ),
               SizedBox(
                 height: context.h * 0.28,
-                child: ListView.separated(
-                    separatorBuilder: (context, index) => const SizedBox(
-                          width: 24,
-                        ),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: fakeEvents.length,
-                    itemBuilder: (context, index) {
-                      // var random = Random();
-                      // int id = random.nextInt(100) + 1;
-                      return CarouselEventCard(
-                        url: 'https://picsum.photos/id/${index + 10}/1024/1024',
-                        event: fakeEvents[index],
+                child: FutureBuilder<List<Event>>(
+                  future: _eventService.getEvents(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final events = snapshot.data!;
+                      if (events.isNotEmpty) {
+                        return ListView.separated(
+                          separatorBuilder: (context, index) => const SizedBox(width: 24),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: events.length,
+                          itemBuilder: (context, index) {
+                            return CarouselEventCard(
+                              url: 'https://picsum.photos/id/${index + 10}/1024/1024',
+                              event: events[index],
+                            );
+                          },
+                        );
+                      } else {
+                        return const Center(
+                          child: Text(
+                            '☹️ There are no events available...',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        );
+                      }
+                    } else if (snapshot.hasError) {
+                      return const Center(
+                        child: Text('Error fetching events'),
                       );
-                    }),
+                    } else {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -216,31 +255,15 @@ class CarouselEventCard extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const Flexible(
-                      flex: 10,
-                      child: Text(
-                        'A world tour event!',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black54,
-                          letterSpacing: 0.5,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      flex: 6,
-                      child: Text(
-                        Helpers.formatDate(event.date.toString()),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black54,
-                          letterSpacing: 1,
-                        ),
+                    Text(
+                      Helpers.formatDate(event.date.toString()),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.black54,
+                        letterSpacing: 1,
                       ),
                     ),
                   ],

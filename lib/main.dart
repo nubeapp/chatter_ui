@@ -3,18 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/application/services/dependency_injection/dependencies.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_bloc.dart';
 
+import 'domain/entities/token.dart';
 import 'presentation/pages/pages.dart';
 
-/// TODO API:
-/// - OrganizationService (Interface, Service and Tests) ✅
-/// - Test OrderService (Methods and match mockResponses) ✅
-/// - Test TicketService -> move random reference generator to back-end ✅
-/// - Test Helpers ✅
-/// - Check all names of tests ✅
-/// - Try-Catch on every call ✅
-///
-/// TODO UI:
-/// - Delete splash effect IconButton
+Token token = const Token(accessToken: '');
 
 void main() async {
   Dependencies.injectDependencies();
@@ -41,7 +33,7 @@ class MyApp extends StatelessWidget {
           create: (context) => TicketCounterBloc(),
         )
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         // theme: appTheme.light,
         // darkTheme: appTheme.dark,

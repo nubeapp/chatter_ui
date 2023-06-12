@@ -38,8 +38,7 @@ class Ticket {
           (e) => e.name == json['status'],
           orElse: () => TicketStatus.AVAILABLE,
         ),
-        eventId: json['event_id'],
-        event: Event.fromJson(json['event']));
+        event: json['event'] != null ? Event.fromJson(json['event']) : null);
   }
 
   Map<String, dynamic> toJson() {

@@ -233,17 +233,17 @@ class EventCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              'UNIVERSAL MUSIC SPAIN',
-                              style: TextStyle(
+                              event.organization!.name.toUpperCase(),
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black87,
                                 height: 2,
                               ),
                             ),
-                            Text(
+                            const Text(
                               '473 Followers',
                               style: TextStyle(
                                 fontSize: 14,

@@ -1,10 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:syncfusion_flutter_barcodes/barcodes.dart';
+import 'package:ui/domain/entities/ticket/ticket_summary.dart';
+import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/extensions/extensions.dart';
+import 'package:ui/infrastructure/utilities/helpers.dart';
+import 'package:ui/main.dart';
+import 'package:ui/presentation/pages/ticket_info_screen.dart';
 
-class TicketScreen extends StatelessWidget {
+class TicketScreen extends StatefulWidget {
   const TicketScreen({Key? key}) : super(key: key);
+
+  @override
+  State<TicketScreen> createState() => _TicketScreenState();
+}
+
+class _TicketScreenState extends State<TicketScreen> {
+  final _ticketService = GetIt.instance<ITicketService>();
 
   @override
   Widget build(BuildContext context) {
@@ -40,194 +53,266 @@ class TicketScreen extends StatelessWidget {
       child: Scaffold(
         appBar: customAppBar(),
         backgroundColor: Colors.transparent,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Center(
-                child: SizedBox(
-                  width: context.w * 0.7,
-                  height: context.h * 0.76,
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: context.h * 0.5,
-                        width: context.w * 0.7,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.network(
-                                'https://picsum.photos/id/10/1024/1024',
-                                fit: BoxFit.cover,
-                                width: context.w * 0.7,
-                                height: context.h * 0.25,
-                              ),
-                            ),
-                            const Text(
-                              'Antonio Diaz: El Mago Pop',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black87,
-                                height: 2,
-                              ),
-                            ),
-                            const Text(
-                              '-  -  -  -  -  -  -  -  -  -  -  -  -',
-                              style: TextStyle(fontSize: 18, color: Colors.black12),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  Text(
-                                    'Date',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Time',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  Text(
-                                    'Dec 07, 2023',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  Text(
-                                    '18:00',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: context.h * 0.02,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  Text(
-                                    'Venue',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                  Text(
-                                    'Seat',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: const [
-                                  Text(
-                                    'Wizink Center',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                  Text(
-                                    'No seat',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ]),
-                        ),
-                      ),
-                      Positioned(
-                        top: context.h * 0.4999,
-                        child: ClipPath(
-                          clipper: TicketShapeClipper(width: context.w, height: context.h),
-                          child: Container(
-                            color: Colors.white,
-                            width: context.w * 0.7,
-                            height: context.h * 0.0095,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: context.h * 0.5095,
-                        child: Container(
-                          height: context.h * 0.25,
-                          width: context.w * 0.7,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
-                            child: SfBarcodeGenerator(
-                              symbology: QRCode(),
-                              value: 'ABCDEFGHIJKLMNOPQRST',
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: context.h * 0.495,
-                        left: context.w * 0.05,
-                        child: const Text(
-                          '-  -  -  -  -  -  -  -  -  -  -  -  -',
-                          style: TextStyle(fontSize: 18, color: Colors.black38),
-                        ),
-                      ),
-                    ],
+        body: FutureBuilder<List<TicketSummary>>(
+          future: _ticketService.getTicketsByUserId(token.accessToken),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final tickets = snapshot.data!;
+              if (tickets.isNotEmpty) {
+                return TicketsListView(tickets: tickets);
+              } else {
+                return const Center(
+                  child: Text(
+                    '☹️ There are no tickets...',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              )
-            ],
+                );
+              }
+            } else if (snapshot.hasError) {
+              return const Center(
+                child: Text('Error fetching events'),
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class TicketsListView extends StatelessWidget {
+  const TicketsListView({
+    Key? key,
+    required this.tickets,
+  }) : super(key: key);
+
+  final List<TicketSummary> tickets;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: tickets.length,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: InkWell(
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TicketInfoScreen(ticketSummary: tickets[index]))),
+            child: TicketEventCard(
+              ticketSummary: tickets[index],
+              url: 'https://picsum.photos/id/${index + 10}/1024/1024',
+            ),
           ),
+        );
+      },
+    );
+  }
+}
+
+class TicketEventCard extends StatelessWidget {
+  const TicketEventCard({
+    Key? key,
+    required this.ticketSummary,
+    required this.url,
+  }) : super(key: key);
+
+  final TicketSummary ticketSummary;
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: context.h * 0.175,
+      width: context.w,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              child: Image.network(
+                url,
+                fit: BoxFit.cover,
+                width: context.h * 0.15,
+                height: context.h * 0.15,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    ticketSummary.event.title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                      height: 1.5,
+                    ),
+                  ),
+                  const Text(
+                    '-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -',
+                    style: TextStyle(fontSize: 12, color: Colors.black26),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          'Date',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        Text(
+                          'Time',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          Helpers.formatDate(ticketSummary.event.date.toString()),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        Text(
+                          ticketSummary.event.time,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: context.h * 0.01,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          'Venue',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          ticketSummary.event.venue,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        if (ticketSummary.tickets.length > 1)
+                          Row(
+                            children: [
+                              Text(
+                                ticketSummary.tickets.length.toString(),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              SizedBox(
+                                width: context.w * 0.01,
+                              ),
+                              const Icon(
+                                CupertinoIcons.ticket,
+                                size: 16,
+                                color: Colors.black54,
+                              ),
+                            ],
+                          )
+                        //
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TicketQR extends StatelessWidget {
+  const TicketQR({
+    Key? key,
+    required this.reference,
+  }) : super(key: key);
+
+  final String reference;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: context.h * 0.25,
+      width: context.w * 0.7,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
+        child: SfBarcodeGenerator(
+          symbology: QRCode(),
+          value: reference,
         ),
       ),
     );

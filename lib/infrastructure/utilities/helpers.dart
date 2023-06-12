@@ -1,7 +1,5 @@
 import 'dart:math' show Random;
 
-import 'package:intl/intl.dart';
-
 abstract class Helpers {
   static final random = Random();
 
@@ -24,13 +22,14 @@ abstract class Helpers {
   }
 
   static String formatDate(String dateTimeString) {
-    DateTime dateTime = DateTime.parse(dateTimeString);
+    List<String> parts = dateTimeString.split('-');
+    int day = int.parse(parts[0]);
+    int month = int.parse(parts[1]);
+    int year = int.parse(parts[2]);
 
-    String dayOfWeek = DateFormat('EEE').format(dateTime);
-    String dayOfMonth = DateFormat('d').format(dateTime);
-    String month = _getAbbreviatedMonthName(dateTime.month);
+    String abbreviatedMonth = _getAbbreviatedMonthName(month);
 
-    return '$dayOfWeek, $dayOfMonth $month';
+    return '$abbreviatedMonth $day, $year';
   }
 
   static String _getAbbreviatedMonthName(int month) {

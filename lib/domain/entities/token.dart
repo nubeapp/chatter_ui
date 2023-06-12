@@ -12,15 +12,15 @@ class Token {
 
   factory Token.fromJson(Map<String, dynamic> json) {
     return Token(
-      accessToken: json['accessToken'],
-      type: json['type'] ?? 'bearer',
+      accessToken: json['access_token'],
+      type: json['token_type'] ?? 'bearer',
     );
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['accessToken'] = accessToken;
-    data['type'] = type;
+    data['access_token'] = accessToken;
+    data['token_type'] = type;
     return data;
   }
 }

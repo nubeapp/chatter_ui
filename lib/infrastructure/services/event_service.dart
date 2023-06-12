@@ -14,11 +14,10 @@ class EventService implements IEventService {
   Future<List<Event>> getEvents() async {
     try {
       Logger.debug('Requesting all events from the database...');
-      final response = await client.get(Uri.parse(API_BASE_URL));
-
+      final response = await client.get(Uri.parse(API_BASE_URL), headers: {'Accept-Charset': 'utf-8'});
       if (response.statusCode == 200) {
         Logger.info('Events have been retrieved successfully!');
-        final List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return data.map((e) => Event.fromJson(e)).toList();
       } else {
         Logger.error('Failed to get events');
