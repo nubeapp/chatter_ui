@@ -47,6 +47,7 @@ dependencies:
   lorem_ipsum: ^0.0.3
   syncfusion_flutter_barcodes: ^21.2.9
   smooth_page_indicator: ^1.1.0
+  shared_preferences: ^2.1.2
 
 dev_dependencies:
   flutter_test:

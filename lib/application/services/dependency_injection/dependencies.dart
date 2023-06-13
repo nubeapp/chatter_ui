@@ -7,6 +7,7 @@ import 'package:ui/domain/services/email_service_interface.dart';
 import 'package:ui/domain/services/event_service_interface.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/domain/services/user_service_interface.dart';
+import 'package:ui/infrastructure/http/http_client.dart';
 import 'package:ui/infrastructure/services/api_service.dart';
 import 'package:ui/infrastructure/services/auth_service.dart';
 import 'package:ui/infrastructure/services/code_service.dart';
@@ -18,22 +19,29 @@ import 'package:http/http.dart' as http;
 
 @immutable
 abstract class Dependencies {
-  static void injectDependencies() {
-    GetIt.instance.registerLazySingleton<http.Client>(() => http.Client());
+  static void injectDependencies() async {
+    GetIt.instance.registerLazySingleton<http.Client>(() => HttpClientFactory.create());
 
     GetIt.instance.registerLazySingleton<IApiService>(
-        () => ApiService(client: GetIt.instance<http.Client>()));
+      () => ApiService(client: GetIt.instance<http.Client>()),
+    );
     GetIt.instance.registerLazySingleton<IEmailService>(
-        () => EmailService(client: GetIt.instance<http.Client>()));
+      () => EmailService(client: GetIt.instance<http.Client>()),
+    );
     GetIt.instance.registerLazySingleton<IUserService>(
-        () => UserService(client: GetIt.instance<http.Client>()));
+      () => UserService(client: GetIt.instance<http.Client>()),
+    );
     GetIt.instance.registerLazySingleton<ICodeService>(
-        () => CodeService(client: GetIt.instance<http.Client>()));
+      () => CodeService(client: GetIt.instance<http.Client>()),
+    );
     GetIt.instance.registerLazySingleton<IEventService>(
-        () => EventService(client: GetIt.instance<http.Client>()));
+      () => EventService(client: GetIt.instance<http.Client>()),
+    );
     GetIt.instance.registerLazySingleton<IAuthService>(
-        () => AuthService(client: GetIt.instance<http.Client>()));
+      () => AuthService(client: GetIt.instance<http.Client>()),
+    );
     GetIt.instance.registerLazySingleton<ITicketService>(
-        () => TicketService(client: GetIt.instance<http.Client>()));
+      () => TicketService(client: GetIt.instance<http.Client>()),
+    );
   }
 }

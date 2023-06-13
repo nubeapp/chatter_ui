@@ -60,7 +60,7 @@ class OrganizationService implements IOrganizationService {
           body: json.encode(organization.toJson()));
       if (response.statusCode == 201) {
         Logger.info('Organization has been created successfully!');
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return Organization.fromJson(data);
       } else {
         Logger.error('Failed to create organization');

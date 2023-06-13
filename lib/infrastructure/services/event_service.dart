@@ -14,7 +14,7 @@ class EventService implements IEventService {
   Future<List<Event>> getEvents() async {
     try {
       Logger.debug('Requesting all events from the database...');
-      final response = await client.get(Uri.parse(API_BASE_URL), headers: {'Accept-Charset': 'utf-8'});
+      final response = await client.get(Uri.parse(API_BASE_URL));
       if (response.statusCode == 200) {
         Logger.info('Events have been retrieved successfully!');
         final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
@@ -37,7 +37,7 @@ class EventService implements IEventService {
 
       if (response.statusCode == 200) {
         Logger.info('Event with id $eventId was retrieved successfully!');
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return Event.fromJson(data);
       } else {
         Logger.error('Failed to get event with id $eventId');
@@ -57,7 +57,7 @@ class EventService implements IEventService {
 
       if (response.statusCode == 200) {
         Logger.info('Events of organization_id $organizationId have been retrieved successfully!');
-        final List<dynamic> data = json.decode(response.body);
+        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return data.map((e) => Event.fromJson(e)).toList();
       } else {
         Logger.error('Failed to get events by organization_id $organizationId');
@@ -83,7 +83,7 @@ class EventService implements IEventService {
 
       if (response.statusCode == 201) {
         Logger.info('The event "${event.title}" was created successfully!');
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return Event.fromJson(data);
       } else {
         Logger.error('Failed to create the event');
@@ -109,7 +109,7 @@ class EventService implements IEventService {
 
       if (response.statusCode == 200) {
         Logger.info('The event with id $eventId has been updated successfully!');
-        final Map<String, dynamic> data = json.decode(response.body);
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return Event.fromJson(data);
       } else {
         Logger.error('Failed to update event with id $eventId');

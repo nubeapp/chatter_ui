@@ -6,7 +6,7 @@ import '../entities/ticket/ticket_summary.dart';
 
 abstract class ITicketService {
   Future<List<Ticket>> getTicketsByUserIdEventId(int eventId);
-  Future<List<TicketSummary>> getTicketsByUserId(String token);
+  Future<List<TicketSummary>> getTicketsByUserId();
   Future<List<Ticket>> createTickets(CreateTicket ticketData);
   Future<List<Ticket>> buyTickets(Order order);
 }

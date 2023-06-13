@@ -19,7 +19,7 @@ class OrderService implements IOrderService {
 
       if (response.statusCode == 200) {
         Logger.info('Orders have been retrieved successfully!');
-        final jsonList = jsonDecode(response.body) as List<dynamic>;
+        final jsonList = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         return jsonList.map((json) => Order.fromJson(json)).toList();
       } else {
         Logger.error('Failed to get orders');

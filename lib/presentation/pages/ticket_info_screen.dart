@@ -86,19 +86,20 @@ class TicketInfoScreen extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 26),
-            child: SmoothPageIndicator(
-              controller: pageController,
-              count: ticketSummary.tickets.length,
-              effect: const WormEffect(
-                dotHeight: 10,
-                dotWidth: 10,
-                activeDotColor: Colors.white,
-                dotColor: Colors.white38,
+          if (ticketSummary.tickets.length > 1)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 26),
+              child: SmoothPageIndicator(
+                controller: pageController,
+                count: ticketSummary.tickets.length,
+                effect: const WormEffect(
+                  dotHeight: 10,
+                  dotWidth: 10,
+                  activeDotColor: Colors.white,
+                  dotColor: Colors.white38,
+                ),
               ),
-            ),
-          )
+            )
         ],
       ),
     );

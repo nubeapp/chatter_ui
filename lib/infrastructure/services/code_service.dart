@@ -18,7 +18,7 @@ class CodeService implements ICodeService {
       final response = await client.get(Uri.parse(API_BASE_URL));
 
       if (response.statusCode == 200) {
-        final List<dynamic> responseData = jsonDecode(response.body);
+        final List<dynamic> responseData = json.decode(utf8.decode(response.bodyBytes));
         final List<Code> codes = responseData.map((json) => Code.fromJson(json)).toList();
         Logger.info('Codes have been received!');
         return codes;
@@ -68,7 +68,7 @@ class CodeService implements ICodeService {
 
       if (response.statusCode == 201) {
         Logger.info('Code has been stored successfully!');
-        return Code.fromJson(jsonDecode(response.body));
+        return Code.fromJson(json.decode(utf8.decode(response.bodyBytes)));
       } else {
         Logger.error('Failed to create the code: ${response.statusCode}');
         throw Exception('Failed to create code: ${response.statusCode}');
@@ -90,7 +90,7 @@ class CodeService implements ICodeService {
       );
 
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
+        final responseData = json.decode(utf8.decode(response.bodyBytes));
         final Code code = Code.fromJson(responseData);
         Logger.info('The code associated with email $email has been updated successfully to ${code.code}!');
         return code;

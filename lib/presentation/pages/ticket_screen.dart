@@ -6,7 +6,6 @@ import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/extensions/extensions.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
-import 'package:ui/main.dart';
 import 'package:ui/presentation/pages/ticket_info_screen.dart';
 
 class TicketScreen extends StatefulWidget {
@@ -54,7 +53,7 @@ class _TicketScreenState extends State<TicketScreen> {
         appBar: customAppBar(),
         backgroundColor: Colors.transparent,
         body: FutureBuilder<List<TicketSummary>>(
-          future: _ticketService.getTicketsByUserId(token.accessToken),
+          future: _ticketService.getTicketsByUserId(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final tickets = snapshot.data!;
@@ -74,11 +73,11 @@ class _TicketScreenState extends State<TicketScreen> {
               }
             } else if (snapshot.hasError) {
               return const Center(
-                child: Text('Error fetching events'),
+                child: Text('Error fetching tickets'),
               );
             } else {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator.adaptive(),
               );
             }
           },
@@ -272,7 +271,7 @@ class TicketEventCard extends StatelessWidget {
                               ),
                               const Icon(
                                 CupertinoIcons.ticket,
-                                size: 16,
+                                size: 18,
                                 color: Colors.black54,
                               ),
                             ],

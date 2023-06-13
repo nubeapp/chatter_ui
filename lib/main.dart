@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/application/services/dependency_injection/dependencies.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_bloc.dart';
-
-import 'domain/entities/token.dart';
 import 'presentation/pages/pages.dart';
 
-Token token = const Token(accessToken: '');
-
-void main() async {
+void main() {
   Dependencies.injectDependencies();
   runApp(
     const MyApp(
@@ -38,7 +34,7 @@ class MyApp extends StatelessWidget {
         // theme: appTheme.light,
         // darkTheme: appTheme.dark,
         // themeMode: ThemeMode.dark,
-        title: 'Chatter',
+        title: 'Ticketo',
         home: MainScreen(),
       ),
     );

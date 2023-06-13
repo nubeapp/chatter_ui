@@ -1,13 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/event.dart';
+import 'package:ui/domain/entities/token.dart';
 import 'package:ui/domain/services/auth_service_interface.dart';
 import 'package:ui/domain/services/event_service_interface.dart';
-import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
-import 'package:ui/main.dart';
 import 'package:ui/presentation/pages/pages.dart';
 import 'package:ui/presentation/pages/ticket_screen.dart';
 import 'package:ui/presentation/styles/logger.dart';
@@ -22,15 +24,16 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _authService = GetIt.instance<IAuthService>();
-  final _ticketService = GetIt.instance<ITicketService>();
   final _eventService = GetIt.instance<IEventService>();
-  // late final Token token;
+  late SharedPreferences _sharedPreferences;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      token = await _authService.login(const Credentials(username: 'alvarolopsi@gmail.com', password: 'alvarolopsi'));
+      Token token = await _authService.login(const Credentials(username: 'alvarolopsi@gmail.com', password: 'alvarolopsi'));
+      _sharedPreferences = await SharedPreferences.getInstance();
+      await _sharedPreferences.setString('token', json.encode(token.toJson()));
     });
   }
 
@@ -73,10 +76,7 @@ class _MainScreenState extends State<MainScreen> {
               CupertinoIcons.bell,
               size: 26,
             ),
-            onPressed: () async {
-              final tickets = await _ticketService.getTicketsByUserId(token.accessToken);
-              Logger.debug(tickets.toList().toString());
-            },
+            onPressed: () => Logger.debug('todo notifications'),
           ),
         );
 
@@ -157,7 +157,7 @@ class _MainScreenState extends State<MainScreen> {
                       );
                     } else {
                       return const Center(
-                        child: CircularProgressIndicator(),
+                        child: CircularProgressIndicator.adaptive(),
                       );
                     }
                   },

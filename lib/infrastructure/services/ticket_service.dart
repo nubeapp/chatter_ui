@@ -14,7 +14,6 @@ class TicketService implements ITicketService {
 
   TicketService({required this.client});
 
-  // It returns all the tickets that have a user for a specific event
   @override
   Future<List<Ticket>> getTicketsByUserIdEventId(int eventId) async {
     try {
@@ -23,7 +22,7 @@ class TicketService implements ITicketService {
 
       if (response.statusCode == 200) {
         Logger.info('Tickets have been retrieved successfully!');
-        final jsonList = jsonDecode(response.body) as List<dynamic>;
+        final jsonList = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         return jsonList.map((json) => Ticket.fromJson(json)).toList();
       } else {
         Logger.error('Failed to get tickets');
@@ -35,15 +34,13 @@ class TicketService implements ITicketService {
     }
   }
 
-// It returns all the tickets that have a user for every event
   @override
-  Future<List<TicketSummary>> getTicketsByUserId(String token) async {
+  Future<List<TicketSummary>> getTicketsByUserId() async {
     try {
-      Logger.debug('Requesting tickets...');
-      final response = await client.get(Uri.parse(API_BASE_URL), headers: {'Authorization': 'Bearer $token'});
+      final response = await client.get(Uri.parse(API_BASE_URL));
 
       if (response.statusCode == 200) {
-        final List<dynamic> jsonList = json.decode(response.body);
+        final List<dynamic> jsonList = json.decode(utf8.decode(response.bodyBytes));
         Logger.info('Tickets have been retrieved successfully!');
         return jsonList.map((json) => TicketSummary.fromJson(json)).toList();
       } else if (response.statusCode == 401) {
@@ -59,7 +56,6 @@ class TicketService implements ITicketService {
     }
   }
 
-// This method generates all the references for each ticket for a specific event
   @override
   Future<List<Ticket>> createTickets(CreateTicket ticketData) async {
     try {
@@ -86,7 +82,6 @@ class TicketService implements ITicketService {
     }
   }
 
-// This refers to when a user buys a ticket for an event, not when a user buys a ticket from a seller
   @override
   Future<List<Ticket>> buyTickets(Order order) async {
     try {
@@ -100,7 +95,7 @@ class TicketService implements ITicketService {
       );
 
       if (response.statusCode == 201) {
-        final jsonList = jsonDecode(response.body) as List<dynamic>;
+        final jsonList = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         Logger.info('Tickets have been bought successfully!');
         return jsonList.map((json) => Ticket.fromJson(json)).toList();
       } else if (response.statusCode == 400) {

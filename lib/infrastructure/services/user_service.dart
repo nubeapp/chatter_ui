@@ -17,7 +17,7 @@ class UserService implements IUserService {
       final response = await client.get(Uri.parse(API_BASE_URL));
 
       if (response.statusCode == 200) {
-        final List<dynamic> responseData = jsonDecode(response.body);
+        final responseData = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         final List<User> users = responseData.map((json) => User.fromJson(json)).toList();
         Logger.info('Users have been retrieved successfully!');
         return users;
@@ -65,7 +65,7 @@ class UserService implements IUserService {
       );
 
       if (response.statusCode == 201) {
-        final dynamic responseData = jsonDecode(response.body);
+        final dynamic responseData = json.decode(utf8.decode(response.bodyBytes));
         final User newUser = User.fromJson(responseData);
         Logger.info('User with email ${newUser.email} has been created successfully!');
         return newUser;
@@ -92,7 +92,7 @@ class UserService implements IUserService {
       );
 
       if (response.statusCode == 200) {
-        final dynamic responseData = jsonDecode(response.body);
+        final dynamic responseData = json.decode(utf8.decode(response.bodyBytes));
         final User updatedUser = User.fromJson(responseData);
         Logger.info('User with email $email has been updated successfully!');
         return updatedUser;
