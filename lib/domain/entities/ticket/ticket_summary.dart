@@ -18,4 +18,11 @@ class TicketSummary {
       tickets: (json['tickets'] as List<dynamic>).map((ticketJson) => Ticket.fromJson(ticketJson)).toList(),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'event': event.toJson(),
+      'tickets': tickets.map((ticket) => ticket.toJson()).toList(),
+    };
+  }
 }

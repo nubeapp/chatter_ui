@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/intl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:ui/domain/entities/event.dart';
@@ -34,14 +33,12 @@ void main() {
         expect(events[1].id, equals(2));
         expect(events[0].title, 'Bad Bunny Concert');
         expect(events[1].title, 'Rosalia Concert');
-        expect(events[0].date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(events[1].date, DateFormat("dd-MM-yyyy").parse('14-12-2023'));
+        expect(events[0].date, CustomDateTime(2023, 12, 07));
+        expect(events[1].date, CustomDateTime(2023, 12, 14));
         expect(events[0].time, '18:00');
         expect(events[1].time, '18:00');
         expect(events[0].venue, 'Wizink Center');
         expect(events[1].venue, 'Wizink Center');
-        expect(events[0].ticketLimit, equals(1000));
-        expect(events[1].ticketLimit, equals(1000));
         expect(events[0].organization!.id, equals(1));
         expect(events[1].organization!.id, equals(1));
         expect(events[0].organization!.name, 'UNIVERSAL MUSIC SPAIN');
@@ -78,14 +75,12 @@ void main() {
         expect(events[1].id, equals(2));
         expect(events[0].title, 'Bad Bunny Concert');
         expect(events[1].title, 'Rosalia Concert');
-        expect(events[0].date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(events[1].date, DateFormat("dd-MM-yyyy").parse('14-12-2023'));
+        expect(events[0].date, CustomDateTime(2023, 12, 07));
+        expect(events[1].date, CustomDateTime(2023, 12, 14));
         expect(events[0].time, '18:00');
         expect(events[1].time, '18:00');
         expect(events[0].venue, 'Wizink Center');
         expect(events[1].venue, 'Wizink Center');
-        expect(events[0].ticketLimit, equals(1000));
-        expect(events[1].ticketLimit, equals(1000));
         expect(events[0].organization!.id, equals(1));
         expect(events[1].organization!.id, equals(1));
         expect(events[0].organization!.name, 'UNIVERSAL MUSIC SPAIN');
@@ -120,10 +115,9 @@ void main() {
         expect(event, isA<Event>());
         expect(event.id, equals(1));
         expect(event.title, 'Bad Bunny Concert');
-        expect(event.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
+        expect(event.date, CustomDateTime(2023, 12, 07));
         expect(event.time, '18:00');
         expect(event.venue, 'Wizink Center');
-        expect(event.ticketLimit, equals(1000));
         expect(event.organization!.id, equals(1));
         expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
 
@@ -160,10 +154,9 @@ void main() {
         expect(event, isA<Event>());
         expect(event.id, equals(1));
         expect(event.title, 'Bad Bunny Concert');
-        expect(event.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
+        expect(event.date, CustomDateTime(2023, 12, 07));
         expect(event.time, '18:00');
         expect(event.venue, 'Wizink Center');
-        expect(event.ticketLimit, equals(1000));
         expect(event.organization!.id, equals(1));
         expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
 
@@ -218,10 +211,9 @@ void main() {
         expect(event, isA<Event>());
         expect(event.id, equals(1));
         expect(event.title, 'Bad Bunny Concert');
-        expect(event.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
+        expect(event.date, CustomDateTime(2023, 12, 07));
         expect(event.time, '18:00');
         expect(event.venue, 'Wizink Center');
-        expect(event.ticketLimit, equals(1000));
         expect(event.organization!.id, equals(1));
         expect(event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
 

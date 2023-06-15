@@ -3,7 +3,6 @@ import 'package:ui/domain/entities/token.dart';
 import 'package:ui/domain/services/auth_service_interface.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:ui/infrastructure/http/http_client.dart';
 import 'package:ui/presentation/styles/logger.dart';
 
 class AuthService implements IAuthService {
@@ -15,7 +14,6 @@ class AuthService implements IAuthService {
   Future<Token> login(Credentials credentials) async {
     try {
       Logger.debug('Trying to log in as ${credentials.username}...');
-      // todo: why I cannot make json.encode(credentials.toJson())
       final response = await client.post(
         Uri.parse(API_BASE_URL),
         body: {

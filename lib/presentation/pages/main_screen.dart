@@ -31,9 +31,10 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Token token = await _authService.login(const Credentials(username: 'alvarolopsi@gmail.com', password: 'alvarolopsi'));
       _sharedPreferences = await SharedPreferences.getInstance();
+      Token token = await _authService.login(const Credentials(username: 'alvarolopsi@gmail.com', password: 'alvarolopsi'));
       await _sharedPreferences.setString('token', json.encode(token.toJson()));
+      _sharedPreferences.remove('tickets'); // Remove in production mode
     });
   }
 

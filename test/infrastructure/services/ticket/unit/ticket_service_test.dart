@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/intl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
+import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/entities/ticket/ticket.dart';
 import 'package:ui/domain/entities/ticket/ticket_status.dart';
+import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/infrastructure/services/ticket_service.dart';
 
@@ -27,39 +28,30 @@ void main() {
         int mockEventId = 1;
 
         when(mockClient.get(Uri.parse('$API_BASE_URL/events/$mockEventId'))).thenAnswer(
-          (_) async => http.Response(json.encode(mockTicketListResponse), 200),
+          (_) async => http.Response(json.encode(mockTicketSummaryResponse), 200),
         );
 
-        final tickets = await ticketService.getTicketsByUserIdEventId(mockEventId);
+        final ticketSummary = await ticketService.getTicketsByUserIdEventId(mockEventId);
+        List<Ticket> tickets = ticketSummary.tickets;
 
+        expect(ticketSummary, isA<TicketSummary>());
         expect(tickets, isA<List<Ticket>>());
         expect(tickets.length, equals(2));
         expect(tickets[0].id, equals(1));
         expect(tickets[1].id, equals(2));
-        expect(tickets[0].price, equals(80.0));
-        expect(tickets[1].price, equals(60.0));
-        expect(tickets[0].reference, "001AUMS20230426ABAD");
-        expect(tickets[1].reference, "001AUMS20230426AROS");
+        expect(tickets[0].price, equals(10.0));
+        expect(tickets[1].price, equals(10.0));
+        expect(tickets[0].reference, "2IR6ZOULKL2HOARDUI19");
+        expect(tickets[1].reference, "ZT1HT93LEGSVCIEEGAIJ");
         expect(tickets[0].status, TicketStatus.SOLD);
         expect(tickets[1].status, TicketStatus.SOLD);
-        expect(tickets[0].eventId, equals(1));
-        expect(tickets[1].eventId, equals(2));
-        expect(tickets[0].event!.id, equals(1));
-        expect(tickets[1].event!.id, equals(2));
-        expect(tickets[0].event!.title, "Bad Bunny Concert");
-        expect(tickets[1].event!.title, "Rosalia Concert");
-        expect(tickets[0].event!.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(tickets[1].event!.date, DateFormat("dd-MM-yyyy").parse('14-12-2023'));
-        expect(tickets[0].event!.time, '18:00');
-        expect(tickets[1].event!.time, '18:00');
-        expect(tickets[0].event!.venue, 'Wizink Center');
-        expect(tickets[1].event!.venue, 'Wizink Center');
-        expect(tickets[0].event!.organizationId, equals(1));
-        expect(tickets[1].event!.organizationId, equals(1));
-        expect(tickets[0].event!.organization!.id, equals(1));
-        expect(tickets[1].event!.organization!.id, equals(1));
-        expect(tickets[0].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
-        expect(tickets[1].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
+        expect(ticketSummary.event.id, equals(1));
+        expect(ticketSummary.event.title, "Bad Bunny Concert");
+        expect(ticketSummary.event.date, CustomDateTime(2023, 12, 07));
+        expect(ticketSummary.event.time, '18:00');
+        expect(ticketSummary.event.venue, 'Wizink Center');
+        expect(ticketSummary.event.organization!.id, equals(1));
+        expect(ticketSummary.event.organization!.name, "UNIVERSAL MUSIC SPAIN");
 
         verify(mockClient.get(Uri.parse('$API_BASE_URL/events/$mockEventId'))).called(1);
       });
@@ -83,39 +75,47 @@ void main() {
         ticketService = TicketService(client: mockClient);
 
         when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer(
-          (_) async => http.Response(json.encode(mockTicketListResponse), 200),
+          (_) async => http.Response(json.encode(mockTicketSummaryListResponse), 200),
         );
 
-        final tickets = await ticketService.getTicketsByUserId();
+        final ticketSummary = await ticketService.getTicketsByUserId();
 
-        expect(tickets, isA<List<Ticket>>());
-        expect(tickets.length, equals(2));
-        expect(tickets[0].id, equals(1));
-        expect(tickets[1].id, equals(2));
-        expect(tickets[0].price, equals(80.0));
-        expect(tickets[1].price, equals(60.0));
-        expect(tickets[0].reference, "001AUMS20230426ABAD");
-        expect(tickets[1].reference, "001AUMS20230426AROS");
-        expect(tickets[0].status, TicketStatus.SOLD);
-        expect(tickets[1].status, TicketStatus.SOLD);
-        expect(tickets[0].eventId, equals(1));
-        expect(tickets[1].eventId, equals(2));
-        expect(tickets[0].event!.id, equals(1));
-        expect(tickets[1].event!.id, equals(2));
-        expect(tickets[0].event!.title, "Bad Bunny Concert");
-        expect(tickets[1].event!.title, "Rosalia Concert");
-        expect(tickets[0].event!.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(tickets[1].event!.date, DateFormat("dd-MM-yyyy").parse('14-12-2023'));
-        expect(tickets[0].event!.time, '18:00');
-        expect(tickets[1].event!.time, '18:00');
-        expect(tickets[0].event!.venue, 'Wizink Center');
-        expect(tickets[1].event!.venue, 'Wizink Center');
-        expect(tickets[0].event!.organizationId, equals(1));
-        expect(tickets[1].event!.organizationId, equals(1));
-        expect(tickets[0].event!.organization!.id, equals(1));
-        expect(tickets[1].event!.organization!.id, equals(1));
-        expect(tickets[0].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
-        expect(tickets[1].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
+        expect(ticketSummary, isA<List<TicketSummary>>());
+        expect(ticketSummary.length, equals(2));
+        expect(ticketSummary[0].tickets, isA<List<Ticket>>());
+        expect(ticketSummary[0].tickets.length, equals(2));
+        expect(ticketSummary[0].event.id, equals(1));
+        expect(ticketSummary[0].event.title, 'Bad Bunny Concert');
+        expect(ticketSummary[0].event.date, CustomDateTime(2023, 12, 07));
+        expect(ticketSummary[0].event.time, '18:00');
+        expect(ticketSummary[0].event.venue, 'Wizink Center');
+        expect(ticketSummary[0].event.organization!.id, equals(1));
+        expect(ticketSummary[0].event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(ticketSummary[0].tickets[0].id, equals(1));
+        expect(ticketSummary[0].tickets[1].id, equals(2));
+        expect(ticketSummary[0].tickets[0].price, equals(10.0));
+        expect(ticketSummary[0].tickets[1].price, equals(10.0));
+        expect(ticketSummary[0].tickets[0].reference, '2IR6ZOULKL2HOARDUI19');
+        expect(ticketSummary[0].tickets[1].reference, 'ZT1HT93LEGSVCIEEGAIJ');
+        expect(ticketSummary[0].tickets[0].status, TicketStatus.SOLD);
+        expect(ticketSummary[0].tickets[1].status, TicketStatus.SOLD);
+        expect(ticketSummary[1].tickets, isA<List<Ticket>>());
+        expect(ticketSummary[1].tickets.length, equals(2));
+        expect(ticketSummary[1].event.id, equals(2));
+        expect(ticketSummary[1].event.title, 'Rosalia Concert');
+        expect(ticketSummary[1].event.date, CustomDateTime(2023, 12, 14));
+        expect(ticketSummary[1].event.time, '18:00');
+        expect(ticketSummary[1].event.venue, 'Wizink Center');
+        expect(ticketSummary[1].event.organization!.id, equals(1));
+        expect(ticketSummary[1].event.organization!.name, 'UNIVERSAL MUSIC SPAIN');
+        expect(ticketSummary[1].tickets[0].id, equals(3));
+        expect(ticketSummary[1].tickets[1].id, equals(4));
+        expect(ticketSummary[1].tickets[0].price, equals(20.0));
+        expect(ticketSummary[1].tickets[1].price, equals(20.0));
+        expect(ticketSummary[1].tickets[0].reference, '4JUAEAWPB1S6KSSWPN80');
+        expect(ticketSummary[1].tickets[1].reference, 'Y3OPY34TJ9FH78UV4BXG');
+        expect(ticketSummary[1].tickets[0].status, TicketStatus.SOLD);
+        expect(ticketSummary[1].tickets[1].status, TicketStatus.SOLD);
 
         verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
       });
@@ -144,39 +144,30 @@ void main() {
           },
           body: json.encode(mockCreateTicketObject.toJson()),
         )).thenAnswer(
-          (_) async => http.Response(json.encode(mockTicketListResponse), 201),
+          (_) async => http.Response(json.encode(mockTicketSummaryResponse), 201),
         );
 
-        final tickets = await ticketService.createTickets(mockCreateTicketObject);
+        final ticketSummary = await ticketService.createTickets(mockCreateTicketObject);
+        List<Ticket> tickets = ticketSummary.tickets;
 
+        expect(ticketSummary, isA<TicketSummary>());
         expect(tickets, isA<List<Ticket>>());
         expect(tickets.length, equals(2));
         expect(tickets[0].id, equals(1));
         expect(tickets[1].id, equals(2));
-        expect(tickets[0].price, equals(80.0));
-        expect(tickets[1].price, equals(60.0));
-        expect(tickets[0].reference, "001AUMS20230426ABAD");
-        expect(tickets[1].reference, "001AUMS20230426AROS");
+        expect(tickets[0].price, equals(10.0));
+        expect(tickets[1].price, equals(10.0));
+        expect(tickets[0].reference, "2IR6ZOULKL2HOARDUI19");
+        expect(tickets[1].reference, "ZT1HT93LEGSVCIEEGAIJ");
         expect(tickets[0].status, TicketStatus.SOLD);
         expect(tickets[1].status, TicketStatus.SOLD);
-        expect(tickets[0].eventId, equals(1));
-        expect(tickets[1].eventId, equals(2));
-        expect(tickets[0].event!.id, equals(1));
-        expect(tickets[1].event!.id, equals(2));
-        expect(tickets[0].event!.title, "Bad Bunny Concert");
-        expect(tickets[1].event!.title, "Rosalia Concert");
-        expect(tickets[0].event!.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(tickets[1].event!.date, DateFormat("dd-MM-yyyy").parse('14-12-2023'));
-        expect(tickets[0].event!.time, '18:00');
-        expect(tickets[1].event!.time, '18:00');
-        expect(tickets[0].event!.venue, 'Wizink Center');
-        expect(tickets[1].event!.venue, 'Wizink Center');
-        expect(tickets[0].event!.organizationId, equals(1));
-        expect(tickets[1].event!.organizationId, equals(1));
-        expect(tickets[0].event!.organization!.id, equals(1));
-        expect(tickets[1].event!.organization!.id, equals(1));
-        expect(tickets[0].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
-        expect(tickets[1].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
+        expect(ticketSummary.event.id, equals(1));
+        expect(ticketSummary.event.title, "Bad Bunny Concert");
+        expect(ticketSummary.event.date, CustomDateTime(2023, 12, 07));
+        expect(ticketSummary.event.time, '18:00');
+        expect(ticketSummary.event.venue, 'Wizink Center');
+        expect(ticketSummary.event.organization!.id, equals(1));
+        expect(ticketSummary.event.organization!.name, "UNIVERSAL MUSIC SPAIN");
 
         verify(mockClient.post(Uri.parse(API_BASE_URL),
                 headers: <String, String>{
@@ -222,38 +213,29 @@ void main() {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: json.encode(mockOrderObject.toJson()),
-        )).thenAnswer((_) async => http.Response(json.encode(mockTicketListResponse), 201));
+        )).thenAnswer((_) async => http.Response(json.encode(mockTicketSummaryResponse), 201));
 
-        final tickets = await ticketService.buyTickets(mockOrderObject);
+        final ticketSummary = await ticketService.buyTickets(mockOrderObject);
+        List<Ticket> tickets = ticketSummary.tickets;
 
+        expect(ticketSummary, isA<TicketSummary>());
         expect(tickets, isA<List<Ticket>>());
         expect(tickets.length, equals(2));
         expect(tickets[0].id, equals(1));
         expect(tickets[1].id, equals(2));
-        expect(tickets[0].price, equals(80.0));
-        expect(tickets[1].price, equals(60.0));
-        expect(tickets[0].reference, "001AUMS20230426ABAD");
-        expect(tickets[1].reference, "001AUMS20230426AROS");
+        expect(tickets[0].price, equals(10.0));
+        expect(tickets[1].price, equals(10.0));
+        expect(tickets[0].reference, "2IR6ZOULKL2HOARDUI19");
+        expect(tickets[1].reference, "ZT1HT93LEGSVCIEEGAIJ");
         expect(tickets[0].status, TicketStatus.SOLD);
         expect(tickets[1].status, TicketStatus.SOLD);
-        expect(tickets[0].eventId, equals(1));
-        expect(tickets[1].eventId, equals(2));
-        expect(tickets[0].event!.id, equals(1));
-        expect(tickets[1].event!.id, equals(2));
-        expect(tickets[0].event!.title, "Bad Bunny Concert");
-        expect(tickets[1].event!.title, "Rosalia Concert");
-        expect(tickets[0].event!.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(tickets[1].event!.date, DateFormat("dd-MM-yyyy").parse('14-12-2023'));
-        expect(tickets[0].event!.time, '18:00');
-        expect(tickets[1].event!.time, '18:00');
-        expect(tickets[0].event!.venue, 'Wizink Center');
-        expect(tickets[1].event!.venue, 'Wizink Center');
-        expect(tickets[0].event!.organizationId, equals(1));
-        expect(tickets[1].event!.organizationId, equals(1));
-        expect(tickets[0].event!.organization!.id, equals(1));
-        expect(tickets[1].event!.organization!.id, equals(1));
-        expect(tickets[0].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
-        expect(tickets[1].event!.organization!.name, "UNIVERSAL MUSIC SPAIN");
+        expect(ticketSummary.event.id, equals(1));
+        expect(ticketSummary.event.title, "Bad Bunny Concert");
+        expect(ticketSummary.event.date, CustomDateTime(2023, 12, 07));
+        expect(ticketSummary.event.time, '18:00');
+        expect(ticketSummary.event.venue, 'Wizink Center');
+        expect(ticketSummary.event.organization!.id, equals(1));
+        expect(ticketSummary.event.organization!.name, "UNIVERSAL MUSIC SPAIN");
 
         verify(mockClient.post(Uri.parse('$API_BASE_URL/buy'),
                 headers: <String, String>{

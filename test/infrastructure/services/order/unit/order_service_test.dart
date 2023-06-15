@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:intl/intl.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/entities/order.dart';
 import 'package:ui/domain/entities/ticket/ticket_status.dart';
 import 'package:ui/domain/services/order_service_interface.dart';
@@ -46,8 +46,8 @@ void main() {
         expect(orders[1].tickets![0].event!.id, equals(2));
         expect(orders[0].tickets![0].event!.title, 'Bad Bunny Concert');
         expect(orders[1].tickets![0].event!.title, 'Rosalia Concert');
-        expect(orders[0].tickets![0].event!.date, DateFormat("dd-MM-yyyy").parse('07-12-2023'));
-        expect(orders[1].tickets![0].event!.date, DateFormat("dd-MM-yyyy").parse('14-12-2023'));
+        expect(orders[0].tickets![0].event!.date, CustomDateTime(2023, 12, 07));
+        expect(orders[1].tickets![0].event!.date, CustomDateTime(2023, 12, 14));
         expect(orders[0].tickets![0].event!.time, '18:00');
         expect(orders[1].tickets![0].event!.time, '18:00');
         expect(orders[0].tickets![0].event!.venue, 'Wizink Center');

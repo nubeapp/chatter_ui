@@ -38,11 +38,13 @@ class Event {
     );
   }
 
-  // Method to convert the instance to a Map (toJson)
   Map<String, dynamic> toJson() {
+    String formattedDate = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}T$time+01:00';
+
     return {
       'title': title,
-      'date': date.toString(),
+      'date': formattedDate,
+      'time': time,
       'venue': venue,
       'ticket_limit': ticketLimit,
       'organization_id': organizationId,

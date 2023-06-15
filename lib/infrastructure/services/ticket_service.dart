@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:ui/domain/entities/order.dart';
 import 'package:ui/domain/entities/ticket/create_ticket.dart';
-import 'package:ui/domain/entities/ticket/ticket.dart';
 import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:http/http.dart' as http;
@@ -15,15 +14,14 @@ class TicketService implements ITicketService {
   TicketService({required this.client});
 
   @override
-  Future<List<Ticket>> getTicketsByUserIdEventId(int eventId) async {
+  Future<TicketSummary> getTicketsByUserIdEventId(int eventId) async {
     try {
       Logger.debug('Requesting tickets for event $eventId...');
       final response = await client.get(Uri.parse('$API_BASE_URL/events/$eventId'));
 
       if (response.statusCode == 200) {
         Logger.info('Tickets have been retrieved successfully!');
-        final jsonList = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
-        return jsonList.map((json) => Ticket.fromJson(json)).toList();
+        return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
       } else {
         Logger.error('Failed to get tickets');
         throw Exception('Failed to get tickets');
@@ -57,7 +55,7 @@ class TicketService implements ITicketService {
   }
 
   @override
-  Future<List<Ticket>> createTickets(CreateTicket ticketData) async {
+  Future<TicketSummary> createTickets(CreateTicket ticketData) async {
     try {
       Logger.debug('Creating tickets...');
       final response = await client.post(
@@ -69,9 +67,8 @@ class TicketService implements ITicketService {
       );
 
       if (response.statusCode == 201) {
-        final jsonList = jsonDecode(response.body) as List<dynamic>;
         Logger.info('Tickets have been created successfully!');
-        return jsonList.map((json) => Ticket.fromJson(json)).toList();
+        return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
       } else {
         Logger.error('Failed to create tickets');
         throw Exception('Failed to create tickets');
@@ -83,7 +80,7 @@ class TicketService implements ITicketService {
   }
 
   @override
-  Future<List<Ticket>> buyTickets(Order order) async {
+  Future<TicketSummary> buyTickets(Order order) async {
     try {
       Logger.debug('Buying ${order.quantity} tickets for event ${order.eventId}...');
       final response = await client.post(
@@ -95,9 +92,8 @@ class TicketService implements ITicketService {
       );
 
       if (response.statusCode == 201) {
-        final jsonList = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         Logger.info('Tickets have been bought successfully!');
-        return jsonList.map((json) => Ticket.fromJson(json)).toList();
+        return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
       } else if (response.statusCode == 400) {
         Logger.error('The event has reached its ticket limit');
         throw Exception('The event has reached its ticket limit');

@@ -35,9 +35,9 @@ const mockUserResponse = {
 */
 
 const mockTokenResponse = {
-  "accessToken":
+  "access_token":
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
-  "type": "bearer"
+  "token_type": "bearer"
 };
 
 /* 
@@ -72,10 +72,9 @@ const mockEventListResponse = [
   {
     "id": 1,
     "title": "Bad Bunny Concert",
-    "date": "07-12-2023",
+    "date": "2023-12-07T18:00:00+01:00",
     "time": "18:00",
     "venue": "Wizink Center",
-    "ticket_limit": 1000,
     "organization_id": 1,
     "organization": {
       "id": 1,
@@ -85,10 +84,9 @@ const mockEventListResponse = [
   {
     "id": 2,
     "title": "Rosalia Concert",
-    "date": "14-12-2023",
+    "date": "2023-12-14T18:00:00+01:00",
     "time": "18:00",
     "venue": "Wizink Center",
-    "ticket_limit": 1000,
     "organization_id": 1,
     "organization": {
       "id": 1,
@@ -101,7 +99,7 @@ const mockEventResponse = {
   "id": 1,
   "title": "Bad Bunny Concert",
   "venue": "Wizink Center",
-  "date": "07-12-2023",
+  "date": "2023-12-07T18:00:00+01:00",
   "time": "18:00",
   "ticket_limit": 1000,
   "organization_id": 1,
@@ -117,65 +115,50 @@ const mockEventResponse = {
   +----------------------------+
 */
 
-final mockTicketListResponse = [
+final mockTicketSummaryListResponse = [
   {
-    "id": 1,
-    "price": 80.0,
-    "reference": "001AUMS20230426ABAD",
-    "status": TicketStatus.SOLD.name,
-    "event_id": 1,
     "event": {
       "id": 1,
       "title": "Bad Bunny Concert",
-      "date": "07-12-2023",
+      "date": "2023-12-07T18:00:00+01:00",
       "time": "18:00",
       "venue": "Wizink Center",
-      "organization_id": 1,
-      "organization": {
-        "id": 1,
-        "name": "UNIVERSAL MUSIC SPAIN",
-      },
-    }
+      "organization": {"id": 1, "name": "UNIVERSAL MUSIC SPAIN"}
+    },
+    "tickets": [
+      {"id": 1, "reference": "2IR6ZOULKL2HOARDUI19", "price": 10.0, "status": "SOLD"},
+      {"id": 2, "reference": "ZT1HT93LEGSVCIEEGAIJ", "price": 10.0, "status": "SOLD"}
+    ]
   },
   {
-    "id": 2,
-    "price": 60.0,
-    "reference": "001AUMS20230426AROS",
-    "status": TicketStatus.SOLD.name,
-    "event_id": 2,
     "event": {
       "id": 2,
       "title": "Rosalia Concert",
-      "date": "14-12-2023",
+      "date": "2023-12-14T18:00:00+01:00",
       "time": "18:00",
       "venue": "Wizink Center",
-      "organization_id": 1,
-      "organization": {
-        "id": 1,
-        "name": "UNIVERSAL MUSIC SPAIN",
-      },
-    }
+      "organization": {"id": 1, "name": "UNIVERSAL MUSIC SPAIN"}
+    },
+    "tickets": [
+      {"id": 3, "reference": "4JUAEAWPB1S6KSSWPN80", "price": 20.0, "status": "SOLD"},
+      {"id": 4, "reference": "Y3OPY34TJ9FH78UV4BXG", "price": 20.0, "status": "SOLD"},
+    ]
   }
 ];
 
-final mockTicketResponse = {
-  "id": 1,
-  "price": 80.0,
-  "reference": "001AUMS20230426ABAD",
-  "status": TicketStatus.SOLD.name,
-  "event_id": 1,
+final mockTicketSummaryResponse = {
   "event": {
     "id": 1,
     "title": "Bad Bunny Concert",
-    "date": "07-12-2023",
+    "date": "2023-12-07T18:00:00+01:00",
     "time": "18:00",
     "venue": "Wizink Center",
-    "organization_id": 1,
-    "organization": {
-      "id": 1,
-      "name": "UNIVERSAL MUSIC SPAIN",
-    },
-  }
+    "organization": {"id": 1, "name": "UNIVERSAL MUSIC SPAIN"}
+  },
+  "tickets": [
+    {"id": 1, "reference": "2IR6ZOULKL2HOARDUI19", "price": 10.0, "status": "SOLD"},
+    {"id": 2, "reference": "ZT1HT93LEGSVCIEEGAIJ", "price": 10.0, "status": "SOLD"}
+  ]
 };
 
 /* 
@@ -197,7 +180,7 @@ final mockOrderListResponse = [
         "event": {
           "id": 1,
           "title": "Bad Bunny Concert",
-          "date": "07-12-2023",
+          "date": "2023-12-07T18:00:00+01:00",
           "time": "18:00",
           "venue": "Wizink Center",
           "organization_id": 1,
@@ -221,7 +204,7 @@ final mockOrderListResponse = [
         "event": {
           "id": 2,
           "title": "Rosalia Concert",
-          "date": "14-12-2023",
+          "date": "2023-12-14T18:00:00+01:00",
           "time": "18:00",
           "venue": "Wizink Center",
           "organization_id": 1,
@@ -247,7 +230,16 @@ final mockOrganizationResponse = {
 };
 
 const mockOrganizationListResponse = [
-  {"id": 1, "name": "UNIVERSAL MUSIC SPAIN"},
-  {"id": 2, "name": "WARNER BROS MUSIC"},
-  {"id": 3, "name": "SONY MUSIC ENTERTAINMENT"}
+  {
+    "id": 1,
+    "name": "UNIVERSAL MUSIC SPAIN",
+  },
+  {
+    "id": 2,
+    "name": "WARNER BROS MUSIC",
+  },
+  {
+    "id": 3,
+    "name": "SONY MUSIC ENTERTAINMENT",
+  }
 ];

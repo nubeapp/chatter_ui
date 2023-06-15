@@ -20,7 +20,7 @@ class Token {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['access_token'] = accessToken;
-    data['token_type'] = type;
+    data['type'] = type;
     return data;
   }
 }

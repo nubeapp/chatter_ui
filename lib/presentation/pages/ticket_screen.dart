@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_barcodes/barcodes.dart';
 import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/extensions/extensions.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
 import 'package:ui/presentation/pages/ticket_info_screen.dart';
+import 'package:ui/presentation/styles/logger.dart';
 
 class TicketScreen extends StatefulWidget {
   const TicketScreen({Key? key}) : super(key: key);
@@ -17,6 +21,42 @@ class TicketScreen extends StatefulWidget {
 
 class _TicketScreenState extends State<TicketScreen> {
   final _ticketService = GetIt.instance<ITicketService>();
+
+  late Future<List<TicketSummary>> _tickets;
+
+  @override
+  void initState() {
+    super.initState();
+    _tickets = _fetchTickets();
+  }
+
+  Future<List<TicketSummary>> _fetchTickets() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+    final cachedTickets = sharedPreferences.getString('tickets');
+    if (cachedTickets != null) {
+      final tickets = _decodeTicketSummaryList(cachedTickets);
+      return tickets;
+    } else {
+      final tickets = await _ticketService.getTicketsByUserId();
+      await sharedPreferences.setString('tickets', _encodeTicketSummaryList(tickets));
+      return tickets;
+    }
+  }
+
+  String _encodeTicketSummaryList(List<TicketSummary> tickets) {
+    final List<Map<String, dynamic>> ticketListJson = tickets.map((ticket) => ticket.toJson()).toList();
+    return jsonEncode(ticketListJson);
+  }
+
+  List<TicketSummary> _decodeTicketSummaryList(String json) {
+    try {
+      final List<dynamic> ticketListJson = jsonDecode(json);
+      return ticketListJson.map<TicketSummary>((ticketJson) => TicketSummary.fromJson(ticketJson as Map<String, dynamic>)).toList();
+    } catch (e) {
+      Logger.error(e.toString());
+      throw Exception(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +93,7 @@ class _TicketScreenState extends State<TicketScreen> {
         appBar: customAppBar(),
         backgroundColor: Colors.transparent,
         body: FutureBuilder<List<TicketSummary>>(
-          future: _ticketService.getTicketsByUserId(),
+          future: _tickets,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final tickets = snapshot.data!;

@@ -25,10 +25,10 @@ void main() {
 
         when(mockClient.post(
           Uri.parse(API_BASE_URL),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
+          body: {
+            'username': mockCredentialsObject.username,
+            'password': mockCredentialsObject.password,
           },
-          body: json.encode(mockCredentialsObject.toJson()),
         )).thenAnswer((_) async => http.Response(json.encode(mockTokenResponse), 200));
 
         final token = await authService.login(mockCredentialsObject);
@@ -40,10 +40,10 @@ void main() {
 
         verify(mockClient.post(
           Uri.parse(API_BASE_URL),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
+          body: {
+            'username': mockCredentialsObject.username,
+            'password': mockCredentialsObject.password,
           },
-          body: json.encode(mockCredentialsObject.toJson()),
         )).called(1);
       });
 
@@ -53,20 +53,20 @@ void main() {
 
         when(mockClient.post(
           Uri.parse(API_BASE_URL),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
+          body: {
+            'username': mockCredentialsObject.username,
+            'password': mockCredentialsObject.password,
           },
-          body: json.encode(mockCredentialsObject.toJson()),
         )).thenAnswer((_) async => http.Response('Not Found', 404));
 
         expect(authService.login(mockCredentialsObject), throwsException);
 
         verify(mockClient.post(
           Uri.parse(API_BASE_URL),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
+          body: {
+            'username': mockCredentialsObject.username,
+            'password': mockCredentialsObject.password,
           },
-          body: json.encode(mockCredentialsObject.toJson()),
         )).called(1);
       });
     });

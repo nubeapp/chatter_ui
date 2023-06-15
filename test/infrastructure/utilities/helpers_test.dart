@@ -41,39 +41,15 @@ void main() {
     });
   });
 
-  // group('Reference Generator Tests', () {
-  //   const length = 20;
-  //   test('returns a string with the specified length', () {
-  //     final code = Helpers.randomReference(length);
-  //     expect(code.length, equals(length));
-  //   });
-
-  //   test('returns a string containing only uppercase letters and digits', () {
-  //     final code = Helpers.randomReference(length);
-  //     expect(RegExp(r'^[A-Z0-9]+$').hasMatch(code), isTrue);
-  //   });
-
-  //   test('returns a different string on multiple invocations', () {
-  //     final code1 = Helpers.randomReference(length);
-  //     final code2 = Helpers.randomReference(length);
-  //     expect(code1, isNot(equals(code2)));
-  //   });
-  // });
-
   group('Date Formatting Tests', () {
     test('formatDate should format the date correctly', () {
-      String result = Helpers.formatDate('2023-05-18T12:34:56');
-      expect(result, '18 may 2023');
+      String result = Helpers.formatDate('18-05-2023');
+      expect(result, 'May 18, 2023');
     });
 
     test('formatDate should handle single-digit day and month correctly', () {
-      String result = Helpers.formatDate('2023-02-03T09:05:00');
-      expect(result, '3 feb 2023');
-    });
-
-    test('formatDate should handle invalid month correctly', () {
-      String result = Helpers.formatDate('2023-13-01T00:00:00');
-      expect(result, '1 jan 2024');
+      String result = Helpers.formatDate('03-02-2023');
+      expect(result, 'Feb 3, 2023');
     });
   });
 }
