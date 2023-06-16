@@ -73,12 +73,14 @@ void main() {
       test('returns list of tickets for the user', () async {
         final mockClient = MockClient();
         ticketService = TicketService(client: mockClient);
+        const ticketLimitMock = 5;
+        const ticketOffsetMock = 0;
 
-        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer(
+        when(mockClient.get(Uri.parse('$API_BASE_URL?limit=$ticketLimitMock&offset=$ticketOffsetMock'))).thenAnswer(
           (_) async => http.Response(json.encode(mockTicketSummaryListResponse), 200),
         );
 
-        final ticketSummary = await ticketService.getTicketsByUserId();
+        final ticketSummary = await ticketService.getTicketsByUserId(ticketLimitMock, ticketOffsetMock);
 
         expect(ticketSummary, isA<List<TicketSummary>>());
         expect(ticketSummary.length, equals(2));
@@ -117,18 +119,21 @@ void main() {
         expect(ticketSummary[1].tickets[0].status, TicketStatus.SOLD);
         expect(ticketSummary[1].tickets[1].status, TicketStatus.SOLD);
 
-        verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
+        verify(mockClient.get(Uri.parse('$API_BASE_URL?limit=$ticketLimitMock&offset=$ticketOffsetMock'))).called(1);
       });
 
       test('throws an exception if the http call completes with an error', () {
         final mockClient = MockClient();
         ticketService = TicketService(client: mockClient);
+        const ticketLimitMock = 5;
+        const ticketOffsetMock = 5;
 
-        when(mockClient.get(Uri.parse(API_BASE_URL))).thenAnswer((_) async => http.Response('Not Found', 404));
+        when(mockClient.get(Uri.parse('$API_BASE_URL?limit=$ticketLimitMock&offset=$ticketOffsetMock')))
+            .thenAnswer((_) async => http.Response('Not Found', 404));
 
-        expect(ticketService.getTicketsByUserId(), throwsException);
+        expect(ticketService.getTicketsByUserId(ticketLimitMock, ticketOffsetMock), throwsException);
 
-        verify(mockClient.get(Uri.parse(API_BASE_URL))).called(1);
+        verify(mockClient.get(Uri.parse('$API_BASE_URL?limit=$ticketLimitMock&offset=$ticketOffsetMock'))).called(1);
       });
     });
 

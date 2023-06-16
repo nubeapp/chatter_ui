@@ -33,9 +33,9 @@ class TicketService implements ITicketService {
   }
 
   @override
-  Future<List<TicketSummary>> getTicketsByUserId() async {
+  Future<List<TicketSummary>> getTicketsByUserId(int limit, int offset) async {
     try {
-      final response = await client.get(Uri.parse(API_BASE_URL));
+      final response = await client.get(Uri.parse('$API_BASE_URL?limit=$limit&offset=$offset'));
 
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(utf8.decode(response.bodyBytes));

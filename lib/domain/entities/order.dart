@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/entities/ticket/ticket.dart';
 
 @immutable
@@ -6,12 +7,14 @@ class Order {
   final int? id;
   final int? eventId;
   final int? quantity;
+  final Event? event;
   final List<Ticket>? tickets;
 
   const Order({
     this.id,
     this.eventId,
     this.quantity,
+    this.event,
     this.tickets,
   });
 
@@ -25,6 +28,7 @@ class Order {
       'id': id,
       'eventId': eventId,
       'quantity': quantity,
+      'event': event,
       'tickets': ticketList,
     };
   }
@@ -40,6 +44,7 @@ class Order {
       id: json['id'],
       eventId: json['eventId'],
       quantity: json['quantity'],
+      event: Event.fromJson(json['event']),
       tickets: ticketsList,
     );
   }

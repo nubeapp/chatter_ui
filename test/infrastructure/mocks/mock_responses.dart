@@ -170,52 +170,36 @@ final mockTicketSummaryResponse = {
 final mockOrderListResponse = [
   {
     "id": 1,
+    "created_at": "2023-06-15T23:25:23+02:00",
+    "event": {
+      "id": 1,
+      "title": "Bad Bunny Concert",
+      "date": "2023-12-07T18:00:00+01:00",
+      "time": "18:00",
+      "venue": "Wizink Center",
+      "organization": {"id": 1, "name": "UNIVERSAL MUSIC SPAIN"}
+    },
     "tickets": [
-      {
-        "id": 1,
-        "price": 80.0,
-        "reference": "001AUMS20230426ABAD",
-        "status": TicketStatus.SOLD.name,
-        "event_id": 1,
-        "event": {
-          "id": 1,
-          "title": "Bad Bunny Concert",
-          "date": "2023-12-07T18:00:00+01:00",
-          "time": "18:00",
-          "venue": "Wizink Center",
-          "organization_id": 1,
-          "organization": {
-            "id": 1,
-            "name": "UNIVERSAL MUSIC SPAIN",
-          },
-        }
-      },
+      {"id": 1, "reference": "2IR6ZOULKL2HOARDUI19", "price": 10.0, "status": "SOLD"},
+      {"id": 2, "reference": "ZT1HT93LEGSVCIEEGAIJ", "price": 10.0, "status": "SOLD"}
     ]
   },
   {
     "id": 2,
+    "created_at": "2023-06-15T23:47:19+02:00",
+    "event": {
+      "id": 2,
+      "title": "Rosalia Concert",
+      "date": "2023-12-14T18:00:00+01:00",
+      "time": "18:00",
+      "venue": "Wizink Center",
+      "organization": {"id": 1, "name": "UNIVERSAL MUSIC SPAIN"}
+    },
     "tickets": [
-      {
-        "id": 2,
-        "price": 60.0,
-        "reference": "001AUMS20230426AROS",
-        "status": TicketStatus.SOLD.name,
-        "event_id": 2,
-        "event": {
-          "id": 2,
-          "title": "Rosalia Concert",
-          "date": "2023-12-14T18:00:00+01:00",
-          "time": "18:00",
-          "venue": "Wizink Center",
-          "organization_id": 1,
-          "organization": {
-            "id": 1,
-            "name": "UNIVERSAL MUSIC SPAIN",
-          },
-        }
-      },
+      {"id": 3, "reference": "4JUAEAWPB1S6KSSWPN80", "price": 20.0, "status": "SOLD"},
+      {"id": 4, "reference": "Y3OPY34TJ9FH78UV4BXG", "price": 20.0, "status": "SOLD"},
     ]
-  },
+  }
 ];
 
 /* 

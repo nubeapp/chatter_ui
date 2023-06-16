@@ -23,11 +23,27 @@ class _TicketScreenState extends State<TicketScreen> {
   final _ticketService = GetIt.instance<ITicketService>();
 
   late Future<List<TicketSummary>> _tickets;
+  final _limit = 15;
+  int _offset = 0;
+  bool _isLoading = false;
+  bool _ticketsRemaining = true;
+
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _tickets = _fetchTickets();
+
+    // Add a listener to the scroll controller
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    // Dispose the scroll controller when the widget is disposed
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<List<TicketSummary>> _fetchTickets() async {
@@ -35,11 +51,55 @@ class _TicketScreenState extends State<TicketScreen> {
     final cachedTickets = sharedPreferences.getString('tickets');
     if (cachedTickets != null) {
       final tickets = _decodeTicketSummaryList(cachedTickets);
+      Logger.debug('There are ${tickets.length} tickets cached');
       return tickets;
     } else {
-      final tickets = await _ticketService.getTicketsByUserId();
+      final tickets = await _ticketService.getTicketsByUserId(_limit, _offset);
+      Logger.debug('tickets on initState after fetch() -> ${tickets.length}');
       await sharedPreferences.setString('tickets', _encodeTicketSummaryList(tickets));
       return tickets;
+    }
+  }
+
+  // Fetch the next set of tickets
+  Future<void> _loadNextTickets() async {
+    if (_isLoading) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      _offset += _limit; // Increment the offset for the next fetch
+      final nextTickets = await _ticketService.getTicketsByUserId(_limit, _offset);
+      if (nextTickets.isEmpty || nextTickets.length < _limit) {
+        _ticketsRemaining = false;
+      }
+      final allTickets = await _tickets;
+
+      // Append the new tickets to the existing list
+      final updatedTickets = [...allTickets, ...nextTickets];
+
+      setState(() {
+        _tickets = Future.value(updatedTickets);
+        _isLoading = false;
+      });
+    } catch (e) {
+      // Handle the error
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _scrollListener() {
+    // Check if the user has reached the bottom of the scroll
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent - 20 && !_scrollController.position.outOfRange) {
+      if (_ticketsRemaining) {
+        _loadNextTickets();
+      }
     }
   }
 
@@ -98,7 +158,7 @@ class _TicketScreenState extends State<TicketScreen> {
             if (snapshot.hasData) {
               final tickets = snapshot.data!;
               if (tickets.isNotEmpty) {
-                return TicketsListView(tickets: tickets);
+                return TicketsListView(tickets: tickets, scrollController: _scrollController);
               } else {
                 return const Center(
                   child: Text(
@@ -131,13 +191,16 @@ class TicketsListView extends StatelessWidget {
   const TicketsListView({
     Key? key,
     required this.tickets,
+    required this.scrollController,
   }) : super(key: key);
 
   final List<TicketSummary> tickets;
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      controller: scrollController,
       itemCount: tickets.length,
       itemBuilder: (context, index) {
         return Padding(
