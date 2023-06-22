@@ -1,8 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:lorem_ipsum/lorem_ipsum.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui/domain/entities/event.dart';
+import 'package:ui/domain/entities/order.dart';
+import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/extensions/extensions.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_bloc.dart';
@@ -75,9 +79,9 @@ class EventScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: EventCard(url: url, event: event),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: EventTicketCounterCard(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: EventTicketCounterCard(event: event),
             ),
           ],
         ),
@@ -407,7 +411,13 @@ class EventStack extends StatelessWidget {
 }
 
 class EventTicketCounterCard extends StatelessWidget {
-  const EventTicketCounterCard({Key? key}) : super(key: key);
+  EventTicketCounterCard({
+    Key? key,
+    required this.event,
+  }) : super(key: key);
+
+  final Event event;
+  ITicketService _ticketService = GetIt.instance<ITicketService>();
 
   @override
   Widget build(BuildContext context) {
@@ -430,13 +440,21 @@ class EventTicketCounterCard extends StatelessWidget {
               Button(
                 text: 'Buy',
                 width: context.w * 0.4,
-                onPressed: () => Logger.debug('buy ${ticketCounterBloc.ticketCounter} tickets'),
+                onPressed: () => _buyTickets(ticketCounterBloc.ticketCounter),
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  void _buyTickets(int counter) async {
+    Order order = Order(eventId: event.id, quantity: counter);
+    final tickets = await _ticketService.buyTickets(order);
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.remove('tickets');
+    // Check return and go to successful screen or error screen
   }
 
   Widget _buildContent(BuildContext context, TicketCounterState state) {

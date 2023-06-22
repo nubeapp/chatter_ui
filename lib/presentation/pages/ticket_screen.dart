@@ -51,11 +51,9 @@ class _TicketScreenState extends State<TicketScreen> {
     final cachedTickets = sharedPreferences.getString('tickets');
     if (cachedTickets != null) {
       final tickets = _decodeTicketSummaryList(cachedTickets);
-      Logger.debug('There are ${tickets.length} tickets cached');
       return tickets;
     } else {
       final tickets = await _ticketService.getTicketsByUserId(_limit, _offset);
-      Logger.debug('tickets on initState after fetch() -> ${tickets.length}');
       await sharedPreferences.setString('tickets', _encodeTicketSummaryList(tickets));
       return tickets;
     }

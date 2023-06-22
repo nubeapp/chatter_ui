@@ -26,7 +26,7 @@ class Order {
 
     return {
       'id': id,
-      'eventId': eventId,
+      'event_id': eventId,
       'quantity': quantity,
       'event': event,
       'tickets': ticketList,
@@ -42,7 +42,7 @@ class Order {
 
     return Order(
       id: json['id'],
-      eventId: json['eventId'],
+      eventId: json['event_id'],
       quantity: json['quantity'],
       event: Event.fromJson(json['event']),
       tickets: ticketsList,
