@@ -86,6 +86,7 @@ class _TicketScreenState extends State<TicketScreen> {
       });
     } catch (e) {
       // Handle the error
+      Logger.error('Error loading next tickets: ${e.toString()}');
       setState(() {
         _isLoading = false;
       });

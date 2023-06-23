@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ui/domain/entities/order.dart';
 import 'package:ui/domain/entities/ticket/create_ticket.dart';
 import 'package:ui/domain/entities/ticket/ticket_summary.dart';
+import 'package:ui/domain/exceptions/exceptions.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:ui/presentation/styles/logger.dart';
@@ -29,6 +30,25 @@ class TicketService implements ITicketService {
     } catch (e) {
       Logger.error('An error occurred while getting tickets: $e');
       throw Exception('Failed to get tickets');
+    }
+  }
+
+  @override
+  Future<TicketSummary> getTicketsAvailableByEventId(int eventId) async {
+    try {
+      Logger.debug('Requesting tickets available for event $eventId...');
+      final response = await client.get(Uri.parse('$API_BASE_URL/available/$eventId'));
+
+      if (response.statusCode == 200) {
+        Logger.info('Available tickets have been retrieved successfully!');
+        return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
+      } else {
+        Logger.error('Failed to get available tickets');
+        throw Exception('Failed to get available tickets');
+      }
+    } catch (e) {
+      Logger.error('An error occurred while getting available tickets: $e');
+      throw Exception('Failed to get available tickets');
     }
   }
 
@@ -95,18 +115,14 @@ class TicketService implements ITicketService {
         Logger.info('Tickets have been bought successfully!');
         return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
       } else if (response.statusCode == 400) {
-        Logger.error('The event has reached its ticket limit');
-        throw Exception('The event has reached its ticket limit');
+        throw EventTicketLimitException('The event has reached its ticket limit');
       } else if (response.statusCode == 409) {
-        Logger.error('The user has already reached the limit of tickets for this event');
-        throw Exception('The user has already reached the limit of tickets for this event');
+        throw UserTicketLimitException('The user has already reached the limit of tickets for this event');
       } else {
-        Logger.error('Failed to buy ticket');
         throw Exception('Failed to buy ticket');
       }
     } catch (e) {
-      Logger.error('An error occurred while buying tickets: $e');
-      throw Exception('Failed to buy ticket');
+      rethrow;
     }
   }
 }

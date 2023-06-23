@@ -1,5 +1,3 @@
-import 'package:ui/domain/entities/ticket/ticket_status.dart';
-
 /* 
   +----------------------------+
   |     Mock User Responses    |

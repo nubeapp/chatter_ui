@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_event.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_state.dart';
 
@@ -28,13 +30,11 @@ class TicketCounterBloc extends Bloc<TicketCounterEvent, TicketCounterState> {
 
   FutureOr<void> _handleIncrementTicketCounter(IncrementTicketCounterEvent event, Emitter<TicketCounterState> emit) {
     ticketCounter++;
-    ticketCounter = ticketCounter > 4 ? 4 : ticketCounter;
     emit(TicketCounterUpdatedState(ticketCounter));
   }
 
   FutureOr<void> _handleDecrementTicketCounter(DecrementTicketCounterEvent event, Emitter<TicketCounterState> emit) {
     ticketCounter--;
-    ticketCounter = ticketCounter < 1 ? 1 : ticketCounter;
     emit(TicketCounterUpdatedState(ticketCounter));
   }
 

@@ -410,14 +410,48 @@ class EventStack extends StatelessWidget {
   }
 }
 
-class EventTicketCounterCard extends StatelessWidget {
-  EventTicketCounterCard({
+class EventTicketCounterCard extends StatefulWidget {
+  const EventTicketCounterCard({
     Key? key,
     required this.event,
   }) : super(key: key);
 
   final Event event;
-  ITicketService _ticketService = GetIt.instance<ITicketService>();
+
+  @override
+  State<EventTicketCounterCard> createState() => _EventTicketCounterCardState();
+}
+
+class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
+  final _ticketService = GetIt.instance<ITicketService>();
+  int _nUserTickets = -1;
+  int _nTicketsAvailable = -1;
+  bool _isLoading = true;
+  int _maxTicketsCanBuy = 4;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTicketData();
+  }
+
+  Future<void> _fetchTicketData() async {
+    try {
+      final availableTickets = await _ticketService.getTicketsAvailableByEventId(widget.event.id!);
+      final userTickets = await _ticketService.getTicketsByUserIdEventId(widget.event.id!);
+      setState(() {
+        _nTicketsAvailable = availableTickets.tickets.length;
+        _nUserTickets = userTickets.tickets.length;
+        _maxTicketsCanBuy -= _nUserTickets;
+        _isLoading = false;
+      });
+    } catch (e) {
+      Logger.error('Error fetching ticket data: ${e.toString()}');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -431,29 +465,66 @@ class EventTicketCounterCard extends StatelessWidget {
             borderRadius: BorderRadius.only(topRight: Radius.circular(20), bottomRight: Radius.circular(20), bottomLeft: Radius.circular(20)),
             color: Colors.white,
           ),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
-                child: _buildContent(context, state),
-              ),
-              Button(
-                text: 'Buy',
-                width: context.w * 0.4,
-                onPressed: () => _buyTickets(ticketCounterBloc.ticketCounter),
-              ),
-            ],
-          ),
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator()) // Show a loading indicator while fetching data
+              : _nTicketsAvailable >= 1
+                  ? _maxTicketsCanBuy == 0
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
+                              child: _buildContent(context, state),
+                            ),
+                            Button(
+                              text: 'Buy',
+                              width: context.w * 0.4,
+                              onPressed: () => Logger.debug('Ticket limit reached!'),
+                              blocked: true,
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
+                              child: _buildContent(context, state),
+                            ),
+                            Button(
+                              text: 'Buy',
+                              width: context.w * 0.4,
+                              onPressed: () => _buyTickets(ticketCounterBloc.ticketCounter, context),
+                            ),
+                          ],
+                        )
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
+                          child: _buildContentFixed(context),
+                        ),
+                        Button(
+                          text: 'Buy',
+                          width: context.w * 0.4,
+                          onPressed: () => Logger.debug('There are no tickets available'),
+                          blocked: true,
+                        ),
+                      ],
+                    ),
         );
       },
     );
   }
 
-  void _buyTickets(int counter) async {
-    Order order = Order(eventId: event.id, quantity: counter);
-    final tickets = await _ticketService.buyTickets(order);
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    sharedPreferences.remove('tickets');
+  void _buyTickets(int counter, BuildContext context) async {
+    try {
+      Order order = Order(eventId: widget.event.id, quantity: counter);
+      final tickets = await _ticketService.buyTickets(order);
+      final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      sharedPreferences.remove('tickets');
+    } catch (e) {
+      Logger.error('Error buying tickets: ${e.toString()}');
+    }
+
     // Check return and go to successful screen or error screen
   }
 
@@ -492,7 +563,10 @@ class EventTicketCounterCard extends StatelessWidget {
         ),
         IconButton(
           onPressed: () {
-            context.read<TicketCounterBloc>().decrementTicketCounter();
+            // Tickets quantity should be 1 or more
+            if (ticketCounter - 1 >= 1) {
+              context.read<TicketCounterBloc>().decrementTicketCounter();
+            }
           },
           icon: const Icon(CupertinoIcons.minus_circle_fill),
           padding: const EdgeInsets.only(top: 8, right: 10),
@@ -500,18 +574,33 @@ class EventTicketCounterCard extends StatelessWidget {
           iconSize: 18,
           color: ticketCounter == 1 ? Colors.black26 : Colors.black87,
         ),
-        _ticketCounterText(ticketCounter),
+        _ticketCounterText(_maxTicketsCanBuy == 0 ? 0 : ticketCounter),
         IconButton(
           onPressed: () {
-            context.read<TicketCounterBloc>().incrementTicketCounter();
+            // Limit to 4 tickets per user
+            if (ticketCounter + 1 <= _maxTicketsCanBuy) {
+              context.read<TicketCounterBloc>().incrementTicketCounter();
+            }
           },
           icon: const Icon(CupertinoIcons.add_circled_solid),
           padding: const EdgeInsets.only(top: 8, left: 10),
           constraints: const BoxConstraints(),
           iconSize: 18,
-          color: ticketCounter == 4 ? Colors.black26 : Colors.black87,
+          color: ticketCounter >= _maxTicketsCanBuy ? Colors.black26 : Colors.black87,
         ),
       ],
+    );
+  }
+
+  Widget _buildContentFixed(BuildContext context) {
+    return const Text(
+      'Tickets are not available for the event',
+      style: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: Colors.black87,
+        height: 2,
+      ),
     );
   }
 

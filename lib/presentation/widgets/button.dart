@@ -8,11 +8,13 @@ class Button extends StatelessWidget {
     required this.text,
     required this.onPressed,
     required this.width,
+    this.blocked = false,
   }) : super(key: key);
 
   final String text;
   final VoidCallback onPressed;
   final double width;
+  final bool blocked;
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +22,10 @@ class Button extends StatelessWidget {
       width: width,
       height: context.h * 0.05,
       child: Material(
-        color: Colors.black, // Apply the background color here
+        color: blocked ? Colors.black26 : Colors.black, // Apply the background color here
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         child: InkWell(
-          onTap: onPressed,
+          onTap: blocked ? null : onPressed,
           borderRadius: const BorderRadius.all(Radius.circular(20)),
           child: Center(
             child: Text(
