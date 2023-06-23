@@ -424,7 +424,6 @@ class EventTicketCounterCard extends StatefulWidget {
 
 class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
   final _ticketService = GetIt.instance<ITicketService>();
-  int _nUserTickets = -1;
   int _nTicketsAvailable = -1;
   bool _isLoading = true;
   int _maxTicketsCanBuy = 4;
@@ -441,8 +440,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
       final userTickets = await _ticketService.getTicketsByUserIdEventId(widget.event.id!);
       setState(() {
         _nTicketsAvailable = availableTickets.tickets.length;
-        _nUserTickets = userTickets.tickets.length;
-        _maxTicketsCanBuy -= _nUserTickets;
+        _maxTicketsCanBuy -= userTickets.tickets.length;
         _isLoading = false;
       });
     } catch (e) {
@@ -469,25 +467,12 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
               ? const Center(child: CircularProgressIndicator()) // Show a loading indicator while fetching data
               : _nTicketsAvailable >= 1
                   ? _maxTicketsCanBuy == 0
-                      ? Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
-                              child: _buildContent(context, state),
-                            ),
-                            Button(
-                              text: 'Buy',
-                              width: context.w * 0.4,
-                              onPressed: () => Logger.debug('Ticket limit reached!'),
-                              blocked: true,
-                            ),
-                          ],
-                        )
+                      ? _buildUserTicketLimit(context)
                       : Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
-                              child: _buildContent(context, state),
+                              child: _buildTicketsCounter(context, state),
                             ),
                             Button(
                               text: 'Buy',
@@ -496,20 +481,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
                             ),
                           ],
                         )
-                  : Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
-                          child: _buildContentFixed(context),
-                        ),
-                        Button(
-                          text: 'Buy',
-                          width: context.w * 0.4,
-                          onPressed: () => Logger.debug('There are no tickets available'),
-                          blocked: true,
-                        ),
-                      ],
-                    ),
+                  : _buildNoTicketsAvailable(context),
         );
       },
     );
@@ -521,22 +493,21 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
       final tickets = await _ticketService.buyTickets(order);
       final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       sharedPreferences.remove('tickets');
+      // Check return and go to successful screen or error screen
     } catch (e) {
       Logger.error('Error buying tickets: ${e.toString()}');
     }
-
-    // Check return and go to successful screen or error screen
   }
 
-  Widget _buildContent(BuildContext context, TicketCounterState state) {
+  Widget _buildTicketsCounter(BuildContext context, TicketCounterState state) {
     if (state is TicketCounterUpdatedState) {
-      return _buildContentRow(context, state.ticketCounter);
+      return _buildTicketsCounterContent(context, state.ticketCounter);
     } else {
-      return _buildContentRow(context, 1); // Default initial state
+      return _buildTicketsCounterContent(context, 1); // Default initial state
     }
   }
 
-  Widget _buildContentRow(BuildContext context, int ticketCounter) {
+  Widget _buildTicketsCounterContent(BuildContext context, int ticketCounter) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -574,7 +545,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           iconSize: 18,
           color: ticketCounter == 1 ? Colors.black26 : Colors.black87,
         ),
-        _ticketCounterText(_maxTicketsCanBuy == 0 ? 0 : ticketCounter),
+        _ticketCounterText(ticketCounter),
         IconButton(
           onPressed: () {
             // Limit to 4 tickets per user
@@ -592,7 +563,24 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
     );
   }
 
-  Widget _buildContentFixed(BuildContext context) {
+  Widget _buildNoTicketsAvailable(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
+          child: _buildNoTicketsAvailableContent(context),
+        ),
+        Button(
+          text: 'Buy',
+          width: context.w * 0.4,
+          onPressed: null,
+          blocked: true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNoTicketsAvailableContent(BuildContext context) {
     return const Text(
       'Tickets are not available for the event',
       style: TextStyle(
@@ -601,6 +589,69 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
         color: Colors.black87,
         height: 2,
       ),
+    );
+  }
+
+  Widget _buildUserTicketLimit(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
+          child: _buildUserTicketLimitContent(context),
+        ),
+        Button(
+          text: 'Buy',
+          width: context.w * 0.4,
+          onPressed: null,
+          blocked: true,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserTicketLimitContent(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'General - ',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+            height: 2,
+          ),
+        ),
+        const Text(
+          '80 €',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+            height: 2,
+          ),
+        ),
+        SizedBox(
+          width: context.w * 0.4,
+        ),
+        const IconButton(
+          onPressed: null,
+          icon: Icon(CupertinoIcons.minus_circle_fill),
+          padding: EdgeInsets.only(top: 8, right: 10),
+          constraints: BoxConstraints(),
+          iconSize: 18,
+          color: Colors.black26,
+        ),
+        _ticketCounterText(0),
+        const IconButton(
+          onPressed: null,
+          icon: Icon(CupertinoIcons.add_circled_solid),
+          padding: EdgeInsets.only(top: 8, left: 10),
+          constraints: BoxConstraints(),
+          iconSize: 18,
+          color: Colors.black26,
+        ),
+      ],
     );
   }
 

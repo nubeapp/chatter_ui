@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_event.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_state.dart';
 

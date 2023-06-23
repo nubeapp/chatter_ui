@@ -6,13 +6,13 @@ class Button extends StatelessWidget {
   const Button({
     Key? key,
     required this.text,
-    required this.onPressed,
+    this.onPressed,
     required this.width,
     this.blocked = false,
   }) : super(key: key);
 
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final double width;
   final bool blocked;
 
