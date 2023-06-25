@@ -23,12 +23,10 @@ class CodeService implements ICodeService {
         Logger.info('Codes have been received!');
         return codes;
       } else {
-        Logger.error('Failed to load codes');
         throw Exception('Failed to load codes');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting codes: $e');
-      throw Exception('Failed to load codes');
+      rethrow;
     }
   }
 
@@ -44,15 +42,12 @@ class CodeService implements ICodeService {
         Logger.info('Code ${code.code} has been retrieved successfully!');
         return code;
       } else if (response.statusCode == 404) {
-        Logger.error('The email $email has no associated code');
         throw Exception('The email $email has no associated code');
       } else {
-        Logger.error('Failed to get code for email $email: ${response.statusCode}');
         throw Exception('Failed to get code for email $email: ${response.statusCode}');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting the code for email $email: $e');
-      throw Exception('Failed to get code for email $email');
+      rethrow;
     }
   }
 
@@ -95,15 +90,12 @@ class CodeService implements ICodeService {
         Logger.info('The code associated with email $email has been updated successfully to ${code.code}!');
         return code;
       } else if (response.statusCode == 404) {
-        Logger.error('The email $email has no associated code');
         throw Exception('The email $email has no associated code');
       } else {
-        Logger.error('Failed to update code for email $email: ${response.statusCode}');
         throw Exception('Failed to update code for email $email: ${response.statusCode}');
       }
     } catch (e) {
-      Logger.error('An error occurred while updating the code for email $email: $e');
-      throw Exception('Failed to update code for email $email');
+      rethrow;
     }
   }
 
@@ -116,15 +108,12 @@ class CodeService implements ICodeService {
       if (response.statusCode == 204) {
         Logger.info('The code associated with email $email has been deleted successfully!');
       } else if (response.statusCode == 404) {
-        Logger.error('The email $email has no associated code');
         throw Exception('The email $email has no associated code');
       } else {
-        Logger.error('Failed to delete code for email $email: ${response.statusCode}');
         throw Exception('Failed to delete code for email $email: ${response.statusCode}');
       }
     } catch (e) {
-      Logger.error('An error occurred while deleting the code for email $email: $e');
-      throw Exception('Failed to delete code for email $email');
+      rethrow;
     }
   }
 
@@ -135,14 +124,11 @@ class CodeService implements ICodeService {
       final response = await client.delete(Uri.parse(API_BASE_URL));
 
       if (response.statusCode != 204) {
-        Logger.error('Failed to delete codes');
         throw Exception('Failed to delete codes');
       }
-
       Logger.info('All codes have been deleted successfully!');
     } catch (e) {
-      Logger.error('An error occurred while deleting codes: $e');
-      throw Exception('Failed to delete codes');
+      rethrow;
     }
   }
 }

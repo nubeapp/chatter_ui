@@ -24,12 +24,10 @@ class TicketService implements ITicketService {
         Logger.info('Tickets have been retrieved successfully!');
         return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
       } else {
-        Logger.error('Failed to get tickets');
         throw Exception('Failed to get tickets');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting tickets: $e');
-      throw Exception('Failed to get tickets');
+      rethrow;
     }
   }
 
@@ -43,12 +41,10 @@ class TicketService implements ITicketService {
         Logger.info('Available tickets have been retrieved successfully!');
         return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
       } else {
-        Logger.error('Failed to get available tickets');
         throw Exception('Failed to get available tickets');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting available tickets: $e');
-      throw Exception('Failed to get available tickets');
+      rethrow;
     }
   }
 
@@ -62,15 +58,12 @@ class TicketService implements ITicketService {
         Logger.info('Tickets have been retrieved successfully!');
         return jsonList.map((json) => TicketSummary.fromJson(json)).toList();
       } else if (response.statusCode == 401) {
-        Logger.warning('Unauthorize operation');
         throw Exception('Unauthorize operation');
       } else {
-        Logger.error('Failed to get tickets');
         throw Exception('Failed to get tickets');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting tickets: $e');
-      throw Exception('Failed to get tickets');
+      rethrow;
     }
   }
 
@@ -90,12 +83,10 @@ class TicketService implements ITicketService {
         Logger.info('Tickets have been created successfully!');
         return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
       } else {
-        Logger.error('Failed to create tickets');
         throw Exception('Failed to create tickets');
       }
     } catch (e) {
-      Logger.error('An error occurred while creating tickets: $e');
-      throw Exception('Failed to create tickets');
+      rethrow;
     }
   }
 

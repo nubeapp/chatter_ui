@@ -24,15 +24,12 @@ class AuthService implements IAuthService {
 
       if (response.statusCode == 200) {
         Logger.info('Logged in successfully!');
-        final json = jsonDecode(response.body);
-        return Token.fromJson(json);
+        return Token.fromJson(jsonDecode(response.body));
       } else {
-        Logger.error('Failed to login');
         throw Exception('Failed to login');
       }
     } catch (e) {
-      Logger.error('An error occurred during login: $e');
-      throw Exception('Failed to login');
+      rethrow;
     }
   }
 }

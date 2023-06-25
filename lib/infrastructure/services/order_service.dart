@@ -22,12 +22,10 @@ class OrderService implements IOrderService {
         final jsonList = json.decode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         return jsonList.map((json) => Order.fromJson(json)).toList();
       } else {
-        Logger.error('Failed to get orders');
         throw Exception('Failed to get orders');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting orders: $e');
-      throw Exception('Failed to get orders');
+      rethrow;
     }
   }
 }

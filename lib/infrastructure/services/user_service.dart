@@ -22,12 +22,10 @@ class UserService implements IUserService {
         Logger.info('Users have been retrieved successfully!');
         return users;
       } else {
-        Logger.error('Failed to load users');
         throw Exception('Failed to load users');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting users: $e');
-      throw Exception('Failed to load users');
+      rethrow;
     }
   }
 
@@ -43,12 +41,10 @@ class UserService implements IUserService {
         Logger.info('User with email ${user.email} has been retrieved successfully!');
         return user;
       } else {
-        Logger.error('Failed to load user');
         throw Exception('Failed to load user');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting user: $e');
-      throw Exception('Failed to load user');
+      rethrow;
     }
   }
 
@@ -70,12 +66,10 @@ class UserService implements IUserService {
         Logger.info('User with email ${newUser.email} has been created successfully!');
         return newUser;
       } else {
-        Logger.error('Failed to create user');
         throw Exception('Failed to create user');
       }
     } catch (e) {
-      Logger.error('An error occurred while creating user: $e');
-      throw Exception('Failed to create user');
+      rethrow;
     }
   }
 
@@ -97,12 +91,10 @@ class UserService implements IUserService {
         Logger.info('User with email $email has been updated successfully!');
         return updatedUser;
       } else {
-        Logger.error('Failed to update user');
         throw Exception('Failed to update user');
       }
     } catch (e) {
-      Logger.error('An error occurred while updating user: $e');
-      throw Exception('Failed to update user');
+      rethrow;
     }
   }
 
@@ -113,13 +105,11 @@ class UserService implements IUserService {
       final response = await client.delete(Uri.parse(API_BASE_URL));
 
       if (response.statusCode != 204) {
-        Logger.error('Failed to delete users');
         throw Exception('Failed to delete users');
       }
       Logger.info('All users have been deleted successfully');
     } catch (e) {
-      Logger.error('An error occurred while deleting users: $e');
-      throw Exception('Failed to delete users');
+      rethrow;
     }
   }
 
@@ -130,13 +120,11 @@ class UserService implements IUserService {
       final response = await client.delete(Uri.parse('$API_BASE_URL/$email'));
 
       if (response.statusCode != 204) {
-        Logger.error('Failed to delete user');
         throw Exception('Failed to delete user');
       }
       Logger.info('User with email $email has been deleted successfully!');
     } catch (e) {
-      Logger.error('An error occurred while deleting user: $e');
-      throw Exception('Failed to delete user');
+      rethrow;
     }
   }
 }

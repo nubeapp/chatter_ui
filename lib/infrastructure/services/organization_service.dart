@@ -21,12 +21,10 @@ class OrganizationService implements IOrganizationService {
         final List<dynamic> data = json.decode(response.body);
         return data.map((e) => Organization.fromJson(e)).toList();
       } else {
-        Logger.error('Failed to get organizations');
         throw Exception('Failed to get organizations. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting organizations: $e');
-      throw Exception('Failed to get organizations');
+      rethrow;
     }
   }
 
@@ -40,12 +38,10 @@ class OrganizationService implements IOrganizationService {
         final Map<String, dynamic> data = json.decode(response.body);
         return Organization.fromJson(data);
       } else {
-        Logger.error('Failed to get organization');
         throw Exception('Failed to get organization. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      Logger.error('An error occurred while getting organization: $e');
-      throw Exception('Failed to get organization');
+      rethrow;
     }
   }
 
@@ -63,12 +59,10 @@ class OrganizationService implements IOrganizationService {
         final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return Organization.fromJson(data);
       } else {
-        Logger.error('Failed to create organization');
         throw Exception('Failed to create organization. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      Logger.error('An error occurred while creating organization: $e');
-      throw Exception('Failed to create organization');
+      rethrow;
     }
   }
 }

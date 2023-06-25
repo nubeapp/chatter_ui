@@ -16,12 +16,10 @@ class ApiService implements IApiService {
         Logger.info('Server is running...');
         return 'Server is running...';
       } else {
-        Logger.error('Request failed with status: ${response.statusCode}.');
         throw Exception('Request failed with status: ${response.statusCode}.');
       }
     } catch (e) {
-      Logger.error('Error: $e');
-      throw Exception('Error: $e');
+      rethrow;
     }
   }
 }

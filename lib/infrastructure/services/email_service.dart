@@ -21,13 +21,11 @@ class EmailService implements IEmailService {
         body: json.encode(emailData.toJson()),
       );
       if (response.statusCode != 200) {
-        Logger.error('Failed to send email: ${response.statusCode}');
         throw Exception('Failed to send email: ${response.statusCode}');
       }
       Logger.info('Email has been sent successfully!');
     } catch (error) {
-      Logger.error('Error sending email: $error');
-      throw Exception('Error sending email: $error');
+      rethrow;
     }
   }
 }
