@@ -427,6 +427,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
   int _nTicketsAvailable = -1;
   bool _isLoading = true;
   int _maxTicketsCanBuy = 4;
+  double _price = 0;
 
   @override
   void initState() {
@@ -438,9 +439,11 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
     try {
       final availableTickets = await _ticketService.getTicketsAvailableByEventId(widget.event.id!);
       final userTickets = await _ticketService.getTicketsByUserIdEventId(widget.event.id!);
+      final eventTickets = await _ticketService.getTicketsByEventId(widget.event.id!);
       setState(() {
         _nTicketsAvailable = availableTickets.tickets.length;
         _maxTicketsCanBuy -= userTickets.tickets.length;
+        _price = eventTickets.tickets.first.price;
         _isLoading = false;
       });
     } catch (e) {
@@ -520,9 +523,9 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
             height: 2,
           ),
         ),
-        const Text(
-          '80 €',
-          style: TextStyle(
+        Text(
+          _price.toString(),
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -622,9 +625,9 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
             height: 2,
           ),
         ),
-        const Text(
-          '80 €',
-          style: TextStyle(
+        Text(
+          '${_price.toString()}€',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -632,7 +635,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           ),
         ),
         SizedBox(
-          width: context.w * 0.4,
+          width: context.w * 0.36,
         ),
         const IconButton(
           onPressed: null,

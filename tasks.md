@@ -10,11 +10,11 @@
 - (P3) SignUp and SignIn forms (SaaS -> AaaS) 
 - (P2) Buy tickets functionality -> It remains show the successful or error buy screen
 - (P3) Color palette generator from image
-- (P2) Bblock buttons in EventScreen depending available tickets and if user can buy more or not ✅
+- (P2) Block buttons in EventScreen depending available tickets and if user can buy more or not ✅
 - (P2) Favourive events functionality
 - (P2) Shimmer effect
 - (P1) Organise code
 - (P2) Custom Exceptions
 - (P4) Real-time Chat (Supabase, GetStream.io, Appwrite, Custom database)
-- (P2) Set real ticket price for each event
+- (P2) Set real ticket price for each event ✅ -> Needs to show 2 decimals
 - (P3) Receive tickets through email

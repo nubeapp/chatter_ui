@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:syncfusion_flutter_barcodes/barcodes.dart';
 import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/extensions/extensions.dart';
@@ -390,89 +389,4 @@ class TicketEventCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class TicketQR extends StatelessWidget {
-  const TicketQR({
-    Key? key,
-    required this.reference,
-  }) : super(key: key);
-
-  final String reference;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: context.h * 0.25,
-      width: context.w * 0.7,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
-        child: SfBarcodeGenerator(
-          symbology: QRCode(),
-          value: reference,
-        ),
-      ),
-    );
-  }
-}
-
-class TicketShapeClipper extends CustomClipper<Path> {
-  final double width;
-  final double height;
-
-  TicketShapeClipper({required this.width, required this.height});
-
-  @override
-  Path getClip(Size size) {
-    final containerPath = Path();
-    final rightPath = Path();
-    final leftPath = Path();
-
-    final container = containerPath
-      ..addRRect(
-        RRect.fromLTRBAndCorners(
-          0,
-          0,
-          width,
-          height,
-        ),
-      );
-
-    final right = rightPath
-      ..addRRect(
-        RRect.fromLTRBAndCorners(
-          width * 0.67,
-          0,
-          width,
-          height * 0.01,
-          topLeft: const Radius.circular(10),
-          bottomLeft: const Radius.circular(10),
-        ),
-      )
-      ..close();
-
-    final left = leftPath
-      ..addRRect(
-        RRect.fromLTRBAndCorners(
-          0,
-          0,
-          width * 0.03,
-          height * 0.01,
-          topRight: const Radius.circular(10),
-          bottomRight: const Radius.circular(10),
-        ),
-      )
-      ..close();
-
-    final newPath = Path.combine(PathOperation.difference, Path.combine(PathOperation.difference, container, right), left);
-
-    return newPath;
-  }
-
-  @override
-  bool shouldReclip(TicketShapeClipper oldClipper) => true;
 }

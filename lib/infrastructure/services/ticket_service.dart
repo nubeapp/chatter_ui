@@ -68,6 +68,24 @@ class TicketService implements ITicketService {
   }
 
   @override
+  Future<TicketSummary> getTicketsByEventId(int eventId) async {
+    try {
+      final response = await client.get(Uri.parse('$API_BASE_URL/$eventId'));
+
+      if (response.statusCode == 200) {
+        Logger.info('Tickets for event $eventId have been retrieved successfully!');
+        return TicketSummary.fromJson(json.decode(utf8.decode(response.bodyBytes)) as dynamic);
+      } else if (response.statusCode == 401) {
+        throw Exception('Unauthorize operation');
+      } else {
+        throw Exception('Failed to get tickets for event $eventId');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<TicketSummary> createTickets(CreateTicket ticketData) async {
     try {
       Logger.debug('Creating tickets...');
