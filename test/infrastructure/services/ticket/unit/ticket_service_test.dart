@@ -137,6 +137,54 @@ void main() {
       });
     });
 
+    group('getTicketsByEventId', () {
+      test('return list of tickets for the event', () async {
+        final mockClient = MockClient();
+        ticketService = TicketService(client: mockClient);
+        int mockEventId = 1;
+
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEventId'))).thenAnswer(
+          (_) async => http.Response(json.encode(mockTicketSummaryResponse), 200),
+        );
+
+        final ticketSummary = await ticketService.getTicketsByEventId(mockEventId);
+        List<Ticket> tickets = ticketSummary.tickets;
+
+        expect(ticketSummary, isA<TicketSummary>());
+        expect(tickets, isA<List<Ticket>>());
+        expect(tickets.length, equals(2));
+        expect(tickets[0].id, equals(1));
+        expect(tickets[1].id, equals(2));
+        expect(tickets[0].price, equals(10.0));
+        expect(tickets[1].price, equals(10.0));
+        expect(tickets[0].reference, "2IR6ZOULKL2HOARDUI19");
+        expect(tickets[1].reference, "ZT1HT93LEGSVCIEEGAIJ");
+        expect(tickets[0].status, TicketStatus.SOLD);
+        expect(tickets[1].status, TicketStatus.SOLD);
+        expect(ticketSummary.event.id, equals(1));
+        expect(ticketSummary.event.title, "Bad Bunny Concert");
+        expect(ticketSummary.event.date, CustomDateTime(2023, 12, 07));
+        expect(ticketSummary.event.time, '18:00');
+        expect(ticketSummary.event.venue, 'Wizink Center');
+        expect(ticketSummary.event.organization!.id, equals(1));
+        expect(ticketSummary.event.organization!.name, "UNIVERSAL MUSIC SPAIN");
+
+        verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockEventId'))).called(1);
+      });
+
+      test('throws an exception if the http call completes with an error', () {
+        final mockClient = MockClient();
+        ticketService = TicketService(client: mockClient);
+        int mockEventId = 1;
+
+        when(mockClient.get(Uri.parse('$API_BASE_URL/$mockEventId'))).thenAnswer((_) async => http.Response('Not Found', 404));
+
+        expect(ticketService.getTicketsByEventId(mockEventId), throwsException);
+
+        verify(mockClient.get(Uri.parse('$API_BASE_URL/$mockEventId'))).called(1);
+      });
+    });
+
     group('createTickets', () {
       test('create a list of tickets', () async {
         final mockClient = MockClient();

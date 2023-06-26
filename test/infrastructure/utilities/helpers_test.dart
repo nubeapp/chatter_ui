@@ -52,4 +52,12 @@ void main() {
       expect(result, 'Feb 3, 2023');
     });
   });
+
+  group('Decimal Formatting Tests', () {
+    test('Format with Two Decimals Tests', () {
+      double value = 10.12345;
+      String result = Helpers.formatWithTwoDecimals(value);
+      expect(result, '10.12');
+    });
+  });
 }
