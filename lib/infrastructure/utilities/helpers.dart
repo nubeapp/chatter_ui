@@ -32,6 +32,10 @@ abstract class Helpers {
     return '$abbreviatedMonth $day, $year';
   }
 
+  static String formatWithTwoDecimals(double value) {
+    return value.toStringAsFixed(2);
+  }
+
   static String _getAbbreviatedMonthName(int month) {
     List<String> months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[month];

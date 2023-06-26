@@ -14,6 +14,7 @@ import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_state.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/avatar.dart';
 import 'package:ui/presentation/widgets/button.dart';
+import 'dart:math' as math;
 
 class EventScreen extends StatelessWidget {
   const EventScreen({
@@ -442,7 +443,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
       final eventTickets = await _ticketService.getTicketsByEventId(widget.event.id!);
       setState(() {
         _nTicketsAvailable = availableTickets.tickets.length;
-        _maxTicketsCanBuy -= userTickets.tickets.length;
+        _maxTicketsCanBuy = math.min(_maxTicketsCanBuy - userTickets.tickets.length, _nTicketsAvailable);
         _price = eventTickets.tickets.first.price;
         _isLoading = false;
       });
@@ -524,7 +525,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           ),
         ),
         Text(
-          _price.toString(),
+          '${Helpers.formatWithTwoDecimals(_price)}€',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -533,7 +534,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           ),
         ),
         SizedBox(
-          width: context.w * 0.4,
+          width: context.w * 0.35,
         ),
         IconButton(
           onPressed: () {
@@ -626,7 +627,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           ),
         ),
         Text(
-          '${_price.toString()}€',
+          '${Helpers.formatWithTwoDecimals(_price)}€',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -635,7 +636,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           ),
         ),
         SizedBox(
-          width: context.w * 0.36,
+          width: context.w * 0.34,
         ),
         const IconButton(
           onPressed: null,
