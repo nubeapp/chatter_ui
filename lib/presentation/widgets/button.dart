@@ -3,18 +3,42 @@ import 'package:ui/extensions/extensions.dart';
 
 @immutable
 class Button extends StatelessWidget {
-  const Button({
+  const Button.black({
     Key? key,
     required this.text,
     this.onPressed,
     required this.width,
-    this.blocked = false,
-  }) : super(key: key);
+  })  : color = Colors.black,
+        textColor = Colors.white,
+        blocked = false,
+        super(key: key);
+
+  const Button.white({
+    Key? key,
+    required this.text,
+    this.onPressed,
+    required this.width,
+  })  : color = Colors.white,
+        textColor = Colors.black87,
+        blocked = false,
+        super(key: key);
+
+  const Button.blocked({
+    Key? key,
+    required this.text,
+    required this.width,
+  })  : onPressed = null,
+        color = Colors.black26,
+        textColor = Colors.white,
+        blocked = true,
+        super(key: key);
 
   final String text;
   final VoidCallback? onPressed;
   final double width;
   final bool blocked;
+  final Color color;
+  final Color textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +46,16 @@ class Button extends StatelessWidget {
       width: width,
       height: context.h * 0.05,
       child: Material(
-        color: blocked ? Colors.black26 : Colors.black, // Apply the background color here
+        color: color, // Apply the background color here
         borderRadius: const BorderRadius.all(Radius.circular(20)),
         child: InkWell(
-          onTap: blocked ? null : onPressed,
+          onTap: onPressed,
           borderRadius: const BorderRadius.all(Radius.circular(20)),
           child: Center(
             child: Text(
               text,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: textColor,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 1.0,

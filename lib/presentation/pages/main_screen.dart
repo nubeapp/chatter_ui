@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/event.dart';
 import 'package:ui/domain/entities/token.dart';
@@ -11,7 +12,6 @@ import 'package:ui/domain/services/auth_service_interface.dart';
 import 'package:ui/domain/services/event_service_interface.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
 import 'package:ui/presentation/pages/pages.dart';
-import 'package:ui/presentation/pages/ticket_screen.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/extensions/extensions.dart';
 
@@ -32,7 +32,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _sharedPreferences = await SharedPreferences.getInstance();
-      Token token = await _authService.login(const Credentials(username: 'alvarolopsi@gmail.com', password: 'alvarolopsi'));
+      Token token = await _authService.login(const Credentials(username: 'rociiocs.00@gmail.com', password: 'rociiocs.00'));
       await _sharedPreferences.setString('token', json.encode(token.toJson()));
       _sharedPreferences.remove('tickets'); // Remove in production mode
     });
@@ -66,7 +66,10 @@ class _MainScreenState extends State<MainScreen> {
                 CupertinoIcons.tickets,
                 size: 26,
               ),
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => const TicketScreen())),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                settings: const RouteSettings(name: '/ticket_screen'),
+                builder: (context) => const TicketScreen(),
+              )),
             ),
           ],
           leading: IconButton(
@@ -92,81 +95,160 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
 
-    return Container(
-      decoration: backgroundGradient(),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: customAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Plan your best event',
-                style: TextStyle(
-                  fontSize: 32,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w100,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: context.h * 0.005, bottom: context.h * 0.03),
-                child: const Text(
-                  'Explore the best events around you',
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Container(
+        decoration: backgroundGradient(),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: customAppBar(),
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Plan your best event',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 32,
                     color: Colors.white,
-                    fontWeight: FontWeight.w400,
+                    fontWeight: FontWeight.w100,
                   ),
                 ),
-              ),
-              SizedBox(
-                height: context.h * 0.28,
-                child: FutureBuilder<List<Event>>(
-                  future: _eventService.getEvents(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final events = snapshot.data!;
-                      if (events.isNotEmpty) {
+                Padding(
+                  padding: EdgeInsets.only(top: context.h * 0.005, bottom: context.h * 0.03),
+                  child: const Text(
+                    'Explore the best events around you',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: context.h * 0.28,
+                  child: FutureBuilder<List<Event>>(
+                    future: Future.delayed(const Duration(milliseconds: 1500), () => _eventService.getEvents()),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final events = snapshot.data!;
+                        if (events.isNotEmpty) {
+                          return ListView.separated(
+                            separatorBuilder: (context, index) => const SizedBox(width: 24),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: events.length,
+                            itemBuilder: (context, index) {
+                              return CarouselEventCard(
+                                url: 'https://picsum.photos/id/${index + 10}/1024/1024',
+                                event: events[index],
+                              );
+                            },
+                          );
+                        } else {
+                          return const Center(
+                            child: Text(
+                              '☹️ There are no events available...',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white70,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          );
+                        }
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                          child: Text('Error fetching events'),
+                        );
+                      } else {
                         return ListView.separated(
                           separatorBuilder: (context, index) => const SizedBox(width: 24),
                           scrollDirection: Axis.horizontal,
-                          itemCount: events.length,
+                          itemCount: 10,
                           itemBuilder: (context, index) {
-                            return CarouselEventCard(
-                              url: 'https://picsum.photos/id/${index + 10}/1024/1024',
-                              event: events[index],
+                            return Shimmer.fromColors(
+                              baseColor: const Color(0xFF507188),
+                              highlightColor: const Color(0xFFABB7C1),
+                              child: const CarouselEventCardSkeleton(),
                             );
                           },
                         );
-                      } else {
-                        return const Center(
-                          child: Text(
-                            '☹️ There are no events available...',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.white70,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        );
                       }
-                    } else if (snapshot.hasError) {
-                      return const Center(
-                        child: Text('Error fetching events'),
-                      );
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      );
-                    }
-                  },
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CarouselEventCardSkeleton extends StatelessWidget {
+  const CarouselEventCardSkeleton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: context.w * 0.7 - 24,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        color: Colors.black38,
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: context.w * 0.7 - 24,
+              height: context.h * 0.18,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: Colors.black38,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              width: context.w * 0.7 - 24,
+              height: context.h * 0.02,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: Colors.black38,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: context.w * 0.35 - 24,
+                  height: context.h * 0.02,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: Colors.black38,
+                  ),
+                ),
+                Container(
+                  width: context.w * 0.25 - 24,
+                  height: context.h * 0.02,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: Colors.black38,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -186,6 +268,7 @@ class CarouselEventCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          settings: const RouteSettings(name: '/event'),
           builder: (context) => EventScreen(
                 event: event,
                 url: url,
@@ -259,7 +342,7 @@ class CarouselEventCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      Helpers.formatDate(event.date.toString()),
+                      Helpers.formatStringDate(event.date.toString()),
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,

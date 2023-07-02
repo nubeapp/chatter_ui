@@ -1,5 +1,6 @@
 import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/token.dart';
+import 'package:ui/domain/exceptions/exceptions.dart';
 import 'package:ui/domain/services/auth_service_interface.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -26,7 +27,7 @@ class AuthService implements IAuthService {
         Logger.info('Logged in successfully!');
         return Token.fromJson(jsonDecode(response.body));
       } else {
-        throw Exception('Failed to login');
+        throw Exception('Failed to login with status: ${response.statusCode}');
       }
     } catch (e) {
       rethrow;

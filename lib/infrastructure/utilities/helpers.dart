@@ -21,7 +21,7 @@ abstract class Helpers {
     return String.fromCharCodes(Iterable.generate(length, (_) => charset.codeUnitAt(random.nextInt(charset.length))));
   }
 
-  static String formatDate(String dateTimeString) {
+  static String formatStringDate(String dateTimeString) {
     List<String> parts = dateTimeString.split('-');
     int day = int.parse(parts[0]);
     int month = int.parse(parts[1]);
@@ -30,6 +30,13 @@ abstract class Helpers {
     String abbreviatedMonth = _getAbbreviatedMonthName(month);
 
     return '$abbreviatedMonth $day, $year';
+  }
+
+  static String formatDateTime(DateTime dateTime) {
+    String day = dateTime.day.toString().padLeft(2, '0');
+    String month = dateTime.month.toString().padLeft(2, '0');
+    String year = dateTime.year.toString();
+    return '$day / $month / $year';
   }
 
   static String formatWithTwoDecimals(double value) {

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ui/domain/entities/code.dart';
+import 'package:ui/domain/exceptions/exceptions.dart';
 import 'package:ui/domain/services/code_service_interface.dart';
 import 'package:http/http.dart' as http;
 import 'package:ui/presentation/styles/logger.dart';
@@ -42,7 +43,7 @@ class CodeService implements ICodeService {
         Logger.info('Code ${code.code} has been retrieved successfully!');
         return code;
       } else if (response.statusCode == 404) {
-        throw Exception('The email $email has no associated code');
+        throw NotFoundException('The email $email has no associated code');
       } else {
         throw Exception('Failed to get code for email $email: ${response.statusCode}');
       }
@@ -90,7 +91,7 @@ class CodeService implements ICodeService {
         Logger.info('The code associated with email $email has been updated successfully to ${code.code}!');
         return code;
       } else if (response.statusCode == 404) {
-        throw Exception('The email $email has no associated code');
+        throw NotFoundException('The email $email has no associated code');
       } else {
         throw Exception('Failed to update code for email $email: ${response.statusCode}');
       }
@@ -108,7 +109,7 @@ class CodeService implements ICodeService {
       if (response.statusCode == 204) {
         Logger.info('The code associated with email $email has been deleted successfully!');
       } else if (response.statusCode == 404) {
-        throw Exception('The email $email has no associated code');
+        throw NotFoundException('The email $email has no associated code');
       } else {
         throw Exception('Failed to delete code for email $email: ${response.statusCode}');
       }

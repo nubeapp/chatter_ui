@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:ui/domain/exceptions/exceptions.dart';
 import 'package:ui/domain/services/api_service_interface.dart';
 import 'package:ui/presentation/styles/logger.dart';
 

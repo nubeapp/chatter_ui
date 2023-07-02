@@ -11,6 +11,7 @@ import 'package:ui/extensions/extensions.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_bloc.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_state.dart';
+import 'package:ui/presentation/pages/pages.dart';
 import 'package:ui/presentation/styles/logger.dart';
 import 'package:ui/presentation/widgets/avatar.dart';
 import 'package:ui/presentation/widgets/button.dart';
@@ -82,7 +83,7 @@ class EventScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: EventTicketCounterCard(event: event),
+              child: EventTicketCounterCard(event: event, url: url),
             ),
           ],
         ),
@@ -179,7 +180,7 @@ class EventCard extends StatelessWidget {
                       Flexible(
                         flex: 6,
                         child: Text(
-                          Helpers.formatDate(event.date.toString()),
+                          Helpers.formatStringDate(event.date.toString()),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -261,7 +262,7 @@ class EventCard extends StatelessWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 24),
-                        child: Button(
+                        child: Button.black(
                           text: 'Follow',
                           width: context.w * 0.2,
                           onPressed: () => Logger.debug('follow'),
@@ -415,9 +416,11 @@ class EventTicketCounterCard extends StatefulWidget {
   const EventTicketCounterCard({
     Key? key,
     required this.event,
+    required this.url,
   }) : super(key: key);
 
   final Event event;
+  final String url;
 
   @override
   State<EventTicketCounterCard> createState() => _EventTicketCounterCardState();
@@ -468,7 +471,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
             color: Colors.white,
           ),
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator()) // Show a loading indicator while fetching data
+              ? const Center(child: CircularProgressIndicator(color: Colors.black54)) // Show a loading indicator while fetching data
               : _nTicketsAvailable >= 1
                   ? _maxTicketsCanBuy == 0
                       ? _buildUserTicketLimit(context)
@@ -478,7 +481,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
                               padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
                               child: _buildTicketsCounter(context, state),
                             ),
-                            Button(
+                            Button.black(
                               text: 'Buy',
                               width: context.w * 0.4,
                               onPressed: () => _buyTickets(ticketCounterBloc.ticketCounter, context),
@@ -497,9 +500,16 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
       final tickets = await _ticketService.buyTickets(order);
       final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       sharedPreferences.remove('tickets');
-      // Check return and go to successful screen or error screen
+      Navigator.of(context).push(MaterialPageRoute(
+        settings: const RouteSettings(name: '/successful_purchase'),
+        builder: (context) => SuccessfulPurchaseScreen(tickets: tickets),
+      ));
     } catch (e) {
       Logger.error('Error buying tickets: ${e.toString()}');
+      Navigator.of(context).push(MaterialPageRoute(
+        settings: const RouteSettings(name: '/error_purchase'),
+        builder: (context) => ErrorPurchaseScreen(event: widget.event, url: widget.url),
+      ));
     }
   }
 
@@ -524,17 +534,20 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
             height: 2,
           ),
         ),
-        Text(
-          '${Helpers.formatWithTwoDecimals(_price)}€',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-            height: 2,
+        SizedBox(
+          width: context.w * 0.18,
+          child: Text(
+            '${Helpers.formatWithTwoDecimals(_price * ticketCounter)}€',
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+              height: 2,
+            ),
           ),
         ),
         SizedBox(
-          width: context.w * 0.35,
+          width: context.w * 0.32,
         ),
         IconButton(
           onPressed: () {
@@ -574,11 +587,9 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
           child: _buildNoTicketsAvailableContent(context),
         ),
-        Button(
+        Button.blocked(
           text: 'Buy',
           width: context.w * 0.4,
-          onPressed: null,
-          blocked: true,
         ),
       ],
     );
@@ -603,11 +614,9 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           padding: const EdgeInsets.only(left: 12, right: 12, bottom: 8, top: 6),
           child: _buildUserTicketLimitContent(context),
         ),
-        Button(
+        Button.blocked(
           text: 'Buy',
           width: context.w * 0.4,
-          onPressed: null,
-          blocked: true,
         ),
       ],
     );
@@ -636,7 +645,7 @@ class _EventTicketCounterCardState extends State<EventTicketCounterCard> {
           ),
         ),
         SizedBox(
-          width: context.w * 0.34,
+          width: context.w * 0.35,
         ),
         const IconButton(
           onPressed: null,

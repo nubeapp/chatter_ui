@@ -43,12 +43,12 @@ void main() {
 
   group('Date Formatting Tests', () {
     test('formatDate should format the date correctly', () {
-      String result = Helpers.formatDate('18-05-2023');
+      String result = Helpers.formatStringDate('18-05-2023');
       expect(result, 'May 18, 2023');
     });
 
     test('formatDate should handle single-digit day and month correctly', () {
-      String result = Helpers.formatDate('03-02-2023');
+      String result = Helpers.formatStringDate('03-02-2023');
       expect(result, 'Feb 3, 2023');
     });
   });

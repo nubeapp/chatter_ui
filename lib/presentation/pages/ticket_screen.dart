@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/extensions/extensions.dart';
@@ -174,11 +175,187 @@ class _TicketScreenState extends State<TicketScreen> {
                 child: Text('Error fetching tickets'),
               );
             } else {
-              return const Center(
-                child: CircularProgressIndicator.adaptive(),
+              return Shimmer.fromColors(
+                baseColor: const Color(0xFF507188),
+                highlightColor: const Color(0xFFABB7C1),
+                child: const TicketsListViewSkeleton(),
               );
             }
           },
+        ),
+      ),
+    );
+  }
+}
+
+class TicketsListViewSkeleton extends StatelessWidget {
+  const TicketsListViewSkeleton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: TicketEventCardSkeleton(),
+        );
+      },
+    );
+  }
+}
+
+class TicketEventCardSkeleton extends StatelessWidget {
+  const TicketEventCardSkeleton({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: context.h * 0.175,
+      width: context.w,
+      decoration: const BoxDecoration(
+        color: Colors.black38,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Container(
+              width: context.w * 0.34,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+                color: Colors.black38,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Container(
+                      width: context.w * 0.3,
+                      height: context.h * 0.02,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                        color: Colors.black38,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: context.w * 0.15,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                        Container(
+                          width: context.w * 0.2,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: context.w * 0.1,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                        Container(
+                          width: context.w * 0.25,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: context.h * 0.01,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: context.w * 0.2,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                        Container(
+                          width: context.w * 0.2,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: context.w * 0.2,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                        Container(
+                          width: context.w * 0.1,
+                          height: context.h * 0.01,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                            color: Colors.black38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -204,7 +381,10 @@ class TicketsListView extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: InkWell(
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => TicketInfoScreen(ticketSummary: tickets[index]))),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              settings: const RouteSettings(name: '/ticket_info'),
+              builder: (context) => TicketInfoScreen(ticketSummary: tickets[index]),
+            )),
             child: TicketEventCard(
               ticketSummary: tickets[index],
               url: 'https://picsum.photos/id/${index + 10}/1024/1024',
@@ -306,7 +486,7 @@ class TicketEventCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          Helpers.formatDate(ticketSummary.event.date.toString()),
+                          Helpers.formatStringDate(ticketSummary.event.date.toString()),
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,

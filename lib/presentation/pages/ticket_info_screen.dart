@@ -188,7 +188,7 @@ class TicketEventInfoQR extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  Helpers.formatDate(event.date.toString()),
+                  Helpers.formatStringDate(event.date.toString()),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
