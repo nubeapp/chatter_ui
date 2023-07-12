@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -21,21 +19,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _eventService = GetIt.instance<IEventService>();
-  // late SharedPreferences _sharedPreferences;
-  bool _favouriteEventsLoaded = false;
-  List<int> _favouriteEventIds = [];
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      //_sharedPreferences.remove('tickets'); // Remove in production mode
-      _favouriteEventIds = (await _eventService.getFavouriteEventsByUserId()).map((event) => event.id!).toList();
-      setState(() {
-        _favouriteEventsLoaded = true;
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +77,16 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
 
+    Future<EventResults> fetchEvents() async {
+      final favouriteEventsFuture = _eventService.getFavouriteEventsByUserId();
+      final eventsFuture = _eventService.getEvents();
+
+      final favouriteEvents = await favouriteEventsFuture;
+      final events = await eventsFuture;
+
+      return EventResults(favouriteEventIds: favouriteEvents.map((event) => event.id!).toList(), events: events);
+    }
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Container(
@@ -127,11 +120,29 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 SizedBox(
                   height: context.h * 0.28,
-                  child: FutureBuilder<List<Event>>(
-                    future: _eventService.getEvents(),
+                  child: FutureBuilder<EventResults>(
+                    future: fetchEvents(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData && _favouriteEventsLoaded) {
-                        final events = snapshot.data!;
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return ListView.separated(
+                          separatorBuilder: (context, index) => const SizedBox(width: 24),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 10,
+                          itemBuilder: (context, index) {
+                            return Shimmer.fromColors(
+                              baseColor: const Color(0xFF507188),
+                              highlightColor: const Color(0xFFABB7C1),
+                              child: const CarouselEventCardSkeleton(),
+                            );
+                          },
+                        );
+                      } else if (snapshot.hasError) {
+                        return const Center(
+                          child: Text('Error fetching events'),
+                        );
+                      } else {
+                        final eventResults = snapshot.data!;
+                        final events = eventResults.events;
                         if (events.isNotEmpty) {
                           return ListView.separated(
                             separatorBuilder: (context, index) => const SizedBox(width: 24),
@@ -141,7 +152,7 @@ class _MainScreenState extends State<MainScreen> {
                               return CarouselEventCard(
                                 url: 'https://picsum.photos/id/${index + 10}/1024/1024',
                                 event: events[index],
-                                favouriteEventIds: _favouriteEventIds,
+                                favouriteEventIds: eventResults.favouriteEventIds,
                               );
                             },
                           );
@@ -157,23 +168,6 @@ class _MainScreenState extends State<MainScreen> {
                             ),
                           );
                         }
-                      } else if (snapshot.hasError) {
-                        return const Center(
-                          child: Text('Error fetching events'),
-                        );
-                      } else {
-                        return ListView.separated(
-                          separatorBuilder: (context, index) => const SizedBox(width: 24),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: 10,
-                          itemBuilder: (context, index) {
-                            return Shimmer.fromColors(
-                              baseColor: const Color(0xFF507188),
-                              highlightColor: const Color(0xFFABB7C1),
-                              child: const CarouselEventCardSkeleton(),
-                            );
-                          },
-                        );
                       }
                     },
                   ),
@@ -185,6 +179,13 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+}
+
+class EventResults {
+  final List<int> favouriteEventIds;
+  final List<Event> events;
+
+  EventResults({required this.favouriteEventIds, required this.events});
 }
 
 class CarouselEventCardSkeleton extends StatelessWidget {
@@ -407,10 +408,15 @@ class _CarouselEventCardState extends State<CarouselEventCard> {
                       color: Colors.black.withOpacity(0.05),
                       borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(18)),
                     ),
-                    child: Icon(
-                      CupertinoIcons.heart,
-                      color: widget.favouriteEventIds.contains(widget.event.id) ? Colors.red : Colors.black,
-                    ),
+                    child: widget.favouriteEventIds.contains(widget.event.id)
+                        ? const Icon(
+                            CupertinoIcons.heart_solid,
+                            color: Colors.red,
+                          )
+                        : const Icon(
+                            CupertinoIcons.heart,
+                            color: Colors.black,
+                          ),
                   ),
                 ),
               ),

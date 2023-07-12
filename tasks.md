@@ -21,6 +21,7 @@
 - (P1) Update ticket price in EventScreen depending on how many tickets are selected ✅
 - (P1) Transaction Fee per ticket, not per order ✅
 - (P2) OrderScreen
+- (P2) FavouriteEventsScreen
 - (P2) BottomNavBar
 - (P1) Fix position of buttons + and - in EventScreen ✅
 - (P1) Add test to FavouriteService and _eventService.getFavouriteEventsByUserId()
