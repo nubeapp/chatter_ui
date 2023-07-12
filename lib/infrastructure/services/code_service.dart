@@ -66,11 +66,9 @@ class CodeService implements ICodeService {
         Logger.info('Code has been stored successfully!');
         return Code.fromJson(json.decode(utf8.decode(response.bodyBytes)));
       } else {
-        Logger.error('Failed to create the code: ${response.statusCode}');
         throw Exception('Failed to create code: ${response.statusCode}');
       }
     } catch (e) {
-      Logger.error('An error occurred while creating the code: $e');
       throw Exception('Failed to create code');
     }
   }

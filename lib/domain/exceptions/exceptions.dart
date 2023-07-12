@@ -42,3 +42,21 @@ class NotFoundException implements Exception {
   @override
   String toString() => message;
 }
+
+class DuplicateFavouriteEventException implements Exception {
+  final String message;
+
+  DuplicateFavouriteEventException(this.message);
+
+  @override
+  String toString() => message;
+}
+
+class NoFavouriteEventException implements Exception {
+  final String message;
+
+  NoFavouriteEventException(this.message);
+
+  @override
+  String toString() => message;
+}

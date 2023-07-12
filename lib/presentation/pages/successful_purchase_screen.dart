@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ui/domain/entities/ticket/ticket.dart';
 import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 
 import 'package:ui/extensions/extensions.dart';

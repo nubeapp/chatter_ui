@@ -1,12 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ui/domain/entities/event.dart';
-import 'package:ui/domain/entities/ticket/ticket.dart';
-import 'package:ui/domain/entities/ticket/ticket_summary.dart';
-
 import 'package:ui/extensions/extensions.dart';
-import 'package:ui/infrastructure/utilities/helpers.dart';
-import 'package:ui/presentation/pages/pages.dart';
 import 'package:ui/presentation/widgets/button.dart';
 
 class ErrorPurchaseScreen extends StatelessWidget {

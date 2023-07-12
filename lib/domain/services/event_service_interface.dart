@@ -5,6 +5,8 @@ abstract class IEventService {
 
   Future<Event> getEventById(int eventId);
 
+  Future<List<Event>> getFavouriteEventsByUserId();
+
   Future<List<Event>> getEventsByOrganizationId(int organizationId);
 
   Future<Event> createEvent(Event event);

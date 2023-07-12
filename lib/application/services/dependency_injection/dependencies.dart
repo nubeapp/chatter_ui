@@ -5,6 +5,7 @@ import 'package:ui/domain/services/auth_service_interface.dart';
 import 'package:ui/domain/services/code_service_interface.dart';
 import 'package:ui/domain/services/email_service_interface.dart';
 import 'package:ui/domain/services/event_service_interface.dart';
+import 'package:ui/domain/services/favourite_service_interface.dart';
 import 'package:ui/domain/services/ticket_service_interface.dart';
 import 'package:ui/domain/services/user_service_interface.dart';
 import 'package:ui/infrastructure/http/http_client.dart';
@@ -13,6 +14,7 @@ import 'package:ui/infrastructure/services/auth_service.dart';
 import 'package:ui/infrastructure/services/code_service.dart';
 import 'package:ui/infrastructure/services/email_service.dart';
 import 'package:ui/infrastructure/services/event_service.dart';
+import 'package:ui/infrastructure/services/favourite_service.dart';
 import 'package:ui/infrastructure/services/ticket_service.dart';
 import 'package:ui/infrastructure/services/user_service.dart';
 import 'package:http/http.dart' as http;
@@ -42,6 +44,9 @@ abstract class Dependencies {
     );
     GetIt.instance.registerLazySingleton<ITicketService>(
       () => TicketService(client: GetIt.instance<http.Client>()),
+    );
+    GetIt.instance.registerLazySingleton<IFavouriteService>(
+      () => FavouriteService(client: GetIt.instance<http.Client>()),
     );
   }
 }

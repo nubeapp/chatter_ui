@@ -46,6 +46,24 @@ class EventService implements IEventService {
   }
 
   @override
+  Future<List<Event>> getFavouriteEventsByUserId() async {
+    try {
+      Logger.debug('Requesting favourite events...');
+      final response = await client.get(Uri.parse('$API_BASE_URL/favourites'));
+
+      if (response.statusCode == 200) {
+        Logger.info('Favourite events have been retrieved successfully!');
+        final List<dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        return data.map((e) => Event.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to get events by organization_id. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<List<Event>> getEventsByOrganizationId(int organizationId) async {
     try {
       Logger.debug('Requesting events by organization_id $organizationId...');

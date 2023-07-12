@@ -12,7 +12,7 @@
 - (P3) Color palette generator from image
 - (P2) Block buttons in EventScreen depending available tickets and if user can buy more or not ✅
 - (P2) Favourive events functionality
-- (P2) Shimmer effect 🚧
+- (P2) Shimmer effect ✅
 - (P1) Organise code
 - (P2) Custom Exceptions ✅
 - (P4) Real-time Chat (Supabase, GetStream.io, Appwrite, Custom database)
@@ -23,3 +23,4 @@
 - (P2) OrderScreen
 - (P2) BottomNavBar
 - (P1) Fix position of buttons + and - in EventScreen ✅
+- (P1) Add test to FavouriteService and _eventService.getFavouriteEventsByUserId()

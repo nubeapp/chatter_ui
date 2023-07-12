@@ -3,13 +3,10 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/event.dart';
-import 'package:ui/domain/entities/token.dart';
-import 'package:ui/domain/services/auth_service_interface.dart';
 import 'package:ui/domain/services/event_service_interface.dart';
+import 'package:ui/domain/services/favourite_service_interface.dart';
 import 'package:ui/infrastructure/utilities/helpers.dart';
 import 'package:ui/presentation/pages/pages.dart';
 import 'package:ui/presentation/styles/logger.dart';
@@ -23,18 +20,20 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  final _authService = GetIt.instance<IAuthService>();
   final _eventService = GetIt.instance<IEventService>();
-  late SharedPreferences _sharedPreferences;
+  // late SharedPreferences _sharedPreferences;
+  bool _favouriteEventsLoaded = false;
+  List<int> _favouriteEventIds = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      _sharedPreferences = await SharedPreferences.getInstance();
-      Token token = await _authService.login(const Credentials(username: 'rociiocs.00@gmail.com', password: 'rociiocs.00'));
-      await _sharedPreferences.setString('token', json.encode(token.toJson()));
-      _sharedPreferences.remove('tickets'); // Remove in production mode
+      //_sharedPreferences.remove('tickets'); // Remove in production mode
+      _favouriteEventIds = (await _eventService.getFavouriteEventsByUserId()).map((event) => event.id!).toList();
+      setState(() {
+        _favouriteEventsLoaded = true;
+      });
     });
   }
 
@@ -129,9 +128,9 @@ class _MainScreenState extends State<MainScreen> {
                 SizedBox(
                   height: context.h * 0.28,
                   child: FutureBuilder<List<Event>>(
-                    future: Future.delayed(const Duration(milliseconds: 1500), () => _eventService.getEvents()),
+                    future: _eventService.getEvents(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData) {
+                      if (snapshot.hasData && _favouriteEventsLoaded) {
                         final events = snapshot.data!;
                         if (events.isNotEmpty) {
                           return ListView.separated(
@@ -142,6 +141,7 @@ class _MainScreenState extends State<MainScreen> {
                               return CarouselEventCard(
                                 url: 'https://picsum.photos/id/${index + 10}/1024/1024',
                                 event: events[index],
+                                favouriteEventIds: _favouriteEventIds,
                               );
                             },
                           );
@@ -254,24 +254,32 @@ class CarouselEventCardSkeleton extends StatelessWidget {
   }
 }
 
-class CarouselEventCard extends StatelessWidget {
+class CarouselEventCard extends StatefulWidget {
   const CarouselEventCard({
     Key? key,
     required this.url,
     required this.event,
+    required this.favouriteEventIds,
   }) : super(key: key);
 
   final String url;
   final Event event;
+  final List<int> favouriteEventIds;
 
+  @override
+  State<CarouselEventCard> createState() => _CarouselEventCardState();
+}
+
+class _CarouselEventCardState extends State<CarouselEventCard> {
+  final _favouriteService = GetIt.instance<IFavouriteService>();
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
           settings: const RouteSettings(name: '/event'),
           builder: (context) => EventScreen(
-                event: event,
-                url: url,
+                event: widget.event,
+                url: widget.url,
               ))),
       child: Container(
         width: context.w * 0.7 - 24,
@@ -287,7 +295,7 @@ class CarouselEventCard extends StatelessWidget {
               child: ClipPath(
                 clipper: CarouselEventCardShapeClipper(width: context.w, height: context.h),
                 child: Image.network(
-                  url,
+                  widget.url,
                   fit: BoxFit.cover,
                   width: context.w,
                   height: context.h,
@@ -306,7 +314,7 @@ class CarouselEventCard extends StatelessWidget {
                     Flexible(
                       flex: 10,
                       child: Text(
-                        event.title,
+                        widget.event.title,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -319,7 +327,7 @@ class CarouselEventCard extends StatelessWidget {
                     Flexible(
                       flex: 4,
                       child: Text(
-                        event.time,
+                        widget.event.time,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -342,7 +350,7 @@ class CarouselEventCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      Helpers.formatStringDate(event.date.toString()),
+                      Helpers.formatStringDate(widget.event.date.toString()),
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
@@ -380,7 +388,16 @@ class CarouselEventCard extends StatelessWidget {
               top: context.h * 0.155,
               right: 0,
               child: GestureDetector(
-                onTap: () => Logger.debug('todo favourite'),
+                onTap: () async {
+                  if (widget.favouriteEventIds.contains(widget.event.id)) {
+                    await _favouriteService.deleteFromFavourites(widget.event.id!);
+                    widget.favouriteEventIds.remove(widget.event.id!);
+                  } else {
+                    await _favouriteService.addToFavourites(widget.event.id!);
+                    widget.favouriteEventIds.add(widget.event.id!);
+                  }
+                  setState(() {});
+                },
                 child: Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: Container(
@@ -390,7 +407,10 @@ class CarouselEventCard extends StatelessWidget {
                       color: Colors.black.withOpacity(0.05),
                       borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(18)),
                     ),
-                    child: const Icon(CupertinoIcons.heart),
+                    child: Icon(
+                      CupertinoIcons.heart,
+                      color: widget.favouriteEventIds.contains(widget.event.id) ? Colors.red : Colors.black,
+                    ),
                   ),
                 ),
               ),

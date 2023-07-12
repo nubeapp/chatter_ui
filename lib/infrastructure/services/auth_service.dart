@@ -1,6 +1,5 @@
 import 'package:ui/domain/entities/credentials.dart';
 import 'package:ui/domain/entities/token.dart';
-import 'package:ui/domain/exceptions/exceptions.dart';
 import 'package:ui/domain/services/auth_service_interface.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;

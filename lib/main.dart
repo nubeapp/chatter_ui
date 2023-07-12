@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui/application/services/dependency_injection/dependencies.dart';
-import 'package:ui/domain/entities/event.dart';
-import 'package:ui/domain/entities/ticket/ticket_summary.dart';
 import 'package:ui/presentation/bloc/ticket_counter/ticket_counter_bloc.dart';
 import 'presentation/pages/pages.dart';
 
@@ -38,7 +36,7 @@ class MyApp extends StatelessWidget {
         // themeMode: ThemeMode.dark,
         title: 'Ticketo',
         // home: SuccessfulPurchaseScreen(tickets: TicketSummary(event: Event(title: '', date: DateTime.now(), time: '', venue: ''), tickets: const [])),
-        home: MainScreen(),
+        home: LoginScreen(),
       ),
     );
   }

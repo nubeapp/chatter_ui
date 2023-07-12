@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui/domain/entities/token.dart';
-import 'package:ui/infrastructure/utilities/auth_endpoints.dart';
+import 'package:ui/infrastructure/utilities/public_endpoints.dart';
 
 class TokenInterceptor extends http.BaseClient {
   final http.Client client;
@@ -16,7 +16,7 @@ class TokenInterceptor extends http.BaseClient {
     if (sharedPreferences.containsKey('token')) {
       final String? strToken = sharedPreferences.getString('token');
       Token token = Token.fromJson(json.decode(strToken ?? ''));
-      if (_requiresTokenAuthentication(request.url.toString())) {
+      if (!_requiresTokenAuthentication(request.url.toString())) {
         request.headers['Authorization'] = 'Bearer ${token.accessToken}';
       }
     }
@@ -24,6 +24,6 @@ class TokenInterceptor extends http.BaseClient {
   }
 
   bool _requiresTokenAuthentication(String url) {
-    return AuthEndpoints.enpoints.any((endpoint) => url.contains(endpoint));
+    return PublicEndpoints.endpoints.any((endpoint) => url == endpoint);
   }
 }
