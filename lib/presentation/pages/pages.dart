@@ -5,3 +5,7 @@ export 'ticket_info_screen.dart';
 export 'successful_purchase_screen.dart';
 export 'error_purchase_screen.dart';
 export 'login_screen.dart';
+export 'home_screen.dart';
+export 'favourite_screen.dart';
+export 'order_screen.dart';
+export 'profile_screen.dart';

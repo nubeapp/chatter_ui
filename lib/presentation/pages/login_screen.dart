@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: Colors.transparent,
         body: Center(
           child: _isLoading
-              ? const CircularProgressIndicator()
+              ? const CircularProgressIndicator(color: Colors.black54)
               : Button.black(
                   text: 'Log in',
                   width: context.w * 0.4,
@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     Navigator.of(context).push(MaterialPageRoute(
                       settings: const RouteSettings(name: '/main_screen'),
-                      builder: (context) => const MainScreen(),
+                      builder: (context) => HomeScreen(),
                     ));
                   },
                 ),

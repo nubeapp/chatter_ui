@@ -24,4 +24,4 @@
 - (P2) FavouriteEventsScreen
 - (P2) BottomNavBar
 - (P1) Fix position of buttons + and - in EventScreen ✅
-- (P1) Add test to FavouriteService and _eventService.getFavouriteEventsByUserId()
+- (P1) Add test to FavouriteService and _eventService.getFavouriteEventsByUserId() ✅
