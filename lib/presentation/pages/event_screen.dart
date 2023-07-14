@@ -79,7 +79,10 @@ class EventScreen extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: EventCard(url: url, event: event),
+              child: EventCard(
+                url: url,
+                event: event,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -291,66 +294,7 @@ class EventCard extends StatelessWidget {
   }
 }
 
-class EventShapeClipper extends CustomClipper<Path> {
-  final double width;
-  final double height;
-
-  EventShapeClipper({required this.width, required this.height});
-
-  @override
-  Path getClip(Size size) {
-    final imagePath = Path();
-    final favouritePath = Path();
-    final tagPath = Path();
-
-    final image = imagePath
-      ..addRRect(
-        RRect.fromLTRBAndCorners(
-          0,
-          0,
-          width * 0.897,
-          height * 0.4,
-          topRight: const Radius.circular(15),
-          bottomRight: const Radius.circular(20),
-          topLeft: const Radius.circular(20),
-        ),
-      );
-
-    final favourite = favouritePath
-      ..addRRect(
-        RRect.fromLTRBAndCorners(
-          width * 0.77,
-          height * 0.34,
-          width,
-          height,
-          topLeft: const Radius.circular(20),
-        ),
-      )
-      ..close();
-
-    final tag = tagPath
-      ..addRRect(
-        RRect.fromLTRBAndCorners(
-          0,
-          0,
-          width * 0.2,
-          height * 0.04,
-          topLeft: const Radius.circular(20),
-          bottomRight: const Radius.circular(20),
-        ),
-      )
-      ..close();
-
-    final newPath = Path.combine(PathOperation.difference, Path.combine(PathOperation.difference, image, favourite), tag);
-
-    return newPath;
-  }
-
-  @override
-  bool shouldReclip(EventShapeClipper oldClipper) => true;
-}
-
-class EventStack extends StatelessWidget {
+class EventStack extends StatefulWidget {
   const EventStack({
     Key? key,
     required this.url,
@@ -359,55 +303,24 @@ class EventStack extends StatelessWidget {
   final String url;
 
   @override
+  State<EventStack> createState() => _EventStackState();
+}
+
+class _EventStackState extends State<EventStack> {
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        ClipPath(
-          clipper: EventShapeClipper(width: context.w, height: context.h),
-          child: Image.network(
-            url,
-            fit: BoxFit.cover,
-            width: context.w,
-            height: context.h * 0.4,
-          ),
-        ),
-        Container(
-          width: context.w * 0.19,
-          height: context.h * 0.0355,
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.05),
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(18)),
-          ),
-          child: const Center(
-            child: Text(
-              'Music',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          top: context.h * 0.345,
-          right: -8,
-          child: GestureDetector(
-            onTap: () => Logger.debug('todo favourite'),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Container(
-                width: context.w * 0.115,
-                height: context.h * 0.055,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.05),
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), bottomRight: Radius.circular(18)),
-                ),
-                child: const Icon(CupertinoIcons.heart),
-              ),
-            ),
-          ),
-        ),
-      ],
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+        bottomRight: Radius.circular(20),
+      ),
+      child: Image.network(
+        widget.url,
+        fit: BoxFit.cover,
+        width: context.w,
+        height: context.h * 0.4,
+      ),
     );
   }
 }
