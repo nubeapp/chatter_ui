@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     });
 
                     Navigator.of(context).push(MaterialPageRoute(
-                      settings: const RouteSettings(name: '/main_screen'),
+                      settings: const RouteSettings(name: '/home_screen'),
                       builder: (context) => HomeScreen(),
                     ));
                   },
